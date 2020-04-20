@@ -1,0 +1,86 @@
+%{
+#include <stdio.h>
+#include <stdlib.h>
+#include <conio.h>
+#include <string.h>
+#include <float.h>
+#include <limits.h>
+#include "y.tab.h"
+%}
+
+DIGITO			[0-9]
+LETRA			[a-zA-Z]
+DELIM           [ \t\n\r]
+CARACTER        [a-z|A-Z|0-9|=|>|<|!|:|+|-|*|/|?|¿|!|¡|@|%|#|&|°|´|^|`|~|/|\\|-|_|.|,|;|¬||]
+VALID_STRING    ({CARACTER}+|{DELIM})*
+COMENTARIO_S    -\/{VALID_STRING}\/-
+COMENTARIO      ({COMENTARIO_S}|-\/{VALID_STRING}{COMENTARIO_S}{VALID_STRING}\/-)+
+                     
+CTE_STRING      \"{VALID_STRING}\"
+CTE_REAL        -?{DIGITO}+"."{DIGITO}*
+CTE_INT         -?{DIGITO}+
+ID				{LETRA}({LETRA}|{DIGITO}|_)*
+INLIST          [Ii][Nn][Ll][Ii][Ss][Tt]
+AVG				[Aa][Vv][Gg]
+WHILE           [Ww][Hh][Ii][Ll][Ee]
+ENDWHILE        [Ee][Nn][Dd][Ww][Hh][Ii][Ll][Ee]
+IF				[Ii][Ff]
+ELSE			[Ee][Ll][Ss][Ee]
+ENDIF			[Ee][Nn][Dd][Ii][Ff]
+AND				[Aa][Nn][Dd]
+OR				[Oo][Rr]
+NOT				[Nn][Oo][Tt]
+INT				[Ii][Nn][Tt]
+FLOAT			[Ff][Ll][Oo][Aa][Tt]
+STRING			[Ss][Tt][Rr][Ii][Nn][Gg]
+DECVAR			[Dd][Ee][Cc][Vv][Aa][Rr]
+ENDDEC			[Ee][Nn][Dd][Dd][Ee][Cc]
+READ			[Rr][Ee][Aa][Dd]
+WRITE			[Ww][Rr][Ii][Tt][Ee]
+
+%%
+"+"				{ return OP_SUMA; }
+"-"				{ return OP_RESTA; }
+"*"				{ return OP_MULT; }
+"/"				{ return OP_DIV; }
+"="			    { return ASIG; }
+"("				{ return P_A; }
+")"				{ return P_C; }
+"["             { return C_A; }
+"]"             { return C_C; }
+";"             { return PUNTO_COMA; }
+","             { return COMA; }
+":"				{ return DOS_PUNTOS; }
+{INLIST}        { return INLIST; }
+{AVG}			{ return AVG; }
+{WHILE}         { return WHILE; } 
+{ENDWHILE}      { return ENDWHILE; }
+{IF}			{ return IF; }
+{ELSE}			{ return ELSE; }
+{ENDIF}			{ return ENDIF; }
+{AND}			{ return AND; }
+{OR}			{ return OR; }
+{NOT}           { return NOT; }
+
+{DECVAR}		{ return DECVAR; }
+{ENDDEC}		{ return ENDDEC; }
+
+{READ}          { return READ; }
+{WRITE}         { return WRITE; }
+
+{INT}			{ return INT; }
+{FLOAT}			{ return FLOAT; }
+{STRING}		{ return STRING; }
+
+">"             { return MAYOR; }
+">="            { return MAYOR_IGUAL; }
+"<"             { return MENOR; }
+"<="            { return MENOR_IGUAL; }
+"=="            { return IGUAL; }
+"!="            { return DISTINTO; }
+
+" "
+"\t"
+"\n"		    
+
+%%
