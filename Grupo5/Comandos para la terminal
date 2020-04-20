@@ -1,0 +1,5 @@
+flex Lexico01.l
+
+gcc lex.yy.c -oLexico01.bin -lfl
+
+Lexico01.bin
