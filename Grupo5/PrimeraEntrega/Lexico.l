@@ -73,7 +73,7 @@ CTE_ENTERA          {DIGITO}+
 {GET}               {return GET;}
 {PROGRAM}           {return PROGRAM;}
 {ENDPROGRAM}        {return ENDPROGRAM;}
-{COMA}		        {return COMA;}
+{COMA}		    {return COMA;}
 {MAYEQ}             {return MAYEQ;}
 {MINEQ}             {return MINEQ;}
 {EQUAL}             {return EQUAL;}
