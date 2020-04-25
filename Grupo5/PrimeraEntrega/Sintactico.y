@@ -97,7 +97,6 @@ iteracion:
 asignacion:
         ID ASIGNID ID
         |ID ASIGN expresion
-        |ID ASIGN ifunario
         ;
 
 ifunario:
@@ -133,10 +132,11 @@ comparador:
 
 expresion:
          termino
-	       |expresion OPSUM termino
+	   |expresion OPSUM termino
          |expresion OPRES termino
          |factorial
          |combinatoria
+         |ifunario
  	 ;
 
 termino: 
