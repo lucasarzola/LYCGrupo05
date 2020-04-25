@@ -1,10 +1,12 @@
 %{
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include <conio.h>
 #include "y.tab.h"
-FILE  *yyin;
-int yylval;
+#define COTA_INT 65536
+#define COTA_FLOAT 4294967296
+FILE  *yyin;  
 %}
 %option noyywrap  
 %option yylineno 
@@ -72,7 +74,7 @@ CTE_ENTERA          {DIGITO}+
 {GET}               {return GET;}
 {PROGRAM}           {return PROGRAM;}
 {ENDPROGRAM}        {return ENDPROGRAM;}
-{COMA}		    {return COMA;}
+{COMA}		        {return COMA;}
 {MAYEQ}             {return MAYEQ;}
 {MINEQ}             {return MINEQ;}
 {EQUAL}             {return EQUAL;}
@@ -100,8 +102,35 @@ CTE_ENTERA          {DIGITO}+
 {ASIGN}             {return ASIGN;}
 {LETRA}             {return LETRA;}
 {ID}                {return ID;}
-{COMENTARIO}        {ECHO;}
-{CTE_STRING}        {return CTE_STRING;}
-{CTE_REAL}          {return CTE_REAL;}
-{CTE_ENTERA}        {return CTE_ENTERA;}
+{COMENTARIO}       {ECHO;}
+{CTE_STRING}        { 			int cantCaracteres = strlen(yytext);
+								if(cantCaracteres <= 30) { //Cuenta las commillas tambien
+										return CTE_STRING;
+								} else {
+										printf("ERROR - Constante string muy larga. Maximo 30 caracteres\n");
+										system ("Pause");
+										exit(3);
+								}
+                    }	
+{CTE_REAL}          { 
+								double n = atof(yytext);
+					
+								if(n >= COTA_FLOAT*(-1) && n <= COTA_FLOAT){
+									return CTE_REAL; 
+								}else{
+									printf("ERROR - Float fuera de rango.\n");
+									system ("Pause");
+									exit(2);
+							}
+						}
+{CTE_ENTERA}        { 
+							int num = atoi(yytext); 
+							if(num >= COTA_INT*(-1) && num <= COTA_INT){
+
+									return CTE_ENTERA; 
+							}else{
+									printf("ERROR - Int fuera de rango.\n");
+									system ("Pause");
+									exit(1);
+							}}
 %%
