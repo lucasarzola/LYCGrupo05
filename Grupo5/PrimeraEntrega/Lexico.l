@@ -9,13 +9,18 @@ int yylval;
 %option noyywrap  
 %option yylineno 
 
+DISPLAY             "DISPLAY"
+GET                 "GET"
+SEMICOLON           ";"
 PROGRAM             "PROGRAM"
 ENDPROGRAM          "ENDPROGRAM"
 FLOAT               "FLOAT"|"float"
 INT                 "INT"|"int"
 STRING              "STRING"|"string"
 OPTER               "?"
-THEN                ":"
+P_A                 "("
+P_C                 ")"
+COLON                ":"
 MAY                 ">"
 MIN                 "<"
 MAYEQ               ">="
@@ -58,6 +63,12 @@ CTE_REAL            ([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*)
 
 
 %%
+{P_A}               {return P_A;}
+{P_C}               {return P_C;}
+{SEMICOLON}         {return SEMICOLON;}
+{COLON}             {return COLON;}
+{DISPLAY}           {return DISPLAY;}
+{GET}               {return GET;}
 {PROGRAM}           {return PROGRAM;}
 {ENDPROGRAM}        {return ENDPROGRAM;}
 {COMA}		        {return COMA;}
@@ -71,6 +82,7 @@ CTE_REAL            ([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*)
 {FACT}              {return FACT;}
 {COMB}              {return COMB;}
 {IF}                {return IF;}
+{ELSE}              {return ELSE;}
 {ELSEIF}	        {return ELSEIF;}
 {ENDIF}		        {return ENDIF;}
 {AND}		        {return AND;}
@@ -85,15 +97,8 @@ CTE_REAL            ([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*)
 {DIGITO}            {return DIGITO;}
 {ENTERO}            {return ENTERO;}
 {LETRA}             {return LETRA;}
-{DELIM}             {return DELIM;}
 {ID}                {return ID;}
-{CARACTER_ESPECIAL} {return CARACTER_ESPECIAL;}
 {COMENTARIO}        {ECHO;}
 {CTE_STRING}        {return CTE_STRING;}
 {CTE_REAL}          {return CTE_REAL;}
-{MAYEQ}             {return MAYEQ;}
-{MINEQ}             {return MINEQ;}
-{EQUAL}             {return EQUAL;}
-{THEN}              {return THEN;}
-{OPTER}             {return OPTER;}
 %%

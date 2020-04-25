@@ -1,4 +1,15 @@
 PROGRAM
 DEFVAR
-var = 10 < 5 ? yes : no
+FLOAT : aasd ; asd133
+INT : hola
 ENDDEF
+DISPLAY aasd
+GET hola
+IF ()
+Aba := Ba
+ENDIF
+IF ()
+Aba := Ba
+ELSE
+Aba := Ba
+ENDIF

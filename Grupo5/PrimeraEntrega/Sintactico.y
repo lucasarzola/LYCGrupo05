@@ -7,6 +7,10 @@ int yystopparser=0;
 FILE  *yyin;
 %}
 
+%token COLON
+%token DISPLAY
+%token GET
+%token SEMICOLON
 %token PROGRAM
 %token ENDPROGRAM
 %token COMA
@@ -20,6 +24,7 @@ FILE  *yyin;
 %token FACT
 %token COMB
 %token IF
+%token ELSE
 %token ELSEIF
 %token ENDIF
 %token AND
@@ -34,77 +39,71 @@ FILE  *yyin;
 %token DIGITO                
 %token ENTERO              
 %token LETRA                 
-%token DELIM                 
 %token ID                    
-%token CARACTER_ESPECIAL             
 %token CTE_STRING          
 %token CTE_REAL
-%token MAYEQ
-%token MINEQ
-%token EQUAL
-%token OPTER
-%token THEN
+%token P_A
+%token P_C
 
 %%
 programa:  	   
-	PROGRAM {printf(" Inicia COMPILADOR\n");} est_declaracion {printf(" Fin COMPILADOR ok\n");}
+	PROGRAM {printf("Inicia COMPILADOR\n");} est_declaracion bloque{printf(" Fin COMPILADOR ok\n");} 
     ;
 
 est_declaracion:
-	DEFVAR {printf("     DECLARACIONES\n");} expresion ENDDEF {printf(" Fin de las Declaraciones\n");}
+	DEFVAR {printf("DECLARACIONES\n");} declaraciones ENDDEF {printf(" Fin de las Declaraciones\n");}
         ;
 
-declaraciones:         	        	
-             declaracion
-             |declaraciones declaracion
-    	     ;
-
+declaraciones:
+            declaracion
+            |declaracion declaraciones
+      ;
 declaracion:
-            FLOAT lista_var
-            |STRING lista_var
-            |INT lista_var
+            FLOAT COLON lista_var{printf("Float\n");}
+            |STRING COLON lista_var{printf("String\n");}
+            |INT COLON lista_var{printf("Int\n");}
             ;
 
 lista_var:
           ID
-          |ID COMA lista_var
+          |ID SEMICOLON lista_var
           ;
 
-expresion: 
-          expresion OPTER expresion THEN expresion
-          |expresion ASIGN condicion
-          |condicion
-          |expresion OPSUM termino 
-          |expresion OPRES termino 
-          |termino
+bloque:
+          sentencia
+          |bloque sentencia
           ;
-condicion:
-          comparacion
-          |condicion AND comparacion
-          |condicion OR comparacion
+sentencia:
+          decision {printf("Decision\n");}
+          |iteracion{printf("Iteracion\n");}
+          |asignacion {printf("Asignacion\n");}
+          |salida
+          |entrada
+          ;
+
+decision: 
+    	 IF P_A P_C bloque ENDIF{printf("     IF\n");}
+	    | IF P_A P_C bloque ELSE bloque ENDIF {printf("     IF con ELSE\n");}	 
 ;
-comparacion:
-            expresion comparador expresion
+
+iteracion:
+          WHILE {printf("Comienza while\n");} P_A P_C bloque ENDWHILE {printf("Termina while\n");}
         ;
-        
-comparador:
-          ASIGN
-          |MAYEQ
-          |MINEQ
-          |MIN
-          |MAY
-          |EQUAL
+
+asignacion:
+        ID ASIGN ID
+        |ID ASIGN CTE_STRING
+        |ID ASIGN CTE_REAL
+        ;
+
+salida:
+        DISPLAY ID{printf("Display id\n");}
+        |DISPLAY CTE_STRING{printf("Display cte_string\n");}
+        ;
+
+entrada:
+      GET ID{printf("Get ID\n");}
       ;
-
-termino: termino OPMUL factor
-        |termino OPDIV factor
-        |factor
-        ;
-
-factor: expresion
-        |ID
-        |DIGITO
-        ;
 
 %%
 int main(int argc,char *argv[])
