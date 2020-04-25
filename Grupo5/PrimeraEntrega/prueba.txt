@@ -1,0 +1,4 @@
+PROGRAM
+DEFVAR
+var = 10 < 5 ? yes : no
+ENDDEF

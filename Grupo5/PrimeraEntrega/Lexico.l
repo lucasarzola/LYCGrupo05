@@ -2,85 +2,98 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <conio.h>
-#include <string.h>
-#include <float.h>
-#include <limits.h>
 #include "y.tab.h"
+FILE  *yyin;
+int yylval;
 %}
+%option noyywrap  
+%option yylineno 
 
-DIGITO			[0-9]
-LETRA			[a-zA-Z]
-DELIM           [ \t\n\r]
-CARACTER        [a-z|A-Z|0-9|=|>|<|!|:|+|-|*|/|?|¿|!|¡|@|%|#|&|°|´|^|`|~|/|\\|-|_|.|,|;|¬||]
-VALID_STRING    ({CARACTER}+|{DELIM})*
-COMENTARIO_S    -\/{VALID_STRING}\/-
-COMENTARIO      ({COMENTARIO_S}|-\/{VALID_STRING}{COMENTARIO_S}{VALID_STRING}\/-)+
-                     
-CTE_STRING      \"{VALID_STRING}\"
-CTE_REAL        -?{DIGITO}+"."{DIGITO}*
-CTE_INT         -?{DIGITO}+
-ID				{LETRA}({LETRA}|{DIGITO}|_)*
-INLIST          [Ii][Nn][Ll][Ii][Ss][Tt]
-AVG				[Aa][Vv][Gg]
-WHILE           [Ww][Hh][Ii][Ll][Ee]
-ENDWHILE        [Ee][Nn][Dd][Ww][Hh][Ii][Ll][Ee]
-IF				[Ii][Ff]
-ELSE			[Ee][Ll][Ss][Ee]
-ENDIF			[Ee][Nn][Dd][Ii][Ff]
-AND				[Aa][Nn][Dd]
-OR				[Oo][Rr]
-NOT				[Nn][Oo][Tt]
-INT				[Ii][Nn][Tt]
-FLOAT			[Ff][Ll][Oo][Aa][Tt]
-STRING			[Ss][Tt][Rr][Ii][Nn][Gg]
-DECVAR			[Dd][Ee][Cc][Vv][Aa][Rr]
-ENDDEC			[Ee][Nn][Dd][Dd][Ee][Cc]
-READ			[Rr][Ee][Aa][Dd]
-WRITE			[Ww][Rr][Ii][Tt][Ee]
+PROGRAM             "PROGRAM"
+ENDPROGRAM          "ENDPROGRAM"
+FLOAT               "FLOAT"|"float"
+INT                 "INT"|"int"
+STRING              "STRING"|"string"
+OPTER               "?"
+THEN                ":"
+MAY                 ">"
+MIN                 "<"
+MAYEQ               ">="
+MINEQ               "<="
+EQUAL               "=="
+COMA		        ","
+FACT                "FACT"
+COMB                "COMB"
+DEFVAR              "DEFVAR"
+ENDDEF              "ENDDEF"
+IF                  "IF"|"if"
+OR                  "OR"|"or"
+WHILE               "WHILE"|"while"
+ENDWHILE	        "ENDWHILE"|"endwhile"
+AND		            "AND"|"and"
+ELSE                "ELSE"|"else"
+ELSEIF              "ELSEIF"|"elseif"
+ENDIF               "ENDIF"|"endif"
+ASIGN               ":="
+OPSUM               "+"
+OPRES               "-"
+OPMUL               [\*]
+OPDIV               [\/]
+DIGITO              [0-9]
+ENTERO              {DIGITO}+
+LETRA               [a-zA-Z]
+ID                  {LETRA}({LETRA}|{DIGITO}|_)*
+DELIM               [ \t\r]
+
+CARACTER_ESPECIAL   [=|>|<|:|\+|-|\*|/|\?|¿|!|¡|\(|\)|@|%|#|&|°|´|\^|`|~|/|\\|-|_|\.|,|;|¬|\|]
+PALABRA             ({LETRA}|{DIGITO})+
+INI_COM             [\*]{3}[\/]
+FIN_COM             [\/][\*]{3}
+COMENTARIO          {INI_COM}{VALID_STRING}{FIN_COM}
+
+VALID_STRING        ({PALABRA}|{DELIM}|{CARACTER_ESPECIAL})+
+CTE_STRING          \"{VALID_STRING}\"
+CTE_REAL            ([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*)
+
+
 
 %%
-"+"				{ return OP_SUMA; }
-"-"				{ return OP_RESTA; }
-"*"				{ return OP_MULT; }
-"/"				{ return OP_DIV; }
-"="			    { return ASIG; }
-"("				{ return P_A; }
-")"				{ return P_C; }
-"["             { return C_A; }
-"]"             { return C_C; }
-";"             { return PUNTO_COMA; }
-","             { return COMA; }
-":"				{ return DOS_PUNTOS; }
-{INLIST}        { return INLIST; }
-{AVG}			{ return AVG; }
-{WHILE}         { return WHILE; } 
-{ENDWHILE}      { return ENDWHILE; }
-{IF}			{ return IF; }
-{ELSE}			{ return ELSE; }
-{ENDIF}			{ return ENDIF; }
-{AND}			{ return AND; }
-{OR}			{ return OR; }
-{NOT}           { return NOT; }
-
-{DECVAR}		{ return DECVAR; }
-{ENDDEC}		{ return ENDDEC; }
-
-{READ}          { return READ; }
-{WRITE}         { return WRITE; }
-
-{INT}			{ return INT; }
-{FLOAT}			{ return FLOAT; }
-{STRING}		{ return STRING; }
-
-">"             { return MAYOR; }
-">="            { return MAYOR_IGUAL; }
-"<"             { return MENOR; }
-"<="            { return MENOR_IGUAL; }
-"=="            { return IGUAL; }
-"!="            { return DISTINTO; }
-
-" "
-"\t"
-"\n"		    
-
+{PROGRAM}           {return PROGRAM;}
+{ENDPROGRAM}        {return ENDPROGRAM;}
+{COMA}		        {return COMA;}
+{MAY}               {return MAY;}
+{MIN}               {return MIN;}
+{FLOAT}             {return FLOAT;}
+{INT}               {return INT;}
+{STRING}            {return STRING;}
+{DEFVAR}            {return DEFVAR;}
+{ENDDEF}            {return ENDDEF;}
+{FACT}              {return FACT;}
+{COMB}              {return COMB;}
+{IF}                {return IF;}
+{ELSEIF}	        {return ELSEIF;}
+{ENDIF}		        {return ENDIF;}
+{AND}		        {return AND;}
+{OR}                {return OR;}
+{WHILE}             {return WHILE;}
+{ENDWHILE}	        {return ENDWHILE;}
+{OPSUM}             {return OPSUM;}
+{OPRES}             {return OPRES;}
+{OPMUL}             {return OPMUL;}
+{OPDIV}             {return OPDIV;}
+{ASIGN}             {return ASIGN;}
+{DIGITO}            {return DIGITO;}
+{ENTERO}            {return ENTERO;}
+{LETRA}             {return LETRA;}
+{DELIM}             {return DELIM;}
+{ID}                {return ID;}
+{CARACTER_ESPECIAL} {return CARACTER_ESPECIAL;}
+{COMENTARIO}        {ECHO;}
+{CTE_STRING}        {return CTE_STRING;}
+{CTE_REAL}          {return CTE_REAL;}
+{MAYEQ}             {return MAYEQ;}
+{MINEQ}             {return MINEQ;}
+{EQUAL}             {return EQUAL;}
+{THEN}              {return THEN;}
+{OPTER}             {return OPTER;}
 %%
