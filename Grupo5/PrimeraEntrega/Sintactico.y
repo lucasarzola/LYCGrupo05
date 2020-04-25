@@ -44,10 +44,13 @@ FILE  *yyin;
 %token CTE_REAL
 %token P_A
 %token P_C
+%token MINEQ
+%token MAYEQ
+%token EQUAL
 
 %%
 programa:  	   
-	PROGRAM {printf("Inicia COMPILADOR\n");} est_declaracion bloque{printf(" Fin COMPILADOR ok\n");} 
+	PROGRAM {printf("Inicia COMPILADOR\n");} est_declaracion bloque condicion{printf(" Fin COMPILADOR ok\n");} 
     ;
 
 est_declaracion:
@@ -104,6 +107,42 @@ salida:
 entrada:
       GET ID{printf("Get ID\n");}
       ;
+
+condicion:
+          comparacion
+          |condicion AND comparacion
+          |condicion OR comparacion
+;
+
+comparacion:
+          expresion comparador expresion
+        ;
+        
+comparador:
+          MAYEQ
+          |MINEQ
+          |MIN
+          |MAY
+          |EQUAL
+      ;
+
+expresion:
+         termino
+	 |expresion OPSUM termino
+         |expresion OPRES termino
+ 	 ;
+
+termino: 
+       factor
+       |termino OPDIV factor
+       |termino OPMUL factor
+       ;
+
+factor: 
+      ID 
+      ;
+;
+
 
 %%
 int main(int argc,char *argv[])

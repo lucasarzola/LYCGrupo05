@@ -72,6 +72,9 @@ CTE_REAL            ([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*)
 {PROGRAM}           {return PROGRAM;}
 {ENDPROGRAM}        {return ENDPROGRAM;}
 {COMA}		        {return COMA;}
+{MAYEQ}             {return MAYEQ;}
+{MINEQ}             {return MINEQ;}
+{EQUAL}             {return EQUAL;}
 {MAY}               {return MAY;}
 {MIN}               {return MIN;}
 {FLOAT}             {return FLOAT;}
