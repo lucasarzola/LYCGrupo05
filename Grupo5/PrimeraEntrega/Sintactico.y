@@ -95,8 +95,7 @@ iteracion:
         ;
 
 asignacion:
-        ID ASIGNID ID
-        |ID ASIGN expresion
+            ID ASIGN expresion
         ;
 
 ifunario:
