@@ -87,8 +87,8 @@ sentencia:
           ;
 
 decision: 
-    	 IF P_A condicion P_C bloque ENDIF{printf("     Termina if\n");}
-	    | IF P_A condicion P_C bloque ELSE bloque ENDIF {printf("     Termina if con ELSE\n");}	 
+    	 IF P_A condicion P_C bloque ENDIF{printf("Termina if\n");}
+	    | IF P_A condicion P_C bloque ELSE bloque ENDIF {printf("Termina if con ELSE\n");}	 
 ;
 
 iteracion:
@@ -97,9 +97,7 @@ iteracion:
 
 asignacion:
         ID ASIGN ID
-        |ID EQUAL CTE_STRING
-        |ID EQUAL CTE_REAL
-        |ID EQUAL CTE_ENTERA
+        |ID EQUAL expresion
         |ID EQUAL ifunario
         ;
 
@@ -148,6 +146,9 @@ termino:
 
 factor: 
       ID 
+      | CTE_ENTERA 
+      | CTE_REAL 
+      | CTE_STRING 
       ;
 
 factorial:

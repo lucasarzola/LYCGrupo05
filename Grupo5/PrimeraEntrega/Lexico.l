@@ -46,7 +46,6 @@ OPRES               "-"
 OPMUL               [\*]
 OPDIV               [\/]
 DIGITO              [0-9]
-ENTERO              {DIGITO}+
 LETRA               [a-zA-Z]
 ID                  {LETRA}({LETRA}|{DIGITO}|_)*
 DELIM               [ \t\r]
@@ -99,7 +98,6 @@ CTE_ENTERA          {DIGITO}+
 {OPMUL}             {return OPMUL;}
 {OPDIV}             {return OPDIV;}
 {ASIGN}             {return ASIGN;}
-{ENTERO}            {return ENTERO;}
 {LETRA}             {return LETRA;}
 {ID}                {return ID;}
 {COMENTARIO}        {ECHO;}
