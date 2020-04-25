@@ -29,6 +29,7 @@ MIN                 "<"
 MAYEQ               ">="
 MINEQ               "<="
 EQUAL               "=="
+NOTEQUAL			"!="
 COMA		        ","
 FACT                "FACT"
 COMB                "COMB"
@@ -39,10 +40,10 @@ OR                  "OR"|"or"
 WHILE               "WHILE"|"while"
 ENDWHILE	        "ENDWHILE"|"endwhile"
 AND		            "AND"|"and"
+NOT					"!"
 ELSE                "ELSE"|"else"
 ELSEIF              "ELSEIF"|"elseif"
 ENDIF               "ENDIF"|"endif"
-ASIGNID             ":="
 ASIGN               "="
 OPSUM               "+"
 OPRES               "-"
@@ -79,6 +80,7 @@ CTE_ENTERA          {DIGITO}+
 {MAYEQ}             {return MAYEQ;}
 {MINEQ}             {return MINEQ;}
 {EQUAL}             {return EQUAL;}
+{NOTEQUAL}			{return NOTEQUAL;}
 {MAY}               {return MAY;}
 {MIN}               {return MIN;}
 {FLOAT}             {return FLOAT;}
@@ -94,6 +96,7 @@ CTE_ENTERA          {DIGITO}+
 {ENDIF}		        {return ENDIF;}
 {AND}		        {return AND;}
 {OR}                {return OR;}
+{NOT}				{return NOT;}
 {WHILE}             {return WHILE;}
 {ENDWHILE}	        {return ENDWHILE;}
 {OPSUM}             {return OPSUM;}
@@ -101,7 +104,6 @@ CTE_ENTERA          {DIGITO}+
 {OPMUL}             {return OPMUL;}
 {OPDIV}             {return OPDIV;}
 {ASIGN}             {return ASIGN;}
-{ASIGNID}			{return ASIGNID;}
 {LETRA}             {return LETRA;}
 {ID}                {return ID;}
 {COMENTARIO}       {ECHO;}

@@ -27,6 +27,7 @@ FILE  *yyin;
 %token ENDIF
 %token AND
 %token OR
+%token NOT
 %token WHILE               
 %token ENDWHILE          
 %token OPSUM                 
@@ -45,6 +46,7 @@ FILE  *yyin;
 %token MINEQ
 %token MAYEQ
 %token EQUAL
+%token NOTEQUAL
 %token FACT
 %token COMB
 %token ASIGNID
@@ -99,7 +101,7 @@ asignacion:
         ;
 
 ifunario:
-        IF P_A condicion COMA expresion COMA expresion P_C
+        IF P_A condicion COMA expresion COMA expresion P_C {printf(" If Unario\n");}
         ;
 
 salida:
@@ -115,6 +117,7 @@ condicion:
           comparacion{printf(" Comparacion\n");}
           |condicion AND comparacion
           |condicion OR comparacion
+		  |NOT condicion
 ;
 
 comparacion:
@@ -127,6 +130,7 @@ comparador:
           |MIN
           |MAY
           |EQUAL
+		  |NOTEQUAL
       ;
 
 expresion:
@@ -156,7 +160,7 @@ factorial:
       ;
 
 combinatoria:
-      COMB P_A expresion COMA expresion P_C
+      COMB P_A expresion COMA expresion P_C {printf(" Combinatoria\n");}
       ;
 
 %%
@@ -179,5 +183,3 @@ int yyerror(void)
 	 system ("Pause");
 	 exit (1);
      }
-
-
