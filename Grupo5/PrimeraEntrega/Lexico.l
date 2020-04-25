@@ -9,6 +9,7 @@ int yylval;
 %option noyywrap  
 %option yylineno 
 
+
 DISPLAY             "DISPLAY"
 GET                 "GET"
 SEMICOLON           ";"
@@ -59,6 +60,7 @@ COMENTARIO          {INI_COM}{VALID_STRING}{FIN_COM}
 VALID_STRING        ({PALABRA}|{DELIM}|{CARACTER_ESPECIAL})+
 CTE_STRING          \"{VALID_STRING}\"
 CTE_REAL            ([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*)
+CTE_ENTERA          {DIGITO}+
 
 
 
@@ -97,11 +99,11 @@ CTE_REAL            ([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*)
 {OPMUL}             {return OPMUL;}
 {OPDIV}             {return OPDIV;}
 {ASIGN}             {return ASIGN;}
-{DIGITO}            {return DIGITO;}
 {ENTERO}            {return ENTERO;}
 {LETRA}             {return LETRA;}
 {ID}                {return ID;}
 {COMENTARIO}        {ECHO;}
 {CTE_STRING}        {return CTE_STRING;}
 {CTE_REAL}          {return CTE_REAL;}
+{CTE_ENTERA}        {return CTE_ENTERA;}
 %%

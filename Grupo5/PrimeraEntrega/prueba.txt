@@ -1,15 +1,15 @@
 PROGRAM
 DEFVAR
-FLOAT : aasd ; asd133
+FLOAT : aasd;asd133
 INT : hola
 ENDDEF
 DISPLAY aasd
 GET hola
 IF ( asddd > assdd3 )
-Aba := Ba
+Aba:=Ba
 ENDIF
 IF ( asddd > assdd3 )
-Aba := Ba
+Aba:=Ba
 ELSE
-Aba := Ba
+Aba:=Ba
 ENDIF

@@ -21,8 +21,6 @@ FILE  *yyin;
 %token STRING
 %token DEFVAR
 %token ENDDEF
-%token FACT
-%token COMB
 %token IF
 %token ELSE
 %token ELSEIF
@@ -36,17 +34,19 @@ FILE  *yyin;
 %token OPMUL               
 %token OPDIV               
 %token ASIGN                 
-%token DIGITO                
 %token ENTERO              
 %token LETRA                 
 %token ID                    
 %token CTE_STRING          
 %token CTE_REAL
+%token CTE_ENTERA                
 %token P_A
 %token P_C
 %token MINEQ
 %token MAYEQ
 %token EQUAL
+%token FACT
+%token COMB
 
 %%
 programa:  	   
@@ -82,6 +82,8 @@ sentencia:
           |asignacion {printf("Asignacion\n");}
           |salida
           |entrada
+          |factorial
+          |combinatoria
           ;
 
 decision: 
@@ -95,8 +97,14 @@ iteracion:
 
 asignacion:
         ID ASIGN ID
-        |ID ASIGN CTE_STRING
-        |ID ASIGN CTE_REAL
+        |ID EQUAL CTE_STRING
+        |ID EQUAL CTE_REAL
+        |ID EQUAL CTE_ENTERA
+        |ID EQUAL ifunario
+        ;
+
+ifunario:
+        IF P_A condicion COMA expresion COMA expresion P_C
         ;
 
 salida:
@@ -142,6 +150,13 @@ factor:
       ID 
       ;
 
+factorial:
+      FACT P_A expresion P_C
+      ;
+
+combinatoria:
+      COMB P_A expresion COMA expresion P_C
+      ;
 
 %%
 int main(int argc,char *argv[])
