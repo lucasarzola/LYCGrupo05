@@ -50,7 +50,7 @@ FILE  *yyin;
 
 %%
 programa:  	   
-	PROGRAM {printf("Inicia COMPILADOR\n");} est_declaracion bloque condicion{printf(" Fin COMPILADOR ok\n");} 
+	PROGRAM {printf("Inicia COMPILADOR\n");} est_declaracion bloque{printf(" Fin COMPILADOR ok\n");} 
     ;
 
 est_declaracion:
@@ -77,7 +77,7 @@ bloque:
           |bloque sentencia
           ;
 sentencia:
-          decision {printf("Decision\n");}
+          decision
           |iteracion{printf("Iteracion\n");}
           |asignacion {printf("Asignacion\n");}
           |salida
@@ -85,12 +85,12 @@ sentencia:
           ;
 
 decision: 
-    	 IF P_A P_C bloque ENDIF{printf("     IF\n");}
-	    | IF P_A P_C bloque ELSE bloque ENDIF {printf("     IF con ELSE\n");}	 
+    	 IF P_A condicion P_C bloque ENDIF{printf("     Termina if\n");}
+	    | IF P_A condicion P_C bloque ELSE bloque ENDIF {printf("     Termina if con ELSE\n");}	 
 ;
 
 iteracion:
-          WHILE {printf("Comienza while\n");} P_A P_C bloque ENDWHILE {printf("Termina while\n");}
+          WHILE {printf("Comienza while\n");} P_A condicion P_C bloque ENDWHILE {printf("Termina while\n");}
         ;
 
 asignacion:
@@ -109,7 +109,7 @@ entrada:
       ;
 
 condicion:
-          comparacion
+          comparacion{printf(" Comparacion\n");}
           |condicion AND comparacion
           |condicion OR comparacion
 ;
@@ -128,7 +128,7 @@ comparador:
 
 expresion:
          termino
-	 |expresion OPSUM termino
+	       |expresion OPSUM termino
          |expresion OPRES termino
  	 ;
 
@@ -141,7 +141,6 @@ termino:
 factor: 
       ID 
       ;
-;
 
 
 %%

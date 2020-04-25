@@ -5,12 +5,11 @@ INT : hola
 ENDDEF
 DISPLAY aasd
 GET hola
-IF ()
+IF ( asddd > assdd3 )
 Aba := Ba
 ENDIF
-IF ()
+IF ( asddd > assdd3 )
 Aba := Ba
 ELSE
 Aba := Ba
 ENDIF
-asddd > assdd3
