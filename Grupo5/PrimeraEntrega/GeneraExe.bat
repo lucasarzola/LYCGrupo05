@@ -5,7 +5,7 @@ pause
 c:\MinGW\bin\gcc.exe lex.yy.c y.tab.c -o Primera.exe
 pause
 pause
-Primera.exe Prueba.txt
+Primera.exe prueba.txt
 del lex.yy.c
 del y.tab.c
 del y.output
