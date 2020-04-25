@@ -42,7 +42,8 @@ AND		            "AND"|"and"
 ELSE                "ELSE"|"else"
 ELSEIF              "ELSEIF"|"elseif"
 ENDIF               "ENDIF"|"endif"
-ASIGN               ":="
+ASIGNID             ":="
+ASIGN               "="
 OPSUM               "+"
 OPRES               "-"
 OPMUL               [\*]
@@ -100,10 +101,12 @@ CTE_ENTERA          {DIGITO}+
 {OPMUL}             {return OPMUL;}
 {OPDIV}             {return OPDIV;}
 {ASIGN}             {return ASIGN;}
+{ASIGNID}			{return ASIGNID;}
 {LETRA}             {return LETRA;}
 {ID}                {return ID;}
 {COMENTARIO}       {ECHO;}
-{CTE_STRING}        { 			int cantCaracteres = strlen(yytext);
+{CTE_STRING}        { 
+								int cantCaracteres = strlen(yytext);
 								if(cantCaracteres <= 30) { //Cuenta las commillas tambien
 										return CTE_STRING;
 								} else {

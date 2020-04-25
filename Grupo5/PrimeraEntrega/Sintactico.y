@@ -47,6 +47,7 @@ FILE  *yyin;
 %token EQUAL
 %token FACT
 %token COMB
+%token ASIGNID
 
 %%
 programa:  	   
@@ -82,8 +83,6 @@ sentencia:
           |asignacion {printf("Asignacion\n");}
           |salida
           |entrada
-          |factorial
-          |combinatoria
           ;
 
 decision: 
@@ -96,9 +95,9 @@ iteracion:
         ;
 
 asignacion:
-        ID ASIGN ID
-        |ID EQUAL expresion
-        |ID EQUAL ifunario
+        ID ASIGNID ID
+        |ID ASIGN expresion
+        |ID ASIGN ifunario
         ;
 
 ifunario:
@@ -136,6 +135,8 @@ expresion:
          termino
 	       |expresion OPSUM termino
          |expresion OPRES termino
+         |factorial
+         |combinatoria
  	 ;
 
 termino: 
