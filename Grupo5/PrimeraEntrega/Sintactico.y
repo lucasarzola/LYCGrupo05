@@ -177,7 +177,7 @@ combinatoria:
 
 int main(int argc,char *argv[])
 { 
-  FILE *archTabla = fopen("ts.txt","a");
+  FILE *archTabla = fopen("ts.txt","w");
   fprintf(archTabla,"%s\n","NOMBRE\t\tTIPODATO\tVALOR");
   fclose(archTabla);
 
