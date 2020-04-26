@@ -1,11 +1,19 @@
 %{
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include <conio.h>
 #include "y.tab.h"
 int yystopparser=0;
 FILE  *yyin;
+int insertarEnTS(char[],char[],char[],int,double);
 %}
+
+%union {
+int int_val;
+double float_val;
+char *str_val;
+}
 
 %token COLON
 %token DISPLAY
@@ -117,11 +125,12 @@ condicion:
           comparacion{printf(" Comparacion\n");}
           |condicion AND comparacion
           |condicion OR comparacion
-	  |NOT comparacion
+	        |NOT comparacion
 ;
 
 comparacion:
           expresion comparador expresion
+	        |P_A expresion comparador expresion P_C
         ;
         
 comparador:
@@ -130,12 +139,12 @@ comparador:
           |MIN
           |MAY
           |EQUAL
-		  |NOTEQUAL
+		      |NOTEQUAL
       ;
 
 expresion:
          termino
-	   |expresion OPSUM termino
+	       |expresion OPSUM termino
          |expresion OPRES termino
          |factorial
          |combinatoria
@@ -156,7 +165,7 @@ factor:
       ;
 
 factorial:
-      FACT P_A expresion P_C
+      FACT P_A expresion P_C {printf(" Factorial\n");}
       ;
 
 combinatoria:
@@ -164,8 +173,14 @@ combinatoria:
       ;
 
 %%
+
+
 int main(int argc,char *argv[])
-{
+{ 
+  FILE *archTabla = fopen("ts.txt","a");
+  fprintf(archTabla,"%s\n","NOMBRE\t\tTIPODATO\tVALOR");
+  fclose(archTabla);
+
   if ((yyin = fopen(argv[1], "rt")) == NULL)
   {
 	printf("\nNo se puede abrir el archivo: %s\n", argv[1]);
@@ -183,3 +198,93 @@ int yyerror(void)
 	 system ("Pause");
 	 exit (1);
      }
+	 
+
+int insertarEnTS(char nombreToken[],char tipoToken[],char valorString[],int valorInteger, double valorFloat){
+  
+  FILE *tablaSimbolos = fopen("ts.txt","r");
+  char simboloNuevo[200];
+  int repetido = 0;
+  int i = 0;
+
+  char valor[20];
+  char valorCte[20];
+  char lineaComparada[20];
+  char linea[200];
+  
+  //Si el tipo de símbolo no es ID
+  if(strcmp(tipoToken,"ID") != 0){
+    //Chequea si el tipo de simbolo es entero
+    if(strcmp(tipoToken,"CTE_ENTERA") == 0){
+      sprintf(valor,"%d",valorInteger);
+      strcpy(valorCte,"_");
+      strcat(valorCte,valor);
+
+      strcpy(simboloNuevo,"_");
+      strcat(simboloNuevo,valor);
+      strcat(simboloNuevo,"\t\t");
+      strcat(simboloNuevo,"Ent");
+      strcat(simboloNuevo,"\t\t");
+      strcat(simboloNuevo,valor);
+    }
+
+    //Chequea si es real
+    if(strcmp(tipoToken,"CTE_REAL") == 0){
+      sprintf(valor,"%.3f",valorFloat);
+      strcpy(valorCte,"_");
+      strcat(valorCte,valor);
+
+      strcpy(simboloNuevo,"_");
+      strcat(simboloNuevo,valor);
+      strcat(simboloNuevo,"\t\t");
+      strcat(simboloNuevo,"Real");
+      strcat(simboloNuevo,"\t\t");
+      strcat(simboloNuevo,valor);
+    }
+
+    //Chequea si es string
+    if(strcmp(tipoToken,"CTE_STRING") == 0){
+      sprintf(valor,"%s",nombreToken);
+      strcpy(valorCte,"_");
+      strcat(valorCte,valor);
+
+      strcpy(simboloNuevo,"_");
+      strcat(simboloNuevo,nombreToken);
+      strcat(simboloNuevo,"\t\t");
+      strcat(simboloNuevo,"String");
+      strcat(simboloNuevo,"\t\t");
+      strcat(simboloNuevo,valorString);
+    }
+  }else{
+    strcpy(simboloNuevo,nombreToken);
+    strcat(simboloNuevo,"\t\t");
+    strcat(simboloNuevo,tipoToken);
+    strcat(simboloNuevo,"\t\t");
+    strcat(simboloNuevo,valorString);
+  }
+
+  //Vuelve a posición 0
+  rewind(tablaSimbolos);
+
+  char *pos;
+//Compara linea a linea si hay repetidos
+  do {
+	  pos = fgets(linea,200,tablaSimbolos);
+	  strcpy(lineaComparada,simboloNuevo);
+	  strcat(lineaComparada,"\n");
+	  if(strcmp(lineaComparada,linea) == 0){
+		  repetido = 1;
+	  }
+	  i++;
+  }while(pos != NULL && repetido == 0);
+
+  fclose(tablaSimbolos);
+
+//Si no es un símbolo repetido, lo graba
+  tablaSimbolos = fopen("ts.txt","a");
+  if(repetido == 0){
+    fprintf(tablaSimbolos,"%s\n",simboloNuevo);
+  }
+
+  fclose(tablaSimbolos);
+}

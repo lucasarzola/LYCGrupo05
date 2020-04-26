@@ -4,8 +4,8 @@
 #include <stdlib.h>
 #include <conio.h>
 #include "y.tab.h"
-#define COTA_INT 65536
-#define COTA_FLOAT 4294967296
+#define TOPE_ENTERO 65536
+#define TOPE_REAL 4294967296
 FILE  *yyin;  
 %}
 %option noyywrap  
@@ -54,7 +54,7 @@ LETRA               [a-zA-Z]
 ID                  {LETRA}({LETRA}|{DIGITO}|_)*
 DELIM               [ \t\r]
 
-CARACTER_ESPECIAL   [=|>|<|:|\+|-|\*|/|\?|¿|!|¡|\(|\)|@|%|#|&|°|´|\^|`|~|/|\\|-|_|\.|,|;|¬|\|]
+CARACTER_ESPECIAL   [=|>|<|:|\+|-|\*|/|\?|¿|!|¡|\(|\)|@|%|#|&|°|´|\^|`|~|/|\\|-|_|\.|,|;|¬|\|á|é|í|ó|ú|ü]
 PALABRA             ({LETRA}|{DIGITO})+
 INI_COM             [\*]{3}[\/]
 FIN_COM             [\/][\*]{3}
@@ -105,11 +105,13 @@ CTE_ENTERA          {DIGITO}+
 {OPDIV}             {return OPDIV;}
 {ASIGN}             {return ASIGN;}
 {LETRA}             {return LETRA;}
-{ID}                {return ID;}
-{COMENTARIO}       {ECHO;}
-{CTE_STRING}        { 
-								int cantCaracteres = strlen(yytext);
-								if(cantCaracteres <= 30) { //Cuenta las commillas tambien
+{ID}                {yylval.str_val = yytext; 
+					insertarEnTS(yylval.str_val,"ID","--",0,0); 
+					return ID;}
+{COMENTARIO}       
+{CTE_STRING}        { 			yylval.str_val = strdup(yytext);
+								if(strlen(yytext) <= 30) {
+										insertarEnTS(yylval.str_val,"CTE_STRING",yylval.str_val,0,0);
 										return CTE_STRING;
 								} else {
 										printf("ERROR - Constante string muy larga. Maximo 30 caracteres\n");
@@ -117,10 +119,9 @@ CTE_ENTERA          {DIGITO}+
 										exit(3);
 								}
                     }	
-{CTE_REAL}          { 
-								double n = atof(yytext);
-					
-								if(n >= COTA_FLOAT*(-1) && n <= COTA_FLOAT){
+{CTE_REAL}          { 			yylval.float_val = atof(yytext);
+								if(atof(yytext) <= TOPE_REAL){
+									insertarEnTS("float","CTE_REAL","--",0,yylval.float_val);
 									return CTE_REAL; 
 								}else{
 									printf("ERROR - Float fuera de rango.\n");
@@ -128,10 +129,9 @@ CTE_ENTERA          {DIGITO}+
 									exit(2);
 							}
 						}
-{CTE_ENTERA}        { 
-							int num = atoi(yytext); 
-							if(num >= COTA_INT*(-1) && num <= COTA_INT){
-
+{CTE_ENTERA}        {  yylval.int_val = atoi(yytext);
+							if(atoi(yytext) <= TOPE_ENTERO){
+									insertarEnTS("entero","CTE_ENTERA","--",yylval.int_val,0);
 									return CTE_ENTERA; 
 							}else{
 									printf("ERROR - Int fuera de rango.\n");
