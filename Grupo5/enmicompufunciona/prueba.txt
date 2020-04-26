@@ -8,7 +8,7 @@ GET hola
 IF ( ! asddd > assdd3 )
 Aba=Ba
 ENDIF
-IF ( asddd != assdd3 )
+IF ( ( asddd != assdd3 ) AND ( ab > c ) )
 Aba=Ba
 ELSE
 Aba=Ba
