@@ -16,4 +16,11 @@ ENDIF
 iasd = COMB( 5 + 3 , 4 - 2 )
 a1 = IF( alpha > 300, a1+1, a1+2)
 ***/ Así son los comentarios en el 1°Cuat de LyC /***
-
+WHILE ( not ab > bc ) 
+cd = 123
+ENDWHILE
+de = "hola"
+IF ( cd == 123 )
+cd = 456
+fg = 789
+ENDIF

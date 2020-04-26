@@ -88,7 +88,7 @@ bloque:
           |bloque sentencia
           ;
 sentencia:
-          decision
+          decision{printf("Decision\n");}
           |iteracion{printf("Iteracion\n");}
           |asignacion {printf("Asignacion\n");}
           |salida
@@ -97,7 +97,7 @@ sentencia:
 
 decision: 
     	 IF P_A condicion P_C bloque ENDIF{printf("Termina if\n");}
-	    | IF P_A condicion P_C bloque ELSE bloque ENDIF {printf("Termina if con ELSE\n");}	 
+	    |IF P_A condicion P_C bloque ELSE bloque ENDIF {printf("Termina if con ELSE\n");}	 
 ;
 
 iteracion:
@@ -123,15 +123,15 @@ entrada:
 
 condicion:
           comparacion{printf(" Comparacion\n");}
-          |condicion AND comparacion
-          |condicion OR comparacion
-	        |NOT comparacion
-;
+          |comparacion AND comparacion
+          |comparacion OR comparacion
+	      |NOT comparacion
+		;
 
 comparacion:
           expresion comparador expresion
-	        |P_A expresion comparador expresion P_C
-        ;
+	      |P_A expresion comparador expresion P_C
+		  ;
         
 comparador:
           MAYEQ
@@ -139,17 +139,17 @@ comparador:
           |MIN
           |MAY
           |EQUAL
-		      |NOTEQUAL
-      ;
+		  |NOTEQUAL
+		  ;
 
 expresion:
          termino
-	       |expresion OPSUM termino
+	     |expresion OPSUM termino
          |expresion OPRES termino
          |factorial
          |combinatoria
          |ifunario
- 	 ;
+		 ;
 
 termino: 
        factor
