@@ -119,10 +119,12 @@ condicion:
           |condicion AND comparacion
           |condicion OR comparacion
 	  |NOT comparacion
+	  |P_A comparacion P_C
 ;
 
 comparacion:
           expresion comparador expresion
+	  |P_A expresion comparador expresion P_C
         ;
         
 comparador:
