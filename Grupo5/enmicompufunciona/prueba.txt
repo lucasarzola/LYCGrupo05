@@ -1,0 +1,18 @@
+PROGRAM
+DEFVAR
+FLOAT : aasd;asd133
+INT : hola
+ENDDEF
+DISPLAY aasd
+GET hola
+IF ( ! asddd > assdd3 )
+Aba=Ba
+ENDIF
+IF ( asddd != assdd3 )
+Aba=Ba
+ELSE
+Aba=Ba
+ENDIF
+iasd = COMB( 5 + 3 , 4 - 2 )
+a1 = IF( alpha > 300, a1+1, a1+2)
+***/ Así son los comentarios en el 1°Cuat de LyC /***
