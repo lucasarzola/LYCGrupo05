@@ -1,12 +1,20 @@
 %{
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include <conio.h>
-#include <string.h>
 #include "y.tab.h"
 int yystopparser=0;
 FILE  *yyin;
+char tituloTS[] = "NOMBRE\t\t\tTIPODATO\t\tVALOR\t\tLONGITUD\n";
+int insertarEnTS(char[],char[],char[],int,double);
 %}
+
+%union {
+int int_val;
+double float_val;
+char *str_val;
+}
 
 %token COLON
 %token DISPLAY
