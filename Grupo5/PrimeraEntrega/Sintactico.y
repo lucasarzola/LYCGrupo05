@@ -117,7 +117,7 @@ condicion:
           comparacion{printf(" Comparacion\n");}
           |condicion AND comparacion
           |condicion OR comparacion
-		  |NOT condicion
+	  |NOT comparacion
 ;
 
 comparacion:
