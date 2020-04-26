@@ -44,7 +44,7 @@ char *str_val;
 %token OPDIV               
 %token ASIGN                 
 %token ENTERO              
-%token LETRA                 
+               
 %token ID                    
 %token CTE_STRING          
 %token CTE_REAL

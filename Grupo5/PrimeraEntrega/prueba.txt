@@ -1,24 +1,35 @@
 PROGRAM
+
 DEFVAR
-FLOAT : aasd;asd133
-INT : hola
+FLOAT : a1; b1
+STRING : variable1
+FLOAT : p1; p2; p3
+INT : a; b
 ENDDEF
+
 DISPLAY aasd
 GET hola
+
 IF ( ( asddd > assdd3 ) OR ( asd < 6 ) )
 Aba=Ba
 ENDIF
+
 IF (asddd != assdd3)
 Aba=Ba
 ELSE
 Aba=Ba
 ENDIF
+
 iasd = COMB( 5 + 3 , 4 - 2 )
+
 a1 = IF( alpha > 300, a1+1, a1+2)
+
 ***/ Así son los comentarios en el 1°Cuat de LyC /***
+
 WHILE ( not ab > bc ) 
 cd = 123
 ENDWHILE
+
 de = "hola"
 IF ( cd == 123 )
 cd = 456

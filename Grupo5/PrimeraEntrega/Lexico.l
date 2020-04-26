@@ -104,7 +104,7 @@ CTE_ENTERA          {DIGITO}+
 {OPMUL}             {return OPMUL;}
 {OPDIV}             {return OPDIV;}
 {ASIGN}             {return ASIGN;}
-{LETRA}             {return LETRA;}
+
 {ID}                {yylval.str_val = yytext; 
 					insertarEnTS(yylval.str_val,"ID","--",0,0); 
 					return ID;}
