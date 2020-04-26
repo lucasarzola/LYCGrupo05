@@ -118,12 +118,12 @@ condicion:
           comparacion{printf(" Comparacion\n");}
           |condicion AND comparacion
           |condicion OR comparacion
-	  |NOT comparacion
+	        |NOT comparacion
 ;
 
 comparacion:
           expresion comparador expresion
-	  |P_A expresion comparador expresion P_C
+	        |P_A expresion comparador expresion P_C
         ;
         
 comparador:
@@ -132,12 +132,12 @@ comparador:
           |MIN
           |MAY
           |EQUAL
-		  |NOTEQUAL
+		      |NOTEQUAL
       ;
 
 expresion:
          termino
-	   |expresion OPSUM termino
+	       |expresion OPSUM termino
          |expresion OPRES termino
          |factorial
          |combinatoria
