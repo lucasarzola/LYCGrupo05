@@ -178,7 +178,7 @@ combinatoria:
 int main(int argc,char *argv[])
 { 
   FILE *archTabla = fopen("ts.txt","w");
-  fprintf(archTabla,"%s\n","NOMBRE\t\tTIPODATO\tVALOR");
+  fprintf(archTabla,"%s\n","NOMBRE\t\t\t\tTIPODATO\t\t\t\tVALOR");
   fclose(archTabla);
 
   if ((yyin = fopen(argv[1], "rt")) == NULL)
@@ -222,9 +222,9 @@ int insertarEnTS(char nombreToken[],char tipoToken[],char valorString[],int valo
 
       strcpy(simboloNuevo,"_");
       strcat(simboloNuevo,valor);
-      strcat(simboloNuevo,"\t\t");
+      strcat(simboloNuevo,"\t\t\t\t");
       strcat(simboloNuevo,"Ent");
-      strcat(simboloNuevo,"\t\t");
+      strcat(simboloNuevo,"\t\t\t\t");
       strcat(simboloNuevo,valor);
     }
 
@@ -236,9 +236,9 @@ int insertarEnTS(char nombreToken[],char tipoToken[],char valorString[],int valo
 
       strcpy(simboloNuevo,"_");
       strcat(simboloNuevo,valor);
-      strcat(simboloNuevo,"\t\t");
+      strcat(simboloNuevo,"\t\t\t\t");
       strcat(simboloNuevo,"Real");
-      strcat(simboloNuevo,"\t\t");
+      strcat(simboloNuevo,"\t\t\t\t");
       strcat(simboloNuevo,valor);
     }
 
@@ -250,16 +250,16 @@ int insertarEnTS(char nombreToken[],char tipoToken[],char valorString[],int valo
 
       strcpy(simboloNuevo,"_");
       strcat(simboloNuevo,nombreToken);
-      strcat(simboloNuevo,"\t\t");
+      strcat(simboloNuevo,"\t\t\t\t");
       strcat(simboloNuevo,"String");
-      strcat(simboloNuevo,"\t\t");
+      strcat(simboloNuevo,"\t\t\t\t");
       strcat(simboloNuevo,valorString);
     }
   }else{
     strcpy(simboloNuevo,nombreToken);
-    strcat(simboloNuevo,"\t\t");
+    strcat(simboloNuevo,"\t\t\t\t");
     strcat(simboloNuevo,tipoToken);
-    strcat(simboloNuevo,"\t\t");
+    strcat(simboloNuevo,"\t\t\t\t");
     strcat(simboloNuevo,valorString);
   }
 
