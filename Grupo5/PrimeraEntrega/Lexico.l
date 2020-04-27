@@ -54,11 +54,11 @@ LETRA               [a-zA-Z]
 ID                  {LETRA}({LETRA}|{DIGITO}|_)*
 DELIM               [ \t\r]
 
-CARACTER_ESPECIAL   [=|>|<|:|\+|-|\*|/|\?|¿|!|¡|\(|\)|@|%|#|&|°|´|\^|`|~|/|\\|-|_|\.|,|;|¬|\|á|é|í|ó|ú|ü|\"|\']
+CARACTER_ESPECIAL   [=|>|<|:|\+|-|\*|/|\?|¿|!|¡|\(|\)|@|%|#|&|°|´|\^|`|~|/|\\|-|_|\.|,|;|¬|\|á|é|í|ó|ú|ü|\']
 PALABRA             ({LETRA}|{DIGITO})+
 INI_COM             [\*]{3}[\/]
 FIN_COM             [\/][\*]{3}
-COMENTARIO          {INI_COM}{VALID_STRING}{FIN_COM}
+COMENTARIO          {INI_COM}({VALID_STRING}|\")*{FIN_COM}
 
 VALID_STRING        ({PALABRA}|{DELIM}|{CARACTER_ESPECIAL})+
 CTE_STRING          \"{VALID_STRING}\"
@@ -68,6 +68,7 @@ CTE_ENTERA          {DIGITO}+
 
 
 %%
+{COMENTARIO}
 {P_A}               {return P_A;}
 {P_C}               {return P_C;}
 {SEMICOLON}         {return SEMICOLON;}
@@ -107,8 +108,7 @@ CTE_ENTERA          {DIGITO}+
 
 {ID}                {yylval.str_val = yytext; 
 					insertarEnTS(yylval.str_val,"ID","--",0,0); 
-					return ID;}
-{COMENTARIO}       
+					return ID;}       
 {CTE_STRING}        { 			yylval.str_val = strdup(yytext);
 								if(strlen(yytext) <= 30) {
 										insertarEnTS(yylval.str_val,"CTE_STRING",yylval.str_val,0,0);
