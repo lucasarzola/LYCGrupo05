@@ -35,3 +35,16 @@ IF ( cd == 123 )
 cd = 456
 fg = 789
 ENDIF
+
+a = 99999.99
+a = 99.
+a = .9999
+
+b = "@sdADaSjfla%dfg"
+b = "asldk fh sjf"
+
+c = "hola" ***/ donde ewr debe ser una cte string /***
+
+DISPLAY "ewr" ***/ donde ewr debe ser una cte string /***
+GET base ***/ donde base es una variable /***
+DISPLAY var1 ***/ donde var1 es una vble numérica definida previamente /***
