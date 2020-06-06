@@ -83,6 +83,7 @@ enum tipoDato{
 	t_pila pilaIf;
 	t_pila pilaWhile;
   t_pila pilaIds;
+  t_pila pilaFactorial;
 %}
 
 %union {
@@ -282,7 +283,9 @@ expresion:
          termino  {printf(" 37\n");}
 	     |expresion OPSUM termino {printf(" 38\n");}
          |expresion OPRES termino {printf(" 39\n");}
-         |factorial {printf(" 40\n");}
+         |factorial {printf(" 40\n");
+                 
+                 }
          |combinatoria {printf(" 41\n");}
          |ifunario {printf(" 42\n");}
 		 ;
@@ -302,11 +305,62 @@ factor:
 
 factorial:
       FACT P_A {
-
-        char* res = "@res";
-        ponerEnPolaca(&polaca,res);
+        ponerEnPolaca(&polaca,"@res");
+        } expresion P_C   {
+        ponerEnPolaca(&polaca,"=");
+        ponerEnPolaca(&polaca,"@fact");
+        ponerEnPolaca(&polaca,"1");
+        ponerEnPolaca(&polaca,"=");        
         
-        } expresion P_C 
+        //Apilar posicion del res para While e insertar Res
+        t_info *tInfoFactorial=(t_info*) malloc(sizeof(t_info));
+        if(!tInfoFactorial)
+        {
+          return;
+        }
+        tInfoFactorial->nro = posicionPolaca;
+        apilar(&pilaFactorial,tInfoFactorial);
+        
+        ponerEnPolaca(&polaca,"@res");
+        ponerEnPolaca(&polaca,"1");
+        ponerEnPolaca(&polaca,"CMP");
+        ponerEnPolaca(&polaca,"BLI");
+        
+        //Apilar posicion del while actual y avanzar
+        tInfoFactorial=(t_info*) malloc(sizeof(t_info));
+        if(!tInfoFactorial)
+        {
+          return;
+        }
+        tInfoFactorial->nro = posicionPolaca;
+        apilar(&pilaFactorial,tInfoFactorial);
+        ponerEnPolaca(&polaca,"");
+
+        ponerEnPolaca(&polaca,"@fact"); 
+        ponerEnPolaca(&polaca,"@fact");
+        ponerEnPolaca(&polaca,"@res");
+        ponerEnPolaca(&polaca,"*");
+        ponerEnPolaca(&polaca,"=");
+        ponerEnPolaca(&polaca,"@res");
+        ponerEnPolaca(&polaca,"@res");
+        ponerEnPolaca(&polaca,"1");
+        ponerEnPolaca(&polaca,"-");
+        ponerEnPolaca(&polaca,"=");
+        ponerEnPolaca(&polaca,"BI");
+        
+        int nro = desapilar_nro(&pilaFactorial);
+                 printf("Valor de la pila %d",nro); 
+        
+        char* posPolaca;
+        sprintf(posPolaca,"%d",posicionPolaca);
+        ponerEnPolacaPosicion(&polaca,nro,posPolaca);
+
+         nro = desapilar_nro(&pilaFactorial);
+
+         char* posIteracion;
+         sprintf(posIteracion,"%d",nro);
+         ponerEnPolaca(&polaca,posIteracion);
+        }
       ;
 
 combinatoria:
@@ -347,11 +401,10 @@ int main(int argc,char *argv[])
   else
   {
   crearPila(&pilaIds);
+  crearPila(&pilaFactorial);
 	crearPolaca(&polaca);
-	
 	yyparse();
   }
-  printf("%s",polaca->info.cadena);
   guardarPolaca(&polaca);
   fclose(yyin);
   return 0;
@@ -407,15 +460,35 @@ t_info* desapilar(t_pila *p)
         return(0);
 
 	  aux=*p;
-	  t_info* infoPila;
-
-	  *infoPila =(*p)->info;
+	  t_info *infoDePila;
+    
+	  *infoDePila = (*p)->info;    
 
     *p=(*p)->sig;
 
     free(aux);
 
-	return (infoPila);
+	return (infoDePila);
+}
+
+int desapilar_nro(t_pila *p)
+{   
+		t_nodoPila *aux;
+
+	if(*p==NULL)
+        return(0);
+
+	  aux=*p;
+
+	  int nro;
+    
+	  nro = (*p)->info.nro;    
+
+    *p=(*p)->sig;
+
+    free(aux);
+
+	return (nro);
 }
 
 t_info* verTopeDePila(t_pila* p)
@@ -500,7 +573,7 @@ int guardarPolaca(t_polaca *p){
 	    {
 	        nodoActual=*p;
 
-	        fprintf(pf, "%s\n",nodoActual->info.cadena);
+	        fprintf(pf, "%s %d\n",nodoActual->info.cadena, nodoActual->info.nro);
 	        
 			*p=(*p)->psig;
 	        
