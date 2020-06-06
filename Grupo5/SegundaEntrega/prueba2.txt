@@ -1,7 +1,0 @@
-PROGRAM
-
-DEFVAR
-INT : a
-ENDDEF
-
-a = 3
