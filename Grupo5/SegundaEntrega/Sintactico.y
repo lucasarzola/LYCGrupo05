@@ -179,8 +179,6 @@ declaracion:
                   }
 
     contVar=0;
-    
-    
     }
             |STRING COLON lista_var{
               t_info* tInfoADesapilar;
@@ -303,7 +301,12 @@ factor:
       ;
 
 factorial:
-      FACT P_A expresion P_C {printf("50\n");}
+      FACT P_A {
+
+        char* res = "@res";
+        ponerEnPolaca(&polaca,res);
+        
+        } expresion P_C 
       ;
 
 combinatoria:
@@ -316,11 +319,6 @@ id: ID {
     strcpy(tInfoPilaId->cadena,$1);
     
     apilar(&pilaIds,tInfoPilaId);
-
-   /* t_info *tInfoADesapilar2;
-    tInfoADesapilar2 = desapilar(&pilaIds);
-      printf("%s",tInfoADesapilar2->cadena);*/
-
 };
 
 cte_Entera: CTE_ENTERA;
@@ -335,7 +333,6 @@ cte_String: CTE_STRING;
 int main(int argc,char *argv[])
 { 
   FILE *archTabla = fopen("ts.txt","w");
-  t_polaca polaca;
   char cadena[] = "ID";
   int value = 0;
   t_info* tInfoADesapilar;
@@ -349,23 +346,14 @@ int main(int argc,char *argv[])
   }
   else
   {
-
-	
   crearPila(&pilaIds);
 	crearPolaca(&polaca);
-	//ponerEnPolaca(&polaca, &cadena);
 	
 	yyparse();
   }
-  //guardarPolaca(&polaca);
-  
-
-
+  printf("%s",polaca->info.cadena);
+  guardarPolaca(&polaca);
   fclose(yyin);
-
-    
-
-
   return 0;
 }
 int yyerror(void)
@@ -461,7 +449,7 @@ int ponerEnPolaca(t_polaca* p, char *cadena)
 	      if(!nue){
 	          return ERROR;
 	      }
-	      
+
 		  t_nodoPolaca* aux;
 	      
 		  //Asignamos la cadena al nodo
@@ -476,6 +464,7 @@ int ponerEnPolaca(t_polaca* p, char *cadena)
        		 p=&(*p)->psig;
     		}
 		*p=nue;
+
 
 		return OK;
 	}
