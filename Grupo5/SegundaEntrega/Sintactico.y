@@ -26,7 +26,7 @@ enum tipoDato{
 	{
     char* cadena;
 		int nro;
-    enum tipoDato tipo;
+   // enum tipoDato tipo;
 	}t_info;
 
 	typedef struct s_nodoPila{
@@ -74,7 +74,7 @@ enum tipoDato{
 	//Contadores
 	int contIf=0;
 	int contWhile=0;
-
+  int contVar =0;
 	//Posicion en polaca
 	int posicionPolaca=0;
 
@@ -161,17 +161,64 @@ est_declaracion:
 
 declaraciones:
             declaracion {printf(" 3\n");}
-            |declaracion declaraciones  {printf(" 4\n");}
+            |declaracion declaraciones  { 
+              
+    }
       ;
 declaracion:
-            FLOAT COLON lista_var{printf("5\n");}
-            |STRING COLON lista_var{printf("6\n");}
-            |INT COLON lista_var{printf("7\n");}
+            FLOAT COLON lista_var{
+              
+              t_info* tInfoADesapilar;
+
+            printf("Cantidad de variables hasta FLOAT:  %d\n", contVar);
+
+              int value =0;
+              for(value;value<contVar;value++){
+                       tInfoADesapilar = desapilar(&pilaIds);
+                       printf("FLOAT %s\n",tInfoADesapilar->cadena);
+                  }
+
+    contVar=0;
+    
+    
+    }
+            |STRING COLON lista_var{
+              t_info* tInfoADesapilar;
+
+            printf("Cantidad de variables hasta STRING:  %d\n", contVar);
+
+              int value =0;
+              for(value;value<contVar;value++){
+                       tInfoADesapilar = desapilar(&pilaIds);
+                       printf("STRING %s\n",tInfoADesapilar->cadena);
+                  }
+
+    contVar=0;
+    }
+
+
+            |INT COLON lista_var
+            {
+              t_info* tInfoADesapilar;
+
+            printf("Cantidad de variables hasta INT:  %d\n", contVar);
+
+              int value =0;
+              for(value;value<contVar;value++){
+                       tInfoADesapilar = desapilar(&pilaIds);
+                       printf("INT %s\n",tInfoADesapilar->cadena);
+                  }
+
+    contVar=0;
+    }
             ;
 
 lista_var:
-          id              {printf(" 8\n");}
-          |id SEMICOLON lista_var {printf(" 9\n");}
+          id              { 
+                            contVar++;
+                            }
+          |id SEMICOLON lista_var {
+                                      contVar++;}
           ;
 
 bloque:
@@ -267,7 +314,13 @@ id: ID {
     t_info *tInfoPilaId=(t_info*) malloc(sizeof(t_info));
     tInfoPilaId->cadena = (char *) malloc (50 * sizeof (char));
     strcpy(tInfoPilaId->cadena,$1);
+    
     apilar(&pilaIds,tInfoPilaId);
+
+   /* t_info *tInfoADesapilar2;
+    tInfoADesapilar2 = desapilar(&pilaIds);
+      printf("%s",tInfoADesapilar2->cadena);*/
+
 };
 
 cte_Entera: CTE_ENTERA;
@@ -289,21 +342,30 @@ int main(int argc,char *argv[])
   fprintf(archTabla,"%s\n","NOMBRE\t\t\tTIPODATO\t\tVALOR");
   fclose(archTabla);
 
+
   if ((yyin = fopen(argv[1], "rt")) == NULL)
   {
 	printf("\nNo se puede abrir el archivo: %s\n", argv[1]);
   }
   else
   {
-	crearPila(&pilaIds);
-	crearPolaca(&polaca);
+
 	
+  crearPila(&pilaIds);
+	crearPolaca(&polaca);
 	//ponerEnPolaca(&polaca, &cadena);
 	
 	yyparse();
   }
   //guardarPolaca(&polaca);
+  
+
+
   fclose(yyin);
+
+    
+
+
   return 0;
 }
 int yyerror(void)
@@ -317,7 +379,7 @@ int yyerror(void)
 //------------------------------------Funciones de Pila----------------------------------------------------//
 
 void crearPila(t_pila* p){
-		p=NULL;
+		*p=NULL;
 }
 
 int vaciarPila(t_pila* p)
@@ -336,6 +398,7 @@ int vaciarPila(t_pila* p)
 int apilar(t_pila* p,t_info* d)
 {   
 	t_nodoPila *nue=(t_nodoPila*) malloc(sizeof(t_nodoPila));
+    
     if(nue==NULL)
         return(0);
 
@@ -350,27 +413,28 @@ int apilar(t_pila* p,t_info* d)
 
 t_info* desapilar(t_pila *p)
 {   
-	t_nodoPila *aux;
-    
+		t_nodoPila *aux;
+
 	if(*p==NULL)
         return(0);
-    
-	aux=*p;
-	t_info* info;
-    
-	*info =(*p)->info;
+
+	  aux=*p;
+	  t_info* infoPila;
+
+	  *infoPila =(*p)->info;
+
     *p=(*p)->sig;
-    
-	free(aux);
-    printf("\nLa info de cadena: %s\n",info->cadena);
-	return (info);
+
+    free(aux);
+
+	return (infoPila);
 }
 
 t_info* verTopeDePila(t_pila* p)
 {   if(*p==NULL)
     return(0); 
 
-	t_info* info;
+	  t_info* info;
 
     *info =(*p)->info;
 
@@ -498,7 +562,7 @@ int insertarEnTS(char nombreToken[],char tipoToken[],char valorString[],int valo
       strcat(simboloNuevo,valor);
       //strcat(simboloNuevo,"\t\t\t");
       strcat(simboloNuevo,tab);
-      strcat(simboloNuevo,"Ent");
+      strcat(simboloNuevo,"CEnt");
       strcat(simboloNuevo,"\t\t\t");
       strcat(simboloNuevo,valor);
     }
@@ -520,7 +584,7 @@ int insertarEnTS(char nombreToken[],char tipoToken[],char valorString[],int valo
       strcpy(simboloNuevo,"_");
       strcat(simboloNuevo,valor);
       strcat(simboloNuevo,tab);
-      strcat(simboloNuevo,"Real");
+      strcat(simboloNuevo,"CReal");
       strcat(simboloNuevo,"\t\t\t");
       strcat(simboloNuevo,valor);
     }
@@ -544,7 +608,7 @@ int insertarEnTS(char nombreToken[],char tipoToken[],char valorString[],int valo
       strcat(simboloNuevo,nombreToken);
       //strcat(simboloNuevo,"\t\t");
       strcat(simboloNuevo,tab);
-      strcat(simboloNuevo,"String");
+      strcat(simboloNuevo,"CString");
       strcat(simboloNuevo,"\t\t\t");
       //strcat(simboloNuevo,tab);
       strcat(simboloNuevo,valorString);
