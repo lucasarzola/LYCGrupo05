@@ -12,11 +12,21 @@ FILE  *yyin;
   #define MAXINT 50
   #define MAXCAD 50
 
+
+enum tipoDato{
+		tipoEntero,
+		tipoReal,
+		tipoCadena,
+		tipoArray,
+		sinTipo
+	};
 //------------------ESTRUCUTURAS ----------------------------//
 //Pila
 	typedef struct
 	{
+    char* cadena;
 		int nro;
+    enum tipoDato tipo;
 	}t_info;
 
 	typedef struct s_nodoPila{
@@ -72,6 +82,7 @@ FILE  *yyin;
 	t_polaca polaca;
 	t_pila pilaIf;
 	t_pila pilaWhile;
+  t_pila pilaIds;
 %}
 
 %union {
@@ -79,6 +90,21 @@ int int_val;
 double float_val;
 char *str_val;
 }
+
+
+%type <str_val> id
+%type <str_val> expresion
+%type <str_val> termino
+%type <str_val> factor
+%type <str_val> sentencia
+%type <str_val> GET
+%type <str_val> DISPLAY
+%type <str_val> asignacion
+%type <str_val> lista_var
+%type <int_val> cte_Entera
+%type <str_val> cte_String
+%type <float_val> cte_Real
+
 
 %token COLON
 %token DISPLAY
@@ -110,10 +136,10 @@ char *str_val;
 %token ASIGN                 
 %token ENTERO              
                
-%token ID                    
-%token CTE_STRING          
-%token CTE_REAL
-%token CTE_ENTERA                
+%token <str_val>    ID                  
+%token <str_val>    CTE_STRING          
+%token <float_val>  CTE_REAL
+%token <int_val>    CTE_ENTERA                
 %token P_A
 %token P_C
 %token MINEQ
@@ -144,8 +170,8 @@ declaracion:
             ;
 
 lista_var:
-          ID              {printf(" 8\n");}
-          |ID SEMICOLON lista_var {printf(" 9\n");}
+          id              {printf(" 8\n");}
+          |id SEMICOLON lista_var {printf(" 9\n");}
           ;
 
 bloque:
@@ -170,7 +196,7 @@ iteracion:
         ;
 
 asignacion:
-            ID ASIGN expresion {printf(" 20\n");}
+            id ASIGN expresion {printf(" 20\n");}
         ;
 
 ifunario:
@@ -178,12 +204,12 @@ ifunario:
         ;
 
 salida:
-        DISPLAY ID{printf("22\n");}
+        DISPLAY id{printf("22\n");}
         |DISPLAY CTE_STRING{printf("23\n");}
         ;
 
 entrada:
-      GET ID{printf("24\n");}
+      GET id{printf("24\n");}
       ;
 
 condicion:
@@ -223,10 +249,10 @@ termino:
        ;
 
 factor:
-      ID                        {printf("46\n");}
-      | CTE_ENTERA              {printf("47\n");}
-      | CTE_REAL                {printf("48\n");}
-      | CTE_STRING              {printf("49\n");}
+      id                        {printf("46\n");}
+      | cte_Entera              {printf("47\n");}
+      | cte_Real                {printf("48\n");}
+      | cte_String              {printf("49\n");}
       ;
 
 factorial:
@@ -237,12 +263,29 @@ combinatoria:
       COMB P_A expresion COMA expresion P_C {printf("51\n");}
       ;
 
+id: ID {
+    t_info *tInfoPilaId=(t_info*) malloc(sizeof(t_info));
+    tInfoPilaId->cadena = (char *) malloc (50 * sizeof (char));
+    strcpy(tInfoPilaId->cadena,$1);
+    apilar(&pilaIds,tInfoPilaId);
+};
+
+cte_Entera: CTE_ENTERA;
+
+cte_Real: CTE_REAL;
+
+cte_String: CTE_STRING;
+
 %%
 
 
 int main(int argc,char *argv[])
 { 
   FILE *archTabla = fopen("ts.txt","w");
+  t_polaca polaca;
+  char cadena[] = "ID";
+  int value = 0;
+  t_info* tInfoADesapilar;
   fprintf(archTabla,"%s\n","NOMBRE\t\t\tTIPODATO\t\tVALOR");
   fclose(archTabla);
 
@@ -252,8 +295,14 @@ int main(int argc,char *argv[])
   }
   else
   {
+	crearPila(&pilaIds);
+	crearPolaca(&polaca);
+	
+	//ponerEnPolaca(&polaca, &cadena);
+	
 	yyparse();
   }
+  //guardarPolaca(&polaca);
   fclose(yyin);
   return 0;
 }
@@ -263,7 +312,6 @@ int yyerror(void)
 	 system ("Pause");
 	 exit (1);
      }
-
 
 
 //------------------------------------Funciones de Pila----------------------------------------------------//
@@ -314,7 +362,7 @@ t_info* desapilar(t_pila *p)
     *p=(*p)->sig;
     
 	free(aux);
-    
+    printf("\nLa info de cadena: %s\n",info->cadena);
 	return (info);
 }
 
