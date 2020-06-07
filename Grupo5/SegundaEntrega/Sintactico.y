@@ -54,6 +54,7 @@ FILE  *yyin;
   	//Definición funciones de pilas
 	int vaciarPila(t_pila*);
 	t_info* desapilar(t_pila*);
+	void desapilar_str(t_pila*, char*);
 	void crearPila(t_pila*);
 	int apilar(t_pila*,t_info*);
 	t_info* verTopeDePila(t_pila*);
@@ -235,7 +236,15 @@ iteracion:
         ;
 
 asignacion:
-            id ASIGN expresion {printf(" 20\n");}
+	    id ASIGN expresion 
+	    {
+	      printf(" 20\n");
+	      char strId[MAXCAD]; 
+	      desapilar_str(&pilaIds, strId);
+	      //printf("\nid asignacion desapilado: %s", strId);
+	      ponerEnPolaca(&polaca, strId);
+	      ponerEnPolaca(&polaca, "=");
+	    }
         ;
 
 ifunario:
@@ -553,6 +562,21 @@ int desapilar_nro(t_pila *p)
     free(aux);
 
 	return (nro);
+}
+
+void desapilar_str(t_pila *p, char* str)
+{   
+	t_nodoPila *aux;
+	if(*p==NULL)
+        return;
+
+	  aux=*p;
+
+	  strcpy(str,(*p)->info.cadena);   
+
+    *p=(*p)->sig;
+
+    free(aux);
 }
 
 t_info* verTopeDePila(t_pila* p)
