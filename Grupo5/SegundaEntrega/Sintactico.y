@@ -80,6 +80,7 @@ FILE  *yyin;
   t_pila pilaIds;
   t_pila pilaFactorial;
   t_pila pilaCMP;
+  t_pila pilaIfUnario;
 %}
 
 %union {
@@ -370,7 +371,68 @@ asignacion:
         ;
 
 ifunario:
-        IF P_A condicion COMA expresion COMA expresion P_C {printf(" 21\n");}
+        IF P_A condicion 
+        {
+          //insertar(CMP); 
+          ponerEnPolaca(&polaca, "CMP");
+          //insertar(@cmp_type); 
+          char sCMP[MAXCAD]; 
+	        desapilar_str(&pilaCMP, sCMP);
+          ponerEnPolaca(&polaca, sCMP);
+          //apilar(#celda_actual); 
+          t_info *tInfoIfUnario=(t_info*) malloc(sizeof(t_info));
+          printf("Ifunario pos: %d\n", tInfoIfUnario->nro);
+          if(!tInfoIfUnario)
+          {
+            return;
+          }
+          tInfoIfUnario->nro = posicionPolaca;
+          apilar(&pilaIfUnario,tInfoIfUnario);
+          //avanzar(); 
+          ponerEnPolaca(&polaca,"");
+          //insertar(@r);
+          ponerEnPolaca(&polaca,"@r");
+        }
+        COMA expresion COMA 
+        {
+          //insertar(ASIGN);
+          ponerEnPolaca(&polaca,"="); 
+          //insertar(BI); 
+          ponerEnPolaca(&polaca,"BI");
+          //apilar(#celda_actual); 
+          t_info *tInfoIfUnario=(t_info*) malloc(sizeof(t_info));
+          printf("Ifunario pos 2: %d\n", tInfoIfUnario->nro);
+          if(!tInfoIfUnario)
+          {
+            return;
+          }
+          tInfoIfUnario->nro = posicionPolaca;
+          apilar(&pilaIfUnario,tInfoIfUnario);
+          //avanzar(); 
+          ponerEnPolaca(&polaca,"");
+          //@x=desapilar(tope_de_pila);
+          int nro = desapilar_nro(&pilaIfUnario);
+          printf("Valor de la pila ifun %d\n",nro); 
+          //insertar_en(@x, #celda_actual);
+          sprintf(posPolaca,"%d",posicionPolaca);
+          ponerEnPolacaPosicion(&polaca,nro,posPolaca); 
+          //insertar(@r);
+          ponerEnPolaca(&polaca,"@r");
+        }
+        expresion P_C 
+        {
+          //insertar(ASIGN); 
+          ponerEnPolaca(&polaca,"=");
+          //@x=desapilar(tope_de_pila);
+          int nro = desapilar_nro(&pilaIfUnario);
+          printf("Valor de la pila ifun 2 %d\n",nro); 
+          //insertar_en(@x, #celda_actual); 
+          sprintf(posPolaca,"%d",posicionPolaca);
+          ponerEnPolacaPosicion(&polaca,nro,posPolaca);
+          //insertar(@r);
+          ponerEnPolaca(&polaca,"@r");
+          printf(" 21\n");
+        }
         ;
 
 salida:
