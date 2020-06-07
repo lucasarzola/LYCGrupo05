@@ -841,7 +841,6 @@ int existeEnTS(char *nombre){
       }
     }
     printf("Error! No existe la variable en la tabla de simbolos");	  
-    cantFilasTS++;   
   }
 //------------------------------------Funciones de Pila----------------------------------------------------//
 
