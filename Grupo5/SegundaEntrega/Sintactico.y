@@ -728,7 +728,7 @@ id: ID {
    t_info *tInfoPilaId=(t_info*) malloc(sizeof(t_info));
     char *nombreId = (char*) malloc(sizeof($1)+1);
     
-    tInfoPilaId->cadena = (char *) malloc (100 * sizeof (char));
+    tInfoPilaId->cadena = (char *) malloc (MAXCAD * sizeof (char));
     strcpy(tInfoPilaId->cadena,$1);
     
     apilar(&pilaIds,tInfoPilaId);

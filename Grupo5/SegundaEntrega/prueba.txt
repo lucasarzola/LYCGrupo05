@@ -2,7 +2,7 @@ PROGRAM
 
 DEFVAR
 FLOAT : a1; b1
-STRING : variable1
+STRING : var1
 FLOAT : p1; p2; p3
 INT : a; b
 STRING : str; str2
