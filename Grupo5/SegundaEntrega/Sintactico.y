@@ -81,6 +81,7 @@ FILE  *yyin;
   t_pila pilaFactorial;
   t_pila pilaCMP;
   t_pila pilaIfUnario;
+  t_pila pilaIdsAsig;
 %}
 
 %union {
@@ -359,16 +360,23 @@ iteracion:
         ;
 
 asignacion:
-	    id ASIGN expresion 
+	    id 
+      {
+        t_info *tInfoPilaIdAsig=(t_info*) malloc(sizeof(t_info));
+        tInfoPilaIdAsig->cadena = (char *) malloc (50 * sizeof (char));
+        strcpy(tInfoPilaIdAsig->cadena,$1);
+        apilar(&pilaIdsAsig,tInfoPilaIdAsig);
+      }
+      ASIGN expresion 
 	    {
 	      printf(" 20\n");
 	      char strId[MAXCAD]; 
-	      desapilar_str(&pilaIds, strId);
+	      desapilar_str(&pilaIdsAsig, strId);
 	      //printf("\nid asignacion desapilado: %s", strId);
 	      ponerEnPolaca(&polaca, strId);
 	      ponerEnPolaca(&polaca, "=");
 	    }
-        ;
+      ;
 
 ifunario:
         IF P_A condicion 
