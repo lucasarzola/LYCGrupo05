@@ -12,6 +12,17 @@ FILE  *yyin;
   #define MAXINT 50
   #define MAXCAD 50
 
+/* Tabla de simbolos */
+
+struct datoTS {
+	char *nombre;
+	char *tipoDato;
+	char *valor;
+	char *longitud;
+};
+
+struct datoTS tablaDeSimbolos[100];
+int cantFilasTS = 0;
 
 //------------------ESTRUCUTURAS ----------------------------//
 //Pila
@@ -173,27 +184,31 @@ declaracion:
 
               int value =0;
               for(value;value<contVar;value++){
-                       tInfoADesapilar = desapilar(&pilaIds);
-                       printf("FLOAT %s\n",tInfoADesapilar->cadena);
+                     char floatIds[MAXCAD];
+                     desapilar_str(&pilaIds,floatIds);
+                    insertarTipoDatoEnTS(floatIds,"FLOAT");
+
+                    printf("FLOAT %s\n",floatIds);
                   }
 
     contVar=0;
     }
             |STRING COLON lista_var{
+
               t_info* tInfoADesapilar;
 
             printf("Cantidad de variables hasta STRING:  %d\n", contVar);
 
               int value =0;
               for(value;value<contVar;value++){
-                       tInfoADesapilar = desapilar(&pilaIds);
-                       printf("STRING %s\n",tInfoADesapilar->cadena);
+                      char stringIds[MAXCAD];
+                     desapilar_str(&pilaIds,stringIds);
+                     insertarTipoDatoEnTS(stringIds,"STRING");
+
+                      printf("STRING %s\n",stringIds);
                   }
-
-    contVar=0;
+              contVar=0;
     }
-
-
             |INT COLON lista_var
             {
               t_info* tInfoADesapilar;
@@ -202,11 +217,13 @@ declaracion:
 
               int value =0;
               for(value;value<contVar;value++){
-                       tInfoADesapilar = desapilar(&pilaIds);
-                       printf("INT %s\n",tInfoADesapilar->cadena);
+                     char intIds[MAXCAD];
+                     desapilar_str(&pilaIds,intIds);
+                     insertarTipoDatoEnTS(intIds,"INT");
+                      printf("INT %s\n",intIds);
                   }
 
-    contVar=0;
+              contVar=0;
     }
             ;
 
@@ -653,7 +670,7 @@ factorial:
                  printf("Valor de la pila %d",nro); 
         
         char posPolacaFact[MAXCAD];
-        sprintf(posPolaca,"%d",posicionPolaca);
+        sprintf(posPolacaFact,"%d",posicionPolaca);
         ponerEnPolacaPosicion(&polaca,nro,posPolacaFact);
 
          nro = desapilar_nro(&pilaFactorial);
@@ -694,27 +711,56 @@ combinatoria:
         ponerEnPolaca(&polaca,"*");
         ponerEnPolaca(&polaca,"/");
         ponerEnPolaca(&polaca,"=");
+
         }
         
-        
+
         
         P_C 
       ;
 
 
 id: ID {
-    t_info *tInfoPilaId=(t_info*) malloc(sizeof(t_info));
-    tInfoPilaId->cadena = (char *) malloc (50 * sizeof (char));
+   t_info *tInfoPilaId=(t_info*) malloc(sizeof(t_info));
+    char *nombreId = (char*) malloc(sizeof($1)+1);
+    
+    tInfoPilaId->cadena = (char *) malloc (100 * sizeof (char));
     strcpy(tInfoPilaId->cadena,$1);
     
     apilar(&pilaIds,tInfoPilaId);
+
+    sprintf(nombreId,"_%s",$1);
+    insertarEnNuevaTS(nombreId,"","","");
 };
 
-cte_Entera: CTE_ENTERA;
+cte_Entera: CTE_ENTERA {
+  
+  char *valorEntero = (char*) malloc(sizeof($1));
+  char *nombreEntero = (char*) malloc(sizeof($1)+1);
+  sprintf(valorEntero,"%d",$1);
+  sprintf(nombreEntero,"_%s",valorEntero);
+  insertarEnNuevaTS(nombreEntero,"Cte_Entera",valorEntero,""); 
+  
+  };
 
-cte_Real: CTE_REAL;
+cte_Real: CTE_REAL {
+  
+  char *valorReal = (char*) malloc(sizeof($1));
+  char *nombreReal = (char*) malloc(sizeof($1)+1);
+  sprintf(valorReal,"%f",$1);
+  sprintf(nombreReal,"_%s",valorReal);
+  insertarEnNuevaTS(nombreReal,"Cte_Real",valorReal,""); 
+  
+  };
+;
 
-cte_String: CTE_STRING;
+cte_String: CTE_STRING {
+  
+  char *nombreString = (char*) malloc(sizeof($1)+1);
+  sprintf(nombreString,"_%s",$1);
+  insertarEnNuevaTS(nombreString,"Cte_Real",$1,""); 
+  
+  };
 
 %%
 
@@ -742,7 +788,10 @@ int main(int argc,char *argv[])
 	yyparse();
   }
   guardarPolaca(&polaca);
+  
+  existeEnTS("_var1");
   fclose(yyin);
+
   return 0;
 }
 int yyerror(void)
@@ -753,6 +802,47 @@ int yyerror(void)
      }
 
 
+//-----------------------------------Funciones tabla de simbolos---------------------------------------&&
+
+int existeEnTS(char *nombre){
+    int i=0;
+    for(i; i<cantFilasTS;i++)
+    { 
+      printf("Verificando: %s\t\t\t%s\t\t\t%s\t\t\t\n",tablaDeSimbolos[i].nombre,tablaDeSimbolos[i].tipoDato,tablaDeSimbolos[i].valor);
+      if(strcmpi(nombre,tablaDeSimbolos[i].nombre) == 0){
+        return 1;
+      }
+    }
+    return 0;
+    }
+
+    insertarEnNuevaTS(char* nombre, char* tipoDato, char* valor, char* longitud){
+    struct datoTS dato;
+
+	  dato.nombre = nombre;
+	  dato.tipoDato = tipoDato;
+	  dato.valor = valor;
+	  dato.longitud = longitud;
+	  tablaDeSimbolos[cantFilasTS] = dato;
+	  
+    cantFilasTS++;   
+  }
+
+  insertarTipoDatoEnTS(char* nombre, char* tipoDato){
+    char* nombreVariable = (char*) malloc(sizeof(nombre)+1);
+    sprintf(nombreVariable,"_%s",nombre);
+
+    int i=0;
+    for(i; i<cantFilasTS;i++)
+    {
+      if(strcmpi(nombreVariable,tablaDeSimbolos[i].nombre) == 0){
+        tablaDeSimbolos[i].tipoDato = tipoDato;
+        return;
+      }
+    }
+    printf("Error! No existe la variable en la tabla de simbolos");	  
+    cantFilasTS++;   
+  }
 //------------------------------------Funciones de Pila----------------------------------------------------//
 
 void crearPila(t_pila* p){
@@ -934,143 +1024,6 @@ int guardarPolaca(t_polaca *p){
 	}
 
 //----------------------------------------------------------------------------------------------------------//
-
-
-int insertarEnTS(char nombreToken[],char tipoToken[],char valorString[],int valorInteger, double valorFloat){
-  
-  FILE *tablaSimbolos = fopen("ts.txt","r");
-  char simboloNuevo[200];
-  int repetido = 0;
-  int i = 0;
-  
-  char tab[6] = "\t\t\t"; 	
-  char *finCadena;
-
-  int j;
-  int cantidadACiclar;
-
-  char valor[20];
-  char valorCte[20];
-  char lineaComparada[20];
-  char linea[200];
-  
-  //Si el tipo de símbolo no es ID
-  if(strcmp(tipoToken,"ID") != 0){
-    //Chequea si el tipo de simbolo es entero
-    if(strcmp(tipoToken,"CTE_ENTERA") == 0){
-      sprintf(valor,"%d",valorInteger);
-      strcpy(valorCte,"_");
-      strcat(valorCte,valor);
-
-
-      cantidadACiclar = (strlen(valor)-1)/8;
-
-      for(j=0; j<cantidadACiclar; j++){
-      	finCadena = strrchr(tab,'\t');
-	  	*finCadena = '\0';
-      }
-
-
-      strcpy(simboloNuevo,"_");
-      strcat(simboloNuevo,valor);
-      //strcat(simboloNuevo,"\t\t\t");
-      strcat(simboloNuevo,tab);
-      strcat(simboloNuevo,"CEnt");
-      strcat(simboloNuevo,"\t\t\t");
-      strcat(simboloNuevo,valor);
-    }
-
-    //Chequea si es real
-    if(strcmp(tipoToken,"CTE_REAL") == 0){
-      sprintf(valor,"%.3f",valorFloat);
-      strcpy(valorCte,"_");
-      strcat(valorCte,valor);
-
-
-      cantidadACiclar = (strlen(valor)-1)/8;
-
-      for(j=0; j<cantidadACiclar; j++){
-      	finCadena = strrchr(tab,'\t');
-	  	*finCadena = '\0';
-      }
-
-      strcpy(simboloNuevo,"_");
-      strcat(simboloNuevo,valor);
-      strcat(simboloNuevo,tab);
-      strcat(simboloNuevo,"CReal");
-      strcat(simboloNuevo,"\t\t\t");
-      strcat(simboloNuevo,valor);
-    }
-
-    //Chequea si es string
-    if(strcmp(tipoToken,"CTE_STRING") == 0){
-      sprintf(valor,"%s",nombreToken);
-      strcpy(valorCte,"_");
-      strcat(valorCte,valor);
-
-
-	  cantidadACiclar = (strlen(valor)-1)/8;
-
-      for(j=0; j<cantidadACiclar; j++){
-      	finCadena = strrchr(tab,'\t');
-	  	*finCadena = '\0';
-      }
-
-
-      strcpy(simboloNuevo,"_");
-      strcat(simboloNuevo,nombreToken);
-      //strcat(simboloNuevo,"\t\t");
-      strcat(simboloNuevo,tab);
-      strcat(simboloNuevo,"CString");
-      strcat(simboloNuevo,"\t\t\t");
-      //strcat(simboloNuevo,tab);
-      strcat(simboloNuevo,valorString);
-
-
-    }
-  }else{
-
-
-      cantidadACiclar = (strlen(nombreToken)-1)/8;
-
-      for(j=0; j<cantidadACiclar; j++){
-      	finCadena = strrchr(tab,'\t');
-	  	*finCadena = '\0';
-      }
-
-    strcpy(simboloNuevo,nombreToken);
-    strcat(simboloNuevo,tab);
-    strcat(simboloNuevo,tipoToken);
-    strcat(simboloNuevo,"\t\t\t");
-    strcat(simboloNuevo,valorString);
-  }
-
-  //Vuelve a posición 0
-  rewind(tablaSimbolos);
-
-  char *pos;
-//Compara linea a linea si hay repetidos
-  do {
-	  pos = fgets(linea,200,tablaSimbolos);
-	  strcpy(lineaComparada,simboloNuevo);
-	  strcat(lineaComparada,"\n");
-	  if(strcmp(lineaComparada,linea) == 0){
-		  repetido = 1;
-	  }
-	  i++;
-  }while(pos != NULL && repetido == 0);
-
-  fclose(tablaSimbolos);
-
-//Si no es un símbolo repetido, lo graba
-  tablaSimbolos = fopen("ts.txt","a");
-  if(repetido == 0){
-    fprintf(tablaSimbolos,"%s\n",simboloNuevo);
-  }
-
-  fclose(tablaSimbolos);
-}
-
 hacerFactoriales(){
   int cicloActual = 1;
   for(cicloActual;cicloActual<=3;cicloActual++){
@@ -1129,4 +1082,8 @@ hacerFactoriales(){
          sprintf(posIteracion,"%d",nro);
          ponerEnPolaca(&polaca,posIteracion);
   }
-}
+  }
+
+
+
+

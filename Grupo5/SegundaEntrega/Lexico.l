@@ -106,11 +106,9 @@ CTE_ENTERA          {DIGITO}+
 {ASIGN}             {return ASIGN;}
 
 {ID}                {yylval.str_val = yytext; 
-					insertarEnTS(yylval.str_val,"ID","--",0,0); 
 					return ID;}       
 {CTE_STRING}        { 			yylval.str_val = strdup(yytext);
 								if(strlen(yytext) <= 30) {
-										insertarEnTS(yylval.str_val,"CTE_STRING",yylval.str_val,0,0);
 										return CTE_STRING;
 								} else {
 										printf("ERROR - Constante string muy larga. Maximo 30 caracteres\n");
@@ -120,7 +118,6 @@ CTE_ENTERA          {DIGITO}+
                     }	
 {CTE_REAL}          { 			yylval.float_val = atof(yytext);
 								if(atof(yytext) <= TOPE_REAL){
-									insertarEnTS("float","CTE_REAL","--",0,yylval.float_val);
 									return CTE_REAL; 
 								}else{
 									printf("ERROR - Float fuera de rango.\n");
@@ -130,7 +127,6 @@ CTE_ENTERA          {DIGITO}+
 						}
 {CTE_ENTERA}        {  yylval.int_val = atoi(yytext);
 							if(atoi(yytext) <= TOPE_ENTERO){
-									insertarEnTS("entero","CTE_ENTERA","--",yylval.int_val,0);
 									return CTE_ENTERA; 
 							}else{
 									printf("ERROR - Int fuera de rango.\n");
