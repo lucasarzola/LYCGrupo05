@@ -70,6 +70,7 @@ FILE  *yyin;
   int contVar =0;
 	//Posicion en polaca
 	int posicionPolaca=0;
+	char posPolaca[MAXCAD];
 
 	//Notacion intermedia
 	t_polaca polaca;
@@ -227,8 +228,80 @@ sentencia:
           ;
 
 decision: 
-    	 IF P_A condicion P_C bloque ENDIF{printf("17\n");}
-	    |IF P_A condicion P_C bloque ELSE bloque ENDIF {printf("18\n");}	 
+    	 IF P_A condicion{
+         char ComparadorIf[MAXCAD];
+         ponerEnPolaca(&polaca,"CMP");
+         desapilar_str(&pilaCMP,ComparadorIf);
+         ponerEnPolaca(&polaca,ComparadorIf);
+         printf("puse area reservada");
+         t_info * tInfoIf =(t_info*) malloc(sizeof(t_info));
+        if(!tInfoIf)
+        {
+          printf("no creo nodo");
+          return;
+        }
+        tInfoIf->nro = posicionPolaca;
+        apilar(&pilaIf,tInfoIf);
+        ponerEnPolaca(&polaca,"");
+        printf("pase condicion");
+        } 
+        P_C bloque {
+        printf("llego hasta esta regla");
+        int nro = desapilar_nro(&pilaIf);
+        printf("Valor de la pila %d",nro); 
+        
+        //char posPolaca[MAXCAD];
+        //creo variable global para evitar escribirlo en todos lados
+        sprintf(posPolaca,"%d",posicionPolaca+1);
+        ponerEnPolacaPosicion(&polaca,nro,posPolaca);
+        printf("pase bloque");
+        }
+        ENDIF { printf("17\n");}
+
+     |   IF P_A condicion P_C {
+         char ComparadorIf[MAXCAD];
+         ponerEnPolaca(&polaca,"CMP");
+         desapilar_str(&pilaCMP,ComparadorIf);
+         ponerEnPolaca(&polaca,ComparadorIf);
+         printf("puse area reservada");
+         t_info *tInfoIf=(t_info*) malloc(sizeof(t_info));
+        if(!tInfoIf)
+        {
+          return;
+        }
+        tInfoIf->nro = posicionPolaca;
+        ponerEnPolaca(&polaca,"");
+        apilar(&pilaIf,tInfoIf);
+        }   bloque{
+
+        int nro = desapilar_nro(&pilaIf);
+        printf("Valor de la pila %d",nro); 
+        
+        //char posPolaca[MAXCAD];
+        //creo variable global para evitar escribirlo en todos lados
+        sprintf(posPolaca,"%d",posicionPolaca+1);
+        ponerEnPolacaPosicion(&polaca,nro,posPolaca);
+        ponerEnPolaca(&polaca,"BI");
+           t_info *tInfoIf=(t_info*) malloc(sizeof(t_info));
+        if(!tInfoIf)
+        {
+          return;
+        }
+        tInfoIf->nro = posicionPolaca;
+        apilar(&pilaIf,tInfoIf);
+        ponerEnPolaca(&polaca,"");
+        } 
+        ELSE bloque {
+        int nro = desapilar_nro(&pilaIf);
+        printf("Valor de la pila %d",nro);   
+        //char posPolaca[MAXCAD];
+        //creo variable global para evitar escribirlo en todos lados
+        sprintf(posPolaca,"%d",posicionPolaca);
+        ponerEnPolacaPosicion(&polaca,nro,posPolaca);
+        }
+        ENDIF 
+         {printf("18\n");
+         }	 
 ;
 
 iteracion:
