@@ -106,9 +106,25 @@ CTE_ENTERA          {DIGITO}+
 {ASIGN}             {return ASIGN;}
 
 {ID}                {yylval.str_val = yytext; 
-					return ID;}       
+									char *nombreId = (char*) malloc(sizeof(yytext)+1);
+									sprintf(nombreId,"_%s",yytext);
+
+									if(existeEnTS(yytext)==0)
+									insertarEnNuevaTS(nombreId,"","","");
+
+									return ID;
+									}       
 {CTE_STRING}        { 			yylval.str_val = strdup(yytext);
 								if(strlen(yytext) <= 30) {
+
+									char *nombreString = (char*) malloc(sizeof(yytext)+1);
+  									sprintf(nombreString,"_%s",yytext);
+
+									if(existeEnTS(yytext)==0)
+  									insertarEnNuevaTS(nombreString,"Cte_String",yytext,""); 
+									
+									printf("Texto capturado: %s",yytext);
+
 										return CTE_STRING;
 								} else {
 										printf("ERROR - Constante string muy larga. Maximo 30 caracteres\n");
@@ -118,6 +134,16 @@ CTE_ENTERA          {DIGITO}+
                     }	
 {CTE_REAL}          { 			yylval.float_val = atof(yytext);
 								if(atof(yytext) <= TOPE_REAL){
+
+									char *valorReal = (char*) malloc(sizeof(yytext));
+  									char *nombreReal = (char*) malloc(sizeof(yytext)+1);
+ 									sprintf(valorReal,"%f",atof(yytext));
+  									sprintf(nombreReal,"_%s",valorReal);
+
+									if(existeEnTS(yytext)==0)
+  									insertarEnNuevaTS(nombreReal,"Cte_Real",valorReal,""); 
+
+
 									return CTE_REAL; 
 								}else{
 									printf("ERROR - Float fuera de rango.\n");
@@ -127,6 +153,14 @@ CTE_ENTERA          {DIGITO}+
 						}
 {CTE_ENTERA}        {  yylval.int_val = atoi(yytext);
 							if(atoi(yytext) <= TOPE_ENTERO){
+								  char *valorEntero = (char*) malloc(sizeof(yytext));
+  									char *nombreEntero = (char*) malloc(sizeof(yytext)+1);
+ 									 sprintf(valorEntero,"%d",atoi(yytext));
+  									sprintf(nombreEntero,"_%s",valorEntero);
+
+									if(existeEnTS(yytext)==0)
+  									insertarEnNuevaTS(nombreEntero,"Cte_Entera",valorEntero,""); 
+									
 									return CTE_ENTERA; 
 							}else{
 									printf("ERROR - Int fuera de rango.\n");

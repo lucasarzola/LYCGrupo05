@@ -726,44 +726,28 @@ combinatoria:
 
 id: ID {
    t_info *tInfoPilaId=(t_info*) malloc(sizeof(t_info));
-    char *nombreId = (char*) malloc(sizeof($1)+1);
     
     tInfoPilaId->cadena = (char *) malloc (MAXCAD * sizeof (char));
     strcpy(tInfoPilaId->cadena,$1);
     
     apilar(&pilaIds,tInfoPilaId);
 
-    sprintf(nombreId,"_%s",$1);
-    insertarEnNuevaTS(nombreId,"","","");
 };
 
 cte_Entera: CTE_ENTERA {
   
-  char *valorEntero = (char*) malloc(sizeof($1));
-  char *nombreEntero = (char*) malloc(sizeof($1)+1);
-  sprintf(valorEntero,"%d",$1);
-  sprintf(nombreEntero,"_%s",valorEntero);
-  insertarEnNuevaTS(nombreEntero,"Cte_Entera",valorEntero,""); 
+
   
   };
 
 cte_Real: CTE_REAL {
-  
-  char *valorReal = (char*) malloc(sizeof($1));
-  char *nombreReal = (char*) malloc(sizeof($1)+1);
-  sprintf(valorReal,"%f",$1);
-  sprintf(nombreReal,"_%s",valorReal);
-  insertarEnNuevaTS(nombreReal,"Cte_Real",valorReal,""); 
   
   };
 ;
 
 cte_String: CTE_STRING {
   
-  char *nombreString = (char*) malloc(sizeof($1)+1);
-  sprintf(nombreString,"_%s",$1);
-  insertarEnNuevaTS(nombreString,"Cte_Real",$1,""); 
-  
+
   };
 
 %%
@@ -793,7 +777,7 @@ int main(int argc,char *argv[])
   }
   guardarPolaca(&polaca);
   
-  existeEnTS("_var1");
+  mostrarTS();
   fclose(yyin);
 
   return 0;
@@ -807,18 +791,30 @@ int yyerror(void)
 
 
 //-----------------------------------Funciones tabla de simbolos---------------------------------------&&
-
-int existeEnTS(char *nombre){
+ mostrarTS(){
     int i=0;
     for(i; i<cantFilasTS;i++)
     { 
-      printf("Verificando: %s\t\t\t%s\t\t\t%s\t\t\t\n",tablaDeSimbolos[i].nombre,tablaDeSimbolos[i].tipoDato,tablaDeSimbolos[i].valor);
-      if(strcmpi(nombre,tablaDeSimbolos[i].nombre) == 0){
+     printf("Verificando: %s\t\t\t%s\t\t\t%s\t\t\t\n",tablaDeSimbolos[i].nombre,tablaDeSimbolos[i].tipoDato,tablaDeSimbolos[i].valor);
+    }
+    return 0;
+  }
+
+
+int existeEnTS(char *nombre){
+    char* nombreVariable = (char*) malloc(sizeof(nombre)+1);
+    sprintf(nombreVariable,"_%s",nombre);
+    
+    int i=0;
+    for(i; i<cantFilasTS;i++)
+    { 
+     // printf("Verificando: %s\t\t\t%s\t\t\t%s\t\t\t\n",tablaDeSimbolos[i].nombre,tablaDeSimbolos[i].tipoDato,tablaDeSimbolos[i].valor);
+      if(strcmpi(nombreVariable,tablaDeSimbolos[i].nombre) == 0){
         return 1;
       }
     }
     return 0;
-    }
+  }
 
     insertarEnNuevaTS(char* nombre, char* tipoDato, char* valor, char* longitud){
     struct datoTS dato;
@@ -829,7 +825,8 @@ int existeEnTS(char *nombre){
 	  dato.longitud = longitud;
 	  tablaDeSimbolos[cantFilasTS] = dato;
 	  
-    cantFilasTS++;   
+    cantFilasTS++; 
+      
   }
 
   insertarTipoDatoEnTS(char* nombre, char* tipoDato){
