@@ -55,6 +55,7 @@ FILE  *yyin;
 	int vaciarPila(t_pila*);
 	t_info* desapilar(t_pila*);
 	void desapilar_str(t_pila*, char*);
+  int desapilar_nro(t_pila *);
 	void crearPila(t_pila*);
 	int apilar(t_pila*,t_info*);
 	t_info* verTopeDePila(t_pila*);
@@ -544,21 +545,55 @@ factorial:
         int nro = desapilar_nro(&pilaFactorial);
                  printf("Valor de la pila %d",nro); 
         
-        char* posPolaca;
+        char posPolacaFact[MAXCAD];
         sprintf(posPolaca,"%d",posicionPolaca);
-        ponerEnPolacaPosicion(&polaca,nro,posPolaca);
+        ponerEnPolacaPosicion(&polaca,nro,posPolacaFact);
 
          nro = desapilar_nro(&pilaFactorial);
 
-         char* posIteracion;
+         char posIteracion[MAXCAD];
          sprintf(posIteracion,"%d",nro);
          ponerEnPolaca(&polaca,posIteracion);
         }
       ;
 
 combinatoria:
-      COMB P_A expresion COMA expresion P_C {printf("51\n");}
+      COMB P_A {
+        ponerEnPolaca(&polaca,"@res1");
+        } expresion {
+        ponerEnPolaca(&polaca,"="); 
+        ponerEnPolaca(&polaca,"F1"); 
+        ponerEnPolaca(&polaca,"1");
+        ponerEnPolaca(&polaca,"=");
+        }
+        COMA { ponerEnPolaca(&polaca,"@res2"); }  expresion 
+        {
+        ponerEnPolaca(&polaca,"=");
+        ponerEnPolaca(&polaca,"F2");
+        ponerEnPolaca(&polaca,"1");
+        ponerEnPolaca(&polaca,"=");
+        ponerEnPolaca(&polaca,"@res3");
+        ponerEnPolaca(&polaca,"@res1");
+        ponerEnPolaca(&polaca,"@res2");
+        ponerEnPolaca(&polaca,"-");
+        ponerEnPolaca(&polaca,"=");
+
+        hacerFactoriales();
+
+        ponerEnPolaca(&polaca,"@res3");
+        ponerEnPolaca(&polaca,"@F1");
+        ponerEnPolaca(&polaca,"@F2");
+        ponerEnPolaca(&polaca,"@F3");
+        ponerEnPolaca(&polaca,"*");
+        ponerEnPolaca(&polaca,"/");
+        ponerEnPolaca(&polaca,"=");
+        }
+        
+        
+        
+        P_C 
       ;
+
 
 id: ID {
     t_info *tInfoPilaId=(t_info*) malloc(sizeof(t_info));
@@ -927,4 +962,64 @@ int insertarEnTS(char nombreToken[],char tipoToken[],char valorString[],int valo
   }
 
   fclose(tablaSimbolos);
+}
+
+hacerFactoriales(){
+  int cicloActual = 1;
+  for(cicloActual;cicloActual<=3;cicloActual++){
+  //Apilar posicion del res para While e insertar Res
+        t_info *tInfoFactorial=(t_info*) malloc(sizeof(t_info));
+        if(!tInfoFactorial)
+        {
+          return;
+        }
+        tInfoFactorial->nro = posicionPolaca;
+        apilar(&pilaFactorial,tInfoFactorial);
+        
+        char resActual[MAXCAD];
+
+        sprintf(resActual,"@res%d",cicloActual);
+        ponerEnPolaca(&polaca,resActual);
+        ponerEnPolaca(&polaca,"1");
+        ponerEnPolaca(&polaca,"CMP");
+        ponerEnPolaca(&polaca,"BLI");
+        
+        //Apilar posicion del while actual y avanzar
+        tInfoFactorial=(t_info*) malloc(sizeof(t_info));
+        if(!tInfoFactorial)
+        {
+          return;
+        }
+        tInfoFactorial->nro = posicionPolaca;
+        apilar(&pilaFactorial,tInfoFactorial);
+        ponerEnPolaca(&polaca,"");
+
+
+        char factActual[MAXCAD];
+        sprintf(factActual,"@F%d",cicloActual);
+        ponerEnPolaca(&polaca,factActual); 
+        ponerEnPolaca(&polaca,factActual);
+        ponerEnPolaca(&polaca,resActual);
+        ponerEnPolaca(&polaca,"*");
+        ponerEnPolaca(&polaca,"=");
+        ponerEnPolaca(&polaca,resActual);
+        ponerEnPolaca(&polaca,resActual);
+        ponerEnPolaca(&polaca,"1");
+        ponerEnPolaca(&polaca,"-");
+        ponerEnPolaca(&polaca,"=");
+        ponerEnPolaca(&polaca,"BI");
+        
+        int nro = desapilar_nro(&pilaFactorial);
+        
+        char posPolacaActual[MAXCAD];
+        sprintf(posPolacaActual,"%d",posicionPolaca+1);
+
+        ponerEnPolacaPosicion(&polaca,nro,posPolacaActual);
+
+         nro = desapilar_nro(&pilaFactorial);
+
+         char posIteracion[MAXCAD];
+         sprintf(posIteracion,"%d",nro);
+         ponerEnPolaca(&polaca,posIteracion);
+  }
 }
