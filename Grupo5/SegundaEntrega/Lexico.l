@@ -107,7 +107,7 @@ CTE_ENTERA          {DIGITO}+
 
 {ID}                {yylval.str_val = yytext; 
 									char *nombreId = (char*) malloc(sizeof(yytext)+1);
-									sprintf(nombreId,"_%s",yytext);
+									sprintf(nombreId,"_%s",yylval.str_val);
 
 									if(existeEnTS(yytext)==0)
 									insertarEnNuevaTS(nombreId,"","","");
@@ -121,7 +121,7 @@ CTE_ENTERA          {DIGITO}+
   									sprintf(nombreString,"_%s",yytext);
 
 									if(existeEnTS(yytext)==0)
-  									insertarEnNuevaTS(nombreString,"Cte_String",yytext,""); 
+  									insertarEnNuevaTS(nombreString,"Cte_String",yylval.str_val,""); 
 									
 									printf("Texto capturado: %s",yytext);
 
