@@ -13,20 +13,12 @@ FILE  *yyin;
   #define MAXCAD 50
 
 
-enum tipoDato{
-		tipoEntero,
-		tipoReal,
-		tipoCadena,
-		tipoArray,
-		sinTipo
-	};
 //------------------ESTRUCUTURAS ----------------------------//
 //Pila
 	typedef struct
 	{
     char* cadena;
 		int nro;
-   // enum tipoDato tipo;
 	}t_info;
 
 	typedef struct s_nodoPila{
@@ -84,6 +76,7 @@ enum tipoDato{
 	t_pila pilaWhile;
   t_pila pilaIds;
   t_pila pilaFactorial;
+  t_pila pilaCMP;
 %}
 
 %union {
@@ -271,12 +264,59 @@ comparacion:
 		  ;
         
 comparador:
-          MAYEQ {printf(" 31\n");}
-          |MINEQ {printf(" 32\n");}
-          |MIN {printf(" 33\n");}
-          |MAY {printf(" 34\n");}
-          |EQUAL {printf(" 35\n");}
-		  |NOTEQUAL {printf(" 36\n");}
+          MAYEQ 
+          {
+            printf(" 31\n");
+            t_info *tInfoPilaCmp=(t_info*) malloc(sizeof(t_info));
+            tInfoPilaCmp->cadena = (char *) malloc (50 * sizeof (char));
+            strcpy(tInfoPilaCmp->cadena,"BLT");
+            printf("Comparador: %s\n", tInfoPilaCmp->cadena);
+            apilar(&pilaCMP,tInfoPilaCmp);
+          }
+          |MINEQ 
+          {
+            printf(" 32\n");
+            t_info *tInfoPilaCmp=(t_info*) malloc(sizeof(t_info));
+            tInfoPilaCmp->cadena = (char *) malloc (50 * sizeof (char));
+            strcpy(tInfoPilaCmp->cadena,"BGT");
+            printf("Comparador: %s\n", tInfoPilaCmp->cadena);
+            apilar(&pilaCMP,tInfoPilaCmp);
+          }
+          |MIN 
+          {
+            printf(" 33\n");
+            t_info *tInfoPilaCmp=(t_info*) malloc(sizeof(t_info));
+            tInfoPilaCmp->cadena = (char *) malloc (50 * sizeof (char));
+            strcpy(tInfoPilaCmp->cadena,"BGE");
+            printf("Comparador: %s\n", tInfoPilaCmp->cadena);
+            apilar(&pilaCMP,tInfoPilaCmp);
+          }
+          |MAY {
+            printf(" 34\n");
+            t_info *tInfoPilaCmp=(t_info*) malloc(sizeof(t_info));
+            tInfoPilaCmp->cadena = (char *) malloc (50 * sizeof (char));
+            strcpy(tInfoPilaCmp->cadena,"BLE");
+            printf("Comparador: %s\n", tInfoPilaCmp->cadena);
+            apilar(&pilaCMP,tInfoPilaCmp);
+          }
+          |EQUAL 
+          {
+            printf(" 35\n");
+            t_info *tInfoPilaCmp=(t_info*) malloc(sizeof(t_info));
+            tInfoPilaCmp->cadena = (char *) malloc (50 * sizeof (char));
+            strcpy(tInfoPilaCmp->cadena,"BNE");
+            printf("Comparador: %s\n", tInfoPilaCmp->cadena);
+            apilar(&pilaCMP,tInfoPilaCmp);
+          }
+		      |NOTEQUAL 
+          {
+            printf(" 36\n");
+            t_info *tInfoPilaCmp=(t_info*) malloc(sizeof(t_info));
+            tInfoPilaCmp->cadena = (char *) malloc (50 * sizeof (char));
+            strcpy(tInfoPilaCmp->cadena,"BEQ");
+            printf("Comparador: %s\n", tInfoPilaCmp->cadena);
+            apilar(&pilaCMP,tInfoPilaCmp);
+          }
 		  ;
 
 expresion:
@@ -297,10 +337,33 @@ termino:
        ;
 
 factor:
-      id                        {printf("46\n");}
-      | cte_Entera              {printf("47\n");}
-      | cte_Real                {printf("48\n");}
-      | cte_String              {printf("49\n");}
+      id     {
+               
+                printf("46\n");
+                ponerEnPolaca(&polaca,$1);
+                
+              }
+      | cte_Entera              {
+        
+        printf("47\n");
+      char arrayEntera[MAXCAD];
+      sprintf(arrayEntera,"%d\0",$1);
+      ponerEnPolaca(&polaca,arrayEntera);
+
+
+         }
+      | cte_Real                {
+
+        printf("48\n");
+      char arrayReal[MAXCAD];
+        sprintf(arrayReal,"%f",$1);
+      ponerEnPolaca(&polaca,arrayReal);
+
+      }
+      | cte_String              {
+        printf("49\n");
+      ponerEnPolaca(&polaca,$1);
+      }
       ;
 
 factorial:
@@ -403,6 +466,7 @@ int main(int argc,char *argv[])
   crearPila(&pilaIds);
   crearPila(&pilaFactorial);
 	crearPolaca(&polaca);
+  crearPila(&pilaCMP);
 	yyparse();
   }
   guardarPolaca(&polaca);
