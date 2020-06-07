@@ -374,12 +374,34 @@ ifunario:
         ;
 
 salida:
-        DISPLAY id{printf("22\n");}
-        |DISPLAY CTE_STRING{printf("23\n");}
+        DISPLAY id{
+
+          char strId[MAXCAD]; 
+	        desapilar_str(&pilaIds, strId);
+
+          printf("22\n");
+          ponerEnPolaca(&polaca,strId);
+          printf("paso 22");
+          ponerEnPolaca(&polaca,"DISPLAY");
+        }
+        |DISPLAY CTE_STRING{
+          printf("23\n");
+          printf("paso 23");
+          ponerEnPolaca(&polaca,$2);
+          ponerEnPolaca(&polaca,"DISPLAY");
+        }
         ;
 
 entrada:
-      GET id{printf("24\n");}
+      GET id{
+        char strId[MAXCAD]; 
+	      desapilar_str(&pilaIds, strId);
+
+        printf("24\n");
+        printf("paso 24");
+        ponerEnPolaca(&polaca,strId);
+        ponerEnPolaca(&polaca,"GET");
+        }
       ;
 
 condicion:
@@ -451,9 +473,15 @@ comparador:
 		  ;
 
 expresion:
-         termino  {printf(" 37\n");}
-	     |expresion OPSUM termino {printf(" 38\n");}
-         |expresion OPRES termino {printf(" 39\n");}
+		termino  {printf(" 37\n");}
+	     |expresion OPSUM termino {
+         printf(" 38\n");
+         ponerEnPolaca(&polaca,"+");
+         }
+         |expresion OPRES termino {
+           printf(" 39\n");
+           ponerEnPolaca(&polaca,"-");
+           }
          |factorial {printf(" 40\n");
                  
                  }
@@ -463,8 +491,17 @@ expresion:
 
 termino: 
        factor                   {printf("43\n");}
-       |termino OPDIV factor    {printf("44\n");}
-       |termino OPMUL factor    {printf("45\n");}
+	   |termino OPDIV factor    {
+                                
+        printf("44\n");
+        ponerEnPolaca(&polaca,"/");
+                                
+            }
+       |termino OPMUL factor    {
+                                
+        printf("45\n");
+        ponerEnPolaca(&polaca,"*");
+            }			   
        ;
 
 factor:
