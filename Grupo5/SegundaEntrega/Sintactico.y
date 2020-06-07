@@ -411,6 +411,7 @@ ifunario:
           {
             return;
           }
+          printf("POSICION POLACA: %d\n", posicionPolaca);
           tInfoIfUnario->nro = posicionPolaca;
           apilar(&pilaIfUnario,tInfoIfUnario);
           //avanzar(); 
@@ -424,6 +425,13 @@ ifunario:
           ponerEnPolaca(&polaca,"="); 
           //insertar(BI); 
           ponerEnPolaca(&polaca,"BI");
+          //@x=desapilar(tope_de_pila);
+          int nro = desapilar_nro(&pilaIfUnario);
+          printf("Valor de la pila ifun %d\n",nro); 
+          //insertar_en(@x, #celda_actual);
+          printf("POSICION POLACA: %d\n", posicionPolaca);
+          sprintf(posPolaca,"%d",posicionPolaca+1);
+          ponerEnPolacaPosicion(&polaca,nro,posPolaca);
           //apilar(#celda_actual); 
           t_info *tInfoIfUnario=(t_info*) malloc(sizeof(t_info));
           printf("Ifunario pos 2: %d\n", tInfoIfUnario->nro);
@@ -431,16 +439,11 @@ ifunario:
           {
             return;
           }
+          printf("POSICION POLACA: %d\n", posicionPolaca);
           tInfoIfUnario->nro = posicionPolaca;
           apilar(&pilaIfUnario,tInfoIfUnario);
           //avanzar(); 
           ponerEnPolaca(&polaca,"");
-          //@x=desapilar(tope_de_pila);
-          int nro = desapilar_nro(&pilaIfUnario);
-          printf("Valor de la pila ifun %d\n",nro); 
-          //insertar_en(@x, #celda_actual);
-          sprintf(posPolaca,"%d",posicionPolaca);
-          ponerEnPolacaPosicion(&polaca,nro,posPolaca); 
           //insertar(@r);
           ponerEnPolaca(&polaca,"@r");
         }
@@ -452,6 +455,7 @@ ifunario:
           int nro = desapilar_nro(&pilaIfUnario);
           printf("Valor de la pila ifun 2 %d\n",nro); 
           //insertar_en(@x, #celda_actual); 
+          printf("POSICION POLACA: %d\n", posicionPolaca);
           sprintf(posPolaca,"%d",posicionPolaca);
           ponerEnPolacaPosicion(&polaca,nro,posPolaca);
           //insertar(@r);
