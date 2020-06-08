@@ -74,7 +74,12 @@ int cantFilasTS = 0;
 	
 
 	//internas del compilador
+  void insertarTipoDatoEnTS(char*, char*);
 	int insertarEnTS(char[],char[],char[],int,double);
+  int existeEnTS(char *);
+  void guardarTS();
+ 
+
 
 	//Contadores
 	int contIf=0;
@@ -171,9 +176,7 @@ est_declaracion:
 
 declaraciones:
             declaracion {printf(" 3\n");}
-            |declaracion declaraciones  { 
-              
-    }
+            |declaracion declaraciones  {}
       ;
 declaracion:
             FLOAT COLON lista_var{
@@ -755,14 +758,9 @@ cte_String: CTE_STRING {
 
 int main(int argc,char *argv[])
 { 
-  FILE *archTabla = fopen("ts.txt","w");
   char cadena[] = "ID";
   int value = 0;
-  t_info* tInfoADesapilar;
-  fprintf(archTabla,"%s\n","NOMBRE\t\t\tTIPODATO\t\tVALOR");
-  fclose(archTabla);
-
-
+  //fprintf(archTabla,"%s\n","NOMBRE\t\t\tTIPODATO\t\tVALOR");
   if ((yyin = fopen(argv[1], "rt")) == NULL)
   {
 	printf("\nNo se puede abrir el archivo: %s\n", argv[1]);
@@ -778,6 +776,7 @@ int main(int argc,char *argv[])
   guardarPolaca(&polaca);
   
   mostrarTS();
+  guardarTS();
   fclose(yyin);
 
   return 0;
@@ -808,7 +807,6 @@ int existeEnTS(char *nombre){
     int i=0;
     for(i; i<cantFilasTS;i++)
     { 
-     // printf("Verificando: %s\t\t\t%s\t\t\t%s\t\t\t\n",tablaDeSimbolos[i].nombre,tablaDeSimbolos[i].tipoDato,tablaDeSimbolos[i].valor);
       if(strcmpi(nombreVariable,tablaDeSimbolos[i].nombre) == 0){
         return 1;
       }
@@ -829,7 +827,7 @@ int existeEnTS(char *nombre){
       
   }
 
-  insertarTipoDatoEnTS(char* nombre, char* tipoDato){
+void insertarTipoDatoEnTS(char* nombre, char* tipoDato){
     char* nombreVariable = (char*) malloc(sizeof(nombre)+1);
     sprintf(nombreVariable,"_%s",nombre);
 
@@ -842,7 +840,27 @@ int existeEnTS(char *nombre){
       }
     }
     printf("Error! No existe la variable en la tabla de simbolos");	  
+    return;
   }
+
+  void guardarTS()
+{
+	FILE *file = fopen("ts.txt", "w+");
+	
+	if(file == NULL) 
+	{
+    	printf("(!) ERROR: No se pudo abrir el txt correspondiente a la tabla de simbolos\n");
+	}
+	else 
+	{
+		int i = 0;
+		for (i; i < cantFilasTS; i++) 
+		{
+			fprintf(file, "%s\t%s\t%s\t%s\n", tablaDeSimbolos[i].nombre, tablaDeSimbolos[i].tipoDato, tablaDeSimbolos[i].valor, tablaDeSimbolos[i].longitud);
+		}		
+		fclose(file);
+	}
+}
 //------------------------------------Funciones de Pila----------------------------------------------------//
 
 void crearPila(t_pila* p){
