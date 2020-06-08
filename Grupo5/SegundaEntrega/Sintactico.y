@@ -259,13 +259,17 @@ decision:
           printf("17\n");
           printf("llego hasta esta regla");
 
-          int nro = desapilar_nro(&pilaCMP);
-          printf("Valor de la pila %d",nro); 
-          
-          //char posPolaca[MAXCAD];
-          //creo variable global para evitar escribirlo en todos lados
-          sprintf(posPolaca,"%d",posicionPolaca);
-          ponerEnPolacaPosicion(&polaca,nro,posPolaca);
+          int i;
+          for(i=0; i<contadorComparaciones; i++)
+          {
+            int nro = desapilar_nro(&pilaCMP);
+            printf("Valor de la pila %d",nro); 
+            
+            //char posPolaca[MAXCAD];
+            //creo variable global para evitar escribirlo en todos lados
+            sprintf(posPolaca,"%d",posicionPolaca);
+            ponerEnPolacaPosicion(&polaca,nro,posPolaca);
+          }
 
           printf("pase bloque");
         }
