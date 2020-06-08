@@ -103,6 +103,8 @@ int cantFilasTS = 0;
   t_pila pilaTipoDato;
   char tipoComparador[4];
   int contadorComparaciones = 0;
+  int saltoOR=0;
+  int condicion_or=0;
   int resActual = 1;
   int resExpFactActual = 1;
   char resPrimExpComb[MAXCAD] ="@resExp1";
@@ -267,15 +269,20 @@ decision:
         { 
           printf("17\n");
           printf("llego hasta esta regla");
-          int i;
+          int i, nro;
           for(i=0; i<contadorComparaciones; i++)
           {
-            int nro = desapilar_nro(&pilaCMP);
+            nro = desapilar_nro(&pilaCMP);
             printf("Valor de la pila %d",nro); 
             
             //char posPolaca[MAXCAD];
             //creo variable global para evitar escribirlo en todos lados
-            sprintf(posPolaca,"%d",posicionPolaca+1);
+            sprintf(posPolaca,"%d",posicionPolaca);
+            ponerEnPolacaPosicion(&polaca,nro,posPolaca);
+          }
+	  if(condicion_or == 1){
+            char posPolaca[MAXCAD];
+            sprintf(posPolaca,"%d",saltoOR);
             ponerEnPolacaPosicion(&polaca,nro,posPolaca);
           }
           contadorComparaciones = 0;
@@ -294,6 +301,11 @@ decision:
           //creo variable global para evitar escribirlo en todos lados
           sprintf(posPolaca,"%d",posicionPolaca+2);
           ponerEnPolacaPosicion(&polaca,nro,posPolaca);
+        }
+	if(condicion_or == 1){
+           char posPolaca[MAXCAD];
+           sprintf(posPolaca,"%d",saltoOR);
+           ponerEnPolacaPosicion(&polaca,nro,posPolaca);
         }
         contadorComparaciones = 0;
         ponerEnPolaca(&polaca,"BI");
@@ -342,11 +354,16 @@ iteracion:
             int i, nro;
             for(i=0; i<contadorComparaciones; i++)
             {
-              int nro = desapilar_nro(&pilaCMP);
+              nro = desapilar_nro(&pilaCMP);
                  printf("Valor de la pila %d\n",nro); 
         
               char posPolaca[MAXCAD];
               sprintf(posPolaca,"%d",posicionPolaca+1);
+              ponerEnPolacaPosicion(&polaca,nro,posPolaca);
+            }
+	    if(condicion_or == 1){
+              char posPolaca[MAXCAD];
+              sprintf(posPolaca,"%d",saltoOR);
               ponerEnPolacaPosicion(&polaca,nro,posPolaca);
             }
 
@@ -560,6 +577,9 @@ condicion:
             //avanzar(); 
             ponerEnPolaca(&polaca,"");
             contadorComparaciones++;
+	    saltoOR= posicionPolaca;
+            condicion_or=1;
+            printf("Posicion de salto del OR%d\n",saltoOR); 
             printf(" 27\n");
           }
         |NOT comparacion {
