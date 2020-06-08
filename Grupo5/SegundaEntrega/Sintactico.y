@@ -75,7 +75,7 @@ int cantFilasTS = 0;
 
 	//internas del compilador
   void insertarTipoDatoEnTS(char*, char*);
-	int insertarEnTS(char[],char[],char[],int,double);
+	int insertarEnNuevaTS(char*,char*,char*,char*);
   int existeEnTS(char *);
   void guardarTS();
   int validarTipoDatoEnTS(char*, char*); 
@@ -631,10 +631,17 @@ factor:
 
 factorial:
       FACT P_A {
+
+        insertarEnNuevaTS("_@res","","","");
         ponerEnPolaca(&polaca,"@res");
+
         } expresion P_C   {
+
         ponerEnPolaca(&polaca,"=");
+
+        insertarEnNuevaTS("_@fact","","","");
         ponerEnPolaca(&polaca,"@fact");
+
         ponerEnPolaca(&polaca,"1");
         ponerEnPolaca(&polaca,"=");        
         
@@ -691,20 +698,31 @@ factorial:
 
 combinatoria:
       COMB P_A {
+        
+        insertarEnNuevaTS("_@res1","","","");
         ponerEnPolaca(&polaca,"@res1");
+        
         } expresion {
         ponerEnPolaca(&polaca,"="); 
         ponerEnPolaca(&polaca,"F1"); 
         ponerEnPolaca(&polaca,"1");
         ponerEnPolaca(&polaca,"=");
         }
-        COMA { ponerEnPolaca(&polaca,"@res2"); }  expresion 
+        COMA { 
+          
+          insertarEnNuevaTS("_@res2","","","");
+          ponerEnPolaca(&polaca,"@res2"); 
+          
+          }  expresion 
         {
         ponerEnPolaca(&polaca,"=");
         ponerEnPolaca(&polaca,"F2");
         ponerEnPolaca(&polaca,"1");
         ponerEnPolaca(&polaca,"=");
+        
+        insertarEnNuevaTS("_@res3","","","");
         ponerEnPolaca(&polaca,"@res3");
+
         ponerEnPolaca(&polaca,"@res1");
         ponerEnPolaca(&polaca,"@res2");
         ponerEnPolaca(&polaca,"-");
@@ -713,8 +731,14 @@ combinatoria:
         hacerFactoriales();
 
         ponerEnPolaca(&polaca,"@res3");
+        
+        insertarEnNuevaTS("_@F1","","","");
         ponerEnPolaca(&polaca,"@F1");
+
+        insertarEnNuevaTS("_@F2","","","");
         ponerEnPolaca(&polaca,"@F2");
+
+        insertarEnNuevaTS("_@F3","","","");
         ponerEnPolaca(&polaca,"@F3");
         ponerEnPolaca(&polaca,"*");
         ponerEnPolaca(&polaca,"/");
