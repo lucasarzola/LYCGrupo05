@@ -4,24 +4,66 @@ DEFVAR
 FLOAT : a1; b1
 STRING : var1
 FLOAT : p1; p2; p3
-INT : a; b
-STRING : str; str2
+INT : a; b; c; d; ab; bc; cd 
+STRING : str; str2; aBBa; aCdC; ola; base
+INT : resComb; resFact; resIfUn; n; r3sp
 ENDDEF
 
-a = 4
+p1 = 99999.99
+p2 = 99.
+p3 = .9999
 
+str = "@sdADaSjfla%dfg"
+str2 = "asldk fh sjf"
 
-if( a < 5)
-a=6
-else 
-a=3
-endif
+IF ( ( a1 > b1 ) OR ( b < 6 ) )
+str=str2
+ENDIF
 
-a = 4 + 5
+IF (a != b)
+a1=b1
+ELSE
+aBBa=aCdC
+ENDIF
+
+resComb = COMB( 5 + 3 , 4 - 2 )
+
+resFact = FACT( n )
+
+resIfUn = IF( a > 300, a1+1, a1+2)
+
+resIfUn = IF( a <= c AND b == c, a1+1, a1+2)
+
+resIfUn = IF( a >= c OR b != c, a1+1, a1+2)
+
+***/ Así son los "comentarios" en el 1°Cuat de LyC 2020 Virtual /***
+
+WHILE ( not a <= b ) 
+cd = 123 + 456 - 678 * 910
+ENDWHILE
+
+WHILE ( ab >= bc ) 
+cd = 123
+WHILE ( cd <= a )
+cd = cd + 1
+ENDWHILE
+DISPLAY cd
+ENDWHILE
+
+ola = "hola"
+IF ( cd == 123 ) ***/IF con comentario/***
+cd = 456
+ola = "chau"
+ENDIF
+
+IF ( ( a != b ) AND ( c == d ) )
+GET n
+ab = 789 / 71
+ENDIF
+
+r3sp = IF ( ab > a, b * 10, 6 / c )
+
 
 DISPLAY "ewr" ***/ donde "ewr" debe ser una cte string /***
 GET base ***/ donde base es una variable /***
-DISPLAY var1 ***/ donde var1 es una vble numerica definida previamente /***
-
-
-
+DISPLAY var1 ***/ donde var1 es una vble numérica definida previamente /***
