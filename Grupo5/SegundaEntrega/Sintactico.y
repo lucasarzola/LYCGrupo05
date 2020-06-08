@@ -745,9 +745,7 @@ combinatoria:
         ponerEnPolaca(&polaca,"=");
 
         }
-        
 
-        
         P_C 
       ;
 
@@ -763,19 +761,13 @@ id: ID {
 };
 
 cte_Entera: CTE_ENTERA {
-  
-
-  
   };
 
 cte_Real: CTE_REAL {
-  
   };
 ;
 
 cte_String: CTE_STRING {
-  
-
   };
 
 %%
