@@ -8,7 +8,7 @@ int yystopparser=0;
 FILE  *yyin;
 
 	#define ERROR -1
-	#define OK 3
+	#define OK 1
   #define MAXINT 50
   #define MAXCAD 50
 
@@ -78,7 +78,8 @@ int cantFilasTS = 0;
 	int insertarEnTS(char[],char[],char[],int,double);
   int existeEnTS(char *);
   void guardarTS();
- 
+  int validarTipoDatoEnTS(char*, char*); 
+  int ponerValorEnTS(char*, char*);
 
 
 	//Contadores
@@ -775,6 +776,7 @@ int main(int argc,char *argv[])
   }
   guardarPolaca(&polaca);
   
+  printf("Validando tipo de dato: %d",validarTipoDatoEnTS("a1","STRING"));
   mostrarTS();
   guardarTS();
   fclose(yyin);
@@ -843,20 +845,61 @@ void insertarTipoDatoEnTS(char* nombre, char* tipoDato){
     return;
   }
 
+int validarTipoDatoEnTS(char* nombre, char* tipoDato){
+    
+    char* nombreVariable = (char*) malloc(sizeof(nombre)+1);
+    sprintf(nombreVariable,"_%s",nombre);
+
+    int i=0;
+
+    for(i; i<cantFilasTS;i++)
+    {
+      if(strcmpi(nombreVariable,tablaDeSimbolos[i].nombre) == 0){
+        if(strcmpi(tipoDato,tablaDeSimbolos[i].tipoDato) == 0)
+        {
+          return OK;
+        }
+        else{
+          printf("\nError! La variable %s es de tipo %s y no coinciden los tipos asignados\n",nombreVariable,tablaDeSimbolos[i].tipoDato);
+          return ERROR;
+          }
+      }
+    }
+    printf("\nError! No existe la variable en la tabla de simbolos");	  
+    return ERROR;
+  }
+
+  int ponerValorEnTS(char* nombre, char* nuevoValor){
+    char* nombreVariable = (char*) malloc(sizeof(nombre)+1);
+    sprintf(nombreVariable,"_%s",nombre);
+
+    int i=0;
+
+    for(i; i<cantFilasTS;i++)
+    {
+      if(strcmpi(nombreVariable,tablaDeSimbolos[i].nombre) == 0){
+        tablaDeSimbolos[i].valor = nuevoValor;
+      }
+    }
+    printf("\nError! No existe la variable en la tabla de simbolos");	  
+    return ERROR;
+  }
+
+
   void guardarTS()
 {
 	FILE *file = fopen("ts.txt", "w+");
 	
 	if(file == NULL) 
 	{
-    	printf("(!) ERROR: No se pudo abrir el txt correspondiente a la tabla de simbolos\n");
+    	printf("\nERROR: No se pudo abrir el txt correspondiente a la tabla de simbolos\n");
 	}
 	else 
 	{
 		int i = 0;
 		for (i; i < cantFilasTS; i++) 
 		{
-			fprintf(file, "%s\t%s\t%s\t%s\n", tablaDeSimbolos[i].nombre, tablaDeSimbolos[i].tipoDato, tablaDeSimbolos[i].valor, tablaDeSimbolos[i].longitud);
+			fprintf(file, "%s\t\t%s\t\t%s\t\t%s\n", tablaDeSimbolos[i].nombre, tablaDeSimbolos[i].tipoDato, tablaDeSimbolos[i].valor, tablaDeSimbolos[i].longitud);
 		}		
 		fclose(file);
 	}
