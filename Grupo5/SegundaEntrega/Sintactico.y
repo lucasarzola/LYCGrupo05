@@ -99,6 +99,8 @@ int cantFilasTS = 0;
   t_pila pilaCMP;
   t_pila pilaIfUnario;
   t_pila pilaIdsAsig;
+  char tipoComparador[4];
+  int contadorComparaciones = 0;
 %}
 
 %union {
@@ -252,53 +254,26 @@ sentencia:
           ;
 
 decision: 
-    	 IF P_A condicion{
-         char ComparadorIf[MAXCAD];
-         ponerEnPolaca(&polaca,"CMP");
-         desapilar_str(&pilaCMP,ComparadorIf);
-         ponerEnPolaca(&polaca,ComparadorIf);
-         printf("puse area reservada");
-         t_info * tInfoIf =(t_info*) malloc(sizeof(t_info));
-        if(!tInfoIf)
-        {
-          printf("no creo nodo");
-          return;
-        }
-        tInfoIf->nro = posicionPolaca;
-        apilar(&pilaIf,tInfoIf);
-        ponerEnPolaca(&polaca,"");
-        printf("pase condicion");
-        } 
-        P_C bloque {
-        printf("llego hasta esta regla");
-        int nro = desapilar_nro(&pilaIf);
-        printf("Valor de la pila %d",nro); 
-        
-        //char posPolaca[MAXCAD];
-        //creo variable global para evitar escribirlo en todos lados
-        sprintf(posPolaca,"%d",posicionPolaca+1);
-        ponerEnPolacaPosicion(&polaca,nro,posPolaca);
-        printf("pase bloque");
-        }
-        ENDIF { printf("17\n");}
+    	 IF P_A condicion P_C bloque ENDIF 
+        { 
+          printf("17\n");
+          printf("llego hasta esta regla");
 
-     |   IF P_A condicion P_C {
-         char ComparadorIf[MAXCAD];
-         ponerEnPolaca(&polaca,"CMP");
-         desapilar_str(&pilaCMP,ComparadorIf);
-         ponerEnPolaca(&polaca,ComparadorIf);
-         printf("puse area reservada");
-         t_info *tInfoIf=(t_info*) malloc(sizeof(t_info));
-        if(!tInfoIf)
-        {
-          return;
-        }
-        tInfoIf->nro = posicionPolaca;
-        ponerEnPolaca(&polaca,"");
-        apilar(&pilaIf,tInfoIf);
-        }   bloque{
+          int nro = desapilar_nro(&pilaCMP);
+          printf("Valor de la pila %d",nro); 
+          
+          //char posPolaca[MAXCAD];
+          //creo variable global para evitar escribirlo en todos lados
+          sprintf(posPolaca,"%d",posicionPolaca);
+          ponerEnPolacaPosicion(&polaca,nro,posPolaca);
 
-        int nro = desapilar_nro(&pilaIf);
+          printf("pase bloque");
+        }
+
+     |IF P_A condicion P_C bloque ELSE 
+     {
+
+        int nro = desapilar_nro(&pilaCMP);
         printf("Valor de la pila %d",nro); 
         
         //char posPolaca[MAXCAD];
@@ -315,17 +290,15 @@ decision:
         apilar(&pilaIf,tInfoIf);
         ponerEnPolaca(&polaca,"");
         } 
-        ELSE bloque {
+     bloque {
         int nro = desapilar_nro(&pilaIf);
         printf("Valor de la pila %d",nro);   
         //char posPolaca[MAXCAD];
         //creo variable global para evitar escribirlo en todos lados
         sprintf(posPolaca,"%d",posicionPolaca);
         ponerEnPolacaPosicion(&polaca,nro,posPolaca);
-        }
-        ENDIF 
-         {printf("18\n");
-         }	 
+      }
+      ENDIF {printf("18\n");}	 
 ;
 
 iteracion:
@@ -402,25 +375,6 @@ asignacion:
 ifunario:
         IF P_A condicion 
         {
-          //insertar(CMP); 
-          ponerEnPolaca(&polaca, "CMP");
-          //insertar(@cmp_type); 
-          char sCMP[MAXCAD]; 
-	        desapilar_str(&pilaCMP, sCMP);
-          ponerEnPolaca(&polaca, sCMP);
-          //apilar(#celda_actual); 
-          t_info *tInfoIfUnario=(t_info*) malloc(sizeof(t_info));
-          printf("Ifunario pos: %d\n", tInfoIfUnario->nro);
-          if(!tInfoIfUnario)
-          {
-            return;
-          }
-          printf("POSICION POLACA: %d\n", posicionPolaca);
-          tInfoIfUnario->nro = posicionPolaca;
-          apilar(&pilaIfUnario,tInfoIfUnario);
-          //avanzar(); 
-          ponerEnPolaca(&polaca,"");
-          //insertar(@r);
           ponerEnPolaca(&polaca,"@r");
         }
         COMA expresion COMA 
@@ -429,21 +383,22 @@ ifunario:
           ponerEnPolaca(&polaca,"="); 
           //insertar(BI); 
           ponerEnPolaca(&polaca,"BI");
-          //@x=desapilar(tope_de_pila);
-          int nro = desapilar_nro(&pilaIfUnario);
-          printf("Valor de la pila ifun %d\n",nro); 
-          //insertar_en(@x, #celda_actual);
-          printf("POSICION POLACA: %d\n", posicionPolaca);
-          sprintf(posPolaca,"%d",posicionPolaca+1);
-          ponerEnPolacaPosicion(&polaca,nro,posPolaca);
+          int i;
+          for(i=0; i<contadorComparaciones; i++)
+          {
+            //@x=desapilar(tope_de_pila);
+            int nro = desapilar_nro(&pilaCMP);
+            //insertar_en(@x, #celda_actual);
+            sprintf(posPolaca,"%d",posicionPolaca+1);
+            ponerEnPolacaPosicion(&polaca,nro,posPolaca);
+          }
+
           //apilar(#celda_actual); 
           t_info *tInfoIfUnario=(t_info*) malloc(sizeof(t_info));
-          printf("Ifunario pos 2: %d\n", tInfoIfUnario->nro);
           if(!tInfoIfUnario)
           {
             return;
           }
-          printf("POSICION POLACA: %d\n", posicionPolaca);
           tInfoIfUnario->nro = posicionPolaca;
           apilar(&pilaIfUnario,tInfoIfUnario);
           //avanzar(); 
@@ -457,9 +412,7 @@ ifunario:
           ponerEnPolaca(&polaca,"=");
           //@x=desapilar(tope_de_pila);
           int nro = desapilar_nro(&pilaIfUnario);
-          printf("Valor de la pila ifun 2 %d\n",nro); 
           //insertar_en(@x, #celda_actual); 
-          printf("POSICION POLACA: %d\n", posicionPolaca);
           sprintf(posPolaca,"%d",posicionPolaca);
           ponerEnPolacaPosicion(&polaca,nro,posPolaca);
           //insertar(@r);
@@ -500,10 +453,70 @@ entrada:
       ;
 
 condicion:
-          comparacion{printf(" 25\n");}
-          |comparacion AND comparacion {printf(" 26\n");}
-          |comparacion OR comparacion {printf(" 27\n");}
-	      |NOT comparacion {printf(" 28\n");}
+          comparacion
+          {
+            printf(" 25\n");
+            ponerEnPolaca(&polaca, "CMP");
+            //insertar(@cmp_type); 
+            ponerEnPolaca(&polaca, tipoComparador);
+            //apilar(#celda_actual); 
+            t_info *tInfoPilaCmp=(t_info*) malloc(sizeof(t_info));
+            if(!tInfoPilaCmp)
+            {
+              return;
+            }
+            tInfoPilaCmp->nro = posicionPolaca;
+            apilar(&pilaCMP,tInfoPilaCmp);
+            //avanzar(); 
+            ponerEnPolaca(&polaca,"");
+            contadorComparaciones = 1;
+          }
+          |comparacion AND 
+          {
+            //insertar(CMP); 
+            ponerEnPolaca(&polaca, "CMP");
+            //insertar(@cmp_type); 
+            ponerEnPolaca(&polaca, tipoComparador);
+            //apilar(#celda_actual); 
+            t_info *tInfoPilaCmp=(t_info*) malloc(sizeof(t_info));
+            if(!tInfoPilaCmp)
+            {
+              return;
+            }
+            tInfoPilaCmp->nro = posicionPolaca;
+            apilar(&pilaCMP,tInfoPilaCmp);
+            //avanzar(); 
+            ponerEnPolaca(&polaca,"");
+            contadorComparaciones++;
+          }
+          comparacion 
+          {
+            printf(" 26\n");
+            //insertar(CMP); 
+            ponerEnPolaca(&polaca, "CMP");
+            //insertar(@cmp_type);
+            ponerEnPolaca(&polaca, tipoComparador);
+            //apilar(#celda_actual); 
+            t_info *tInfoPilaCmp=(t_info*) malloc(sizeof(t_info));
+            if(!tInfoPilaCmp)
+            {
+              return;
+            }
+            tInfoPilaCmp->nro = posicionPolaca;
+            apilar(&pilaCMP,tInfoPilaCmp);
+            //avanzar(); 
+            ponerEnPolaca(&polaca,"");
+            contadorComparaciones++;
+          }
+          |comparacion OR 
+          {
+            //si es con OR se deberia modificar el cmp apilado y cambiarlo por el contrario
+          }
+          comparacion 
+          {
+            printf(" 27\n");
+          }
+	        |NOT comparacion {printf(" 28\n");}
 		;
 
 comparacion:
@@ -515,55 +528,31 @@ comparador:
           MAYEQ 
           {
             printf(" 31\n");
-            t_info *tInfoPilaCmp=(t_info*) malloc(sizeof(t_info));
-            tInfoPilaCmp->cadena = (char *) malloc (50 * sizeof (char));
-            strcpy(tInfoPilaCmp->cadena,"BLT");
-            printf("Comparador: %s\n", tInfoPilaCmp->cadena);
-            apilar(&pilaCMP,tInfoPilaCmp);
+            strcpy(tipoComparador,"BLT");
           }
           |MINEQ 
           {
             printf(" 32\n");
-            t_info *tInfoPilaCmp=(t_info*) malloc(sizeof(t_info));
-            tInfoPilaCmp->cadena = (char *) malloc (50 * sizeof (char));
-            strcpy(tInfoPilaCmp->cadena,"BGT");
-            printf("Comparador: %s\n", tInfoPilaCmp->cadena);
-            apilar(&pilaCMP,tInfoPilaCmp);
+            strcpy(tipoComparador,"BGT");
           }
           |MIN 
           {
             printf(" 33\n");
-            t_info *tInfoPilaCmp=(t_info*) malloc(sizeof(t_info));
-            tInfoPilaCmp->cadena = (char *) malloc (50 * sizeof (char));
-            strcpy(tInfoPilaCmp->cadena,"BGE");
-            printf("Comparador: %s\n", tInfoPilaCmp->cadena);
-            apilar(&pilaCMP,tInfoPilaCmp);
+            strcpy(tipoComparador,"BGE");
           }
           |MAY {
             printf(" 34\n");
-            t_info *tInfoPilaCmp=(t_info*) malloc(sizeof(t_info));
-            tInfoPilaCmp->cadena = (char *) malloc (50 * sizeof (char));
-            strcpy(tInfoPilaCmp->cadena,"BLE");
-            printf("Comparador: %s\n", tInfoPilaCmp->cadena);
-            apilar(&pilaCMP,tInfoPilaCmp);
+            strcpy(tipoComparador,"BLE");
           }
           |EQUAL 
           {
             printf(" 35\n");
-            t_info *tInfoPilaCmp=(t_info*) malloc(sizeof(t_info));
-            tInfoPilaCmp->cadena = (char *) malloc (50 * sizeof (char));
-            strcpy(tInfoPilaCmp->cadena,"BNE");
-            printf("Comparador: %s\n", tInfoPilaCmp->cadena);
-            apilar(&pilaCMP,tInfoPilaCmp);
+            strcpy(tipoComparador,"BNE");
           }
-		      |NOTEQUAL 
+	  |NOTEQUAL 
           {
             printf(" 36\n");
-            t_info *tInfoPilaCmp=(t_info*) malloc(sizeof(t_info));
-            tInfoPilaCmp->cadena = (char *) malloc (50 * sizeof (char));
-            strcpy(tInfoPilaCmp->cadena,"BEQ");
-            printf("Comparador: %s\n", tInfoPilaCmp->cadena);
-            apilar(&pilaCMP,tInfoPilaCmp);
+            strcpy(tipoComparador,"BEQ");
           }
 		  ;
 
