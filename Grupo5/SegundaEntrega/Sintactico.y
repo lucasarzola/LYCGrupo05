@@ -81,6 +81,7 @@ int cantFilasTS = 0;
   int validarTipoDatoEnTS(char*, char*); 
   int ponerValorEnTS(char*, char*);
   void invertirComparador(char *);
+  char* tieneTipoDatoEnTS(char* nombre);
 
 
 	//Contadores
@@ -676,7 +677,19 @@ factor:
       id     {
                
                 printf("46\n");
+                char tipoDatoId[MAXCAD];
+                strcpy(tipoDatoId,tieneTipoDatoEnTS($1)); 
+
+                if(strcmpi(tipoDatoId, "") == 0){
+                  printf("ERROR: El id no tiene tipo de dato\n");
+                  return;
+                }
+
+                t_info *tInfoFactor = (t_info*) malloc(sizeof(t_info));
+                tInfoFactor->cadena = (char *) malloc (50 * sizeof (char));
+                strcpy(tInfoFactor->cadena,tipoDatoId);
                 ponerEnPolaca(&polaca,$1);
+                apilar(&pilaTipoDato,tInfoFactor);
                 
               }
       | cte_Entera              {
@@ -1058,6 +1071,24 @@ int validarTipoDatoEnTS(char* nombre, char* tipoDato){
 		fclose(file);
 	}
 }
+
+char* tieneTipoDatoEnTS(char* nombre){
+    
+    char* nombreVariable = (char*) malloc(sizeof(nombre)+1);
+    sprintf(nombreVariable,"_%s",nombre);
+
+    int i=0;
+
+    for(i; i<cantFilasTS;i++)
+    {
+      if(strcmpi(nombreVariable,tablaDeSimbolos[i].nombre) == 0){
+        return tablaDeSimbolos[i].tipoDato;
+      }
+    }
+    printf("\nError! No existe la variable en la tabla de simbolos");	  
+    return "";
+}   
+
 //------------------------------------Funciones de Pila----------------------------------------------------//
 
 void crearPila(t_pila* p){
