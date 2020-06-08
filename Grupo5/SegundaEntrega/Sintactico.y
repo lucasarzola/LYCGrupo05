@@ -103,6 +103,12 @@ int cantFilasTS = 0;
   t_pila pilaTipoDato;
   char tipoComparador[4];
   int contadorComparaciones = 0;
+  int resActual = 1;
+  int resExpFactActual = 1;
+  char resPrimExpComb[MAXCAD] ="@resExp1";
+  char resSegExpComb[MAXCAD] ="@resExp2";
+  char resTercExpComb[MAXCAD] ="@resExp3";
+  char resExpFact[MAXCAD] ="@resFact1";
 %}
 
 %union {
@@ -691,14 +697,27 @@ factor:
 factorial:
       FACT P_A {
 
-        insertarEnNuevaTS("_@res","","","");
-        ponerEnPolaca(&polaca,"@res");
+        while(existeEnTS(resExpFact) == 1)
+            {
+            sprintf(resExpFact,"@resFact%d",resExpFactActual+1);
+            resExpFactActual = resExpFactActual + 1;
+            }
+
+        char* resAGuardar = (char*) malloc(sizeof(char)*MAXCAD+1);
+        
+        sprintf(resAGuardar,"_%s",resExpFact);
+
+        insertarEnNuevaTS(resAGuardar,"","","");
+
+        ponerEnPolaca(&polaca,resExpFact);
 
         } expresion P_C   {
 
         ponerEnPolaca(&polaca,"=");
 
+        if(existeEnTS("@fact")==0)
         insertarEnNuevaTS("_@fact","","","");
+
         ponerEnPolaca(&polaca,"@fact");
 
         ponerEnPolaca(&polaca,"1");
@@ -713,7 +732,7 @@ factorial:
         tInfoFactorial->nro = posicionPolaca;
         apilar(&pilaFactorial,tInfoFactorial);
         
-        ponerEnPolaca(&polaca,"@res");
+        ponerEnPolaca(&polaca,resExpFact);
         ponerEnPolaca(&polaca,"1");
         ponerEnPolaca(&polaca,"CMP");
         ponerEnPolaca(&polaca,"BLI");
@@ -730,11 +749,11 @@ factorial:
 
         ponerEnPolaca(&polaca,"@fact"); 
         ponerEnPolaca(&polaca,"@fact");
-        ponerEnPolaca(&polaca,"@res");
+        ponerEnPolaca(&polaca,resExpFact);
         ponerEnPolaca(&polaca,"*");
         ponerEnPolaca(&polaca,"=");
-        ponerEnPolaca(&polaca,"@res");
-        ponerEnPolaca(&polaca,"@res");
+        ponerEnPolaca(&polaca,resExpFact);
+        ponerEnPolaca(&polaca,resExpFact);
         ponerEnPolaca(&polaca,"1");
         ponerEnPolaca(&polaca,"-");
         ponerEnPolaca(&polaca,"=");
@@ -744,7 +763,7 @@ factorial:
                  printf("Valor de la pila %d",nro); 
         
         char posPolacaFact[MAXCAD];
-        sprintf(posPolacaFact,"%d",posicionPolaca);
+        sprintf(posPolacaFact,"%d",posicionPolaca+1);
         ponerEnPolacaPosicion(&polaca,nro,posPolacaFact);
 
          nro = desapilar_nro(&pilaFactorial);
@@ -752,57 +771,89 @@ factorial:
          char posIteracion[MAXCAD];
          sprintf(posIteracion,"%d",nro);
          ponerEnPolaca(&polaca,posIteracion);
+
+         ponerEnPolaca(&polaca,"@fact");
+          
+        resExpFactActual--;
+        sprintf(resExpFact,"@resFact%d",resExpFactActual);
         }
       ;
 
 combinatoria:
       COMB P_A {
+        while(existeEnTS(resPrimExpComb) == 1) 
+            {
+            sprintf(resPrimExpComb,"@resExp%d",resActual+3);
+            resActual = resActual + 3;
+            }
         
-        insertarEnNuevaTS("_@res1","","","");
-        ponerEnPolaca(&polaca,"@res1");
+        char* resAGuardar = (char*) malloc(sizeof(char)*MAXCAD+1);
+        
+        sprintf(resAGuardar,"_%s",resPrimExpComb);
+
+        insertarEnNuevaTS(resAGuardar,"","","");
+        
+        ponerEnPolaca(&polaca,resPrimExpComb);
         
         } expresion {
         ponerEnPolaca(&polaca,"="); 
-        ponerEnPolaca(&polaca,"F1"); 
-        ponerEnPolaca(&polaca,"1");
-        ponerEnPolaca(&polaca,"=");
         }
         COMA { 
+          char* resSegAGuardar = (char*) malloc(sizeof(char)*MAXCAD+1);
+          sprintf(resSegExpComb,"@resExp%d",resActual+1);
+         
+          sprintf(resSegAGuardar,"_%s",resSegExpComb);
           
-          insertarEnNuevaTS("_@res2","","","");
-          ponerEnPolaca(&polaca,"@res2"); 
+          insertarEnNuevaTS(resSegAGuardar,"","","");
+          ponerEnPolaca(&polaca,resSegExpComb); 
           
           }  expresion 
         {
         ponerEnPolaca(&polaca,"=");
+
+        if(existeEnTS("@F1")==0)
+        insertarEnNuevaTS("_@F1","","","");
+
+        ponerEnPolaca(&polaca,"F1"); 
+        ponerEnPolaca(&polaca,"1");
+        ponerEnPolaca(&polaca,"=");
+
+        if(existeEnTS("@F2")==0)
+        insertarEnNuevaTS("_@F2","","","");
+
         ponerEnPolaca(&polaca,"F2");
         ponerEnPolaca(&polaca,"1");
         ponerEnPolaca(&polaca,"=");
         
-        insertarEnNuevaTS("_@res3","","","");
-        ponerEnPolaca(&polaca,"@res3");
+        char* resTercAGuardar = (char*) malloc(sizeof(char)*MAXCAD+1);
+        
+        sprintf(resTercExpComb,"@resExp%d",resActual+2);
+         
+        sprintf(resTercAGuardar,"_%s",resTercExpComb);
+          
+        insertarEnNuevaTS(resTercAGuardar,"","","");
 
-        ponerEnPolaca(&polaca,"@res1");
-        ponerEnPolaca(&polaca,"@res2");
+        ponerEnPolaca(&polaca,resTercExpComb);
+        ponerEnPolaca(&polaca,resPrimExpComb);
+        ponerEnPolaca(&polaca,resSegExpComb);
         ponerEnPolaca(&polaca,"-");
         ponerEnPolaca(&polaca,"=");
 
         hacerFactoriales();
 
-        ponerEnPolaca(&polaca,"@res3");
-        
-        insertarEnNuevaTS("_@F1","","","");
+        ponerEnPolaca(&polaca,resTercExpComb);
         ponerEnPolaca(&polaca,"@F1");
-
-        insertarEnNuevaTS("_@F2","","","");
         ponerEnPolaca(&polaca,"@F2");
 
+        if(existeEnTS("@F3")==0)
         insertarEnNuevaTS("_@F3","","","");
+        
         ponerEnPolaca(&polaca,"@F3");
         ponerEnPolaca(&polaca,"*");
         ponerEnPolaca(&polaca,"/");
-        ponerEnPolaca(&polaca,"=");
 
+        resActual = resActual-3;
+        sprintf(resPrimExpComb,"@resExp%d",resActual);
         }
 
         P_C 
@@ -1162,8 +1213,11 @@ int guardarPolaca(t_polaca *p){
 
 //----------------------------------------------------------------------------------------------------------//
 hacerFactoriales(){
-  int cicloActual = 1;
-  for(cicloActual;cicloActual<=3;cicloActual++){
+  int limite = resActual + 2;
+  int ciclo = resActual;
+  int factActual = 1;
+
+  for(ciclo;ciclo<=limite;ciclo++){
   //Apilar posicion del res para While e insertar Res
         t_info *tInfoFactorial=(t_info*) malloc(sizeof(t_info));
         if(!tInfoFactorial)
@@ -1173,10 +1227,10 @@ hacerFactoriales(){
         tInfoFactorial->nro = posicionPolaca;
         apilar(&pilaFactorial,tInfoFactorial);
         
-        char resActual[MAXCAD];
+        char resultActual[MAXCAD];
 
-        sprintf(resActual,"@res%d",cicloActual);
-        ponerEnPolaca(&polaca,resActual);
+        sprintf(resultActual,"@resExp%d",ciclo);
+        ponerEnPolaca(&polaca,resultActual);
         ponerEnPolaca(&polaca,"1");
         ponerEnPolaca(&polaca,"CMP");
         ponerEnPolaca(&polaca,"BLI");
@@ -1192,15 +1246,15 @@ hacerFactoriales(){
         ponerEnPolaca(&polaca,"");
 
 
-        char factActual[MAXCAD];
-        sprintf(factActual,"@F%d",cicloActual);
-        ponerEnPolaca(&polaca,factActual); 
-        ponerEnPolaca(&polaca,factActual);
-        ponerEnPolaca(&polaca,resActual);
+        char factorActual[MAXCAD];
+        sprintf(factorActual,"@F%d",factActual);
+        ponerEnPolaca(&polaca,factorActual); 
+        ponerEnPolaca(&polaca,factorActual);
+        ponerEnPolaca(&polaca,resultActual);
         ponerEnPolaca(&polaca,"*");
         ponerEnPolaca(&polaca,"=");
-        ponerEnPolaca(&polaca,resActual);
-        ponerEnPolaca(&polaca,resActual);
+        ponerEnPolaca(&polaca,resultActual);
+        ponerEnPolaca(&polaca,resultActual);
         ponerEnPolaca(&polaca,"1");
         ponerEnPolaca(&polaca,"-");
         ponerEnPolaca(&polaca,"=");
@@ -1219,7 +1273,7 @@ hacerFactoriales(){
          sprintf(posIteracion,"%d",nro);
          ponerEnPolaca(&polaca,posIteracion);
   }
-}
+  }
 
   void invertirComparador(char *comparadorEntrada) 
   {
