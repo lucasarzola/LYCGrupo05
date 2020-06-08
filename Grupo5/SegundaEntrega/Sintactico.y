@@ -462,6 +462,15 @@ salida:
           char strId[MAXCAD]; 
 	        desapilar_str(&pilaIds, strId);
 
+          char tipoDatoId[MAXCAD];
+                strcpy(tipoDatoId,tieneTipoDatoEnTS(strId)); 
+                if(strcmpi(tipoDatoId,"") == 0){
+                  printf("ERROR: El id %s no tiene tipo de dato ni fue declarado\n",strId);
+                  system ("Pause");
+										exit(3);
+                  return;
+                }
+
           printf("22\n");
           ponerEnPolaca(&polaca,strId);
           printf("paso 22");
@@ -479,6 +488,15 @@ entrada:
       GET id{
         char strId[MAXCAD]; 
 	      desapilar_str(&pilaIds, strId);
+
+        char tipoDatoId[MAXCAD];
+                strcpy(tipoDatoId,tieneTipoDatoEnTS(strId)); 
+                if(strcmpi(tipoDatoId,"") == 0){
+                  printf("ERROR: El id %s no tiene tipo de dato ni fue declarado\n",strId);
+                  system ("Pause");
+										exit(3);
+                  return;
+                }
 
         printf("24\n");
         printf("paso 24");
@@ -681,7 +699,7 @@ factor:
                 strcpy(tipoDatoId,tieneTipoDatoEnTS($1)); 
 
                 if(strcmpi(tipoDatoId, "") == 0){
-                  printf("ERROR: El id no tiene tipo de dato\n");
+                  printf("ERROR: El id %s no tiene tipo de dato\n",$1);
                   return;
                 }
 
