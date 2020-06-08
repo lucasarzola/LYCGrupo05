@@ -63,7 +63,7 @@ VALID_STRING        ({PALABRA}|{DELIM}|{CARACTER_ESPECIAL})+
 CTE_STRING          \"{VALID_STRING}\"
 CTE_REAL            ([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*)
 CTE_ENTERA          {DIGITO}+
-
+CUALQUIER_DIGITO    ({CARACTER_ESPECIAL})*|({LETRA}|{DIGITO})*
 
 
 %%
@@ -167,4 +167,8 @@ CTE_ENTERA          {DIGITO}+
 									system ("Pause");
 									exit(1);
 							}}
+{CUALQUIER_DIGITO}			{printf("Se detecto un digito erroneo: %s", yytext);
+									system ("Pause");
+									exit(1);
+									};
 %%
