@@ -292,9 +292,10 @@ decision:
      |IF P_A condicion P_C bloque ELSE 
      {
         int i;
+        int nro;
         for(i=0; i<contadorComparaciones; i++)
         {
-          int nro = desapilar_nro(&pilaCMP);
+          nro = desapilar_nro(&pilaCMP);
           printf("Valor de la pila %d",nro); 
           
           //char posPolaca[MAXCAD];
