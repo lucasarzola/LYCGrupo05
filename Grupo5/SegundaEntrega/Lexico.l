@@ -116,12 +116,12 @@ CUALQUIER_DIGITO    ({CARACTER_ESPECIAL})*|({LETRA}|{DIGITO})*
 									}       
 {CTE_STRING}        { 			yylval.str_val = strdup(yytext);
 								if(strlen(yytext) <= 30) {
-
+									char *longitudString = (char*) malloc(sizeof(yytext)+1);
 									char *nombreString = (char*) malloc(sizeof(yytext)+1);
   									sprintf(nombreString,"_%s",yytext);
-
+									sprintf(longitudString,"%d",strlen(yytext));
 									if(existeEnTS(yytext)==0)
-  									insertarEnNuevaTS(nombreString,"Cte_String",yylval.str_val,""); 
+  									insertarEnNuevaTS(nombreString,"Cte_String",yylval.str_val,longitudString); 
 									
 									printf("Texto capturado: %s",yytext);
 
