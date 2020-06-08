@@ -80,6 +80,7 @@ int cantFilasTS = 0;
   void guardarTS();
   int validarTipoDatoEnTS(char*, char*); 
   int ponerValorEnTS(char*, char*);
+  void invertirComparador(char *);
 
 
 	//Contadores
@@ -258,7 +259,6 @@ decision:
         { 
           printf("17\n");
           printf("llego hasta esta regla");
-
           int i;
           for(i=0; i<contadorComparaciones; i++)
           {
@@ -267,16 +267,16 @@ decision:
             
             //char posPolaca[MAXCAD];
             //creo variable global para evitar escribirlo en todos lados
-            sprintf(posPolaca,"%d",posicionPolaca);
+            sprintf(posPolaca,"%d",posicionPolaca+1);
             ponerEnPolacaPosicion(&polaca,nro,posPolaca);
           }
-	  contadorComparaciones = 0;
+          contadorComparaciones = 0;
           printf("pase bloque");
         }
 
      |IF P_A condicion P_C bloque ELSE 
      {
-	int i;
+        int i;
         for(i=0; i<contadorComparaciones; i++)
         {
           int nro = desapilar_nro(&pilaCMP);
@@ -284,7 +284,7 @@ decision:
           
           //char posPolaca[MAXCAD];
           //creo variable global para evitar escribirlo en todos lados
-          sprintf(posPolaca,"%d",posicionPolaca+1);
+          sprintf(posPolaca,"%d",posicionPolaca+2);
           ponerEnPolacaPosicion(&polaca,nro,posPolaca);
         }
         contadorComparaciones = 0;
@@ -328,21 +328,34 @@ iteracion:
             tInfoWhile->nro = posicionPolaca;
             apilar(&pilaWhile,tInfoWhile);
           }
-          P_A condicion P_C
+          P_A condicion P_C{
+            //apilo la posicion actual, avanzo
+            ponerEnPolaca(&polaca,"CMP");
+            char ComparadorWhile[MAXCAD];
+            desapilar_str(&pilaCMP,ComparadorWhile);
+            ponerEnPolaca(&polaca,ComparadorWhile);
+            
+            t_info *tInfoWhile=(t_info*) malloc(sizeof(t_info));
+            if(!tInfoWhile)
+            {
+                return;
+            }
+            tInfoWhile->nro = posicionPolaca;
+            apilar(&pilaWhile,tInfoWhile);
+            ponerEnPolaca(&polaca,"");
+          }
           bloque{
             ponerEnPolaca(&polaca,"BI");
-            int i, nro;
-            for(i=0; i<contadorComparaciones; i++){
-              nro = desapilar_nro(&pilaCMP);
-                  printf("Valor de la pila %d\n",nro); 
-              char posPolaca[MAXCAD];
-              sprintf(posPolaca,"%d",posicionPolaca+1);
-              ponerEnPolacaPosicion(&polaca,nro,posPolaca);
-            }
-            
+            int nro = desapilar_nro(&pilaWhile);
+                 printf("Valor de la pila %d\n",nro); 
+        
+            char* posPolaca;
+            sprintf(posPolaca,"%d",posicionPolaca+1);
+            ponerEnPolacaPosicion(&polaca,nro,posPolaca);
+
             nro = desapilar_nro(&pilaWhile);
 
-            char posIteracion[MAXCAD];
+            char* posIteracion;
             sprintf(posIteracion,"%d",nro);
             ponerEnPolaca(&polaca,posIteracion);
            } ENDWHILE {printf("ENDWHILE     19\n");}
@@ -387,7 +400,7 @@ ifunario:
             sprintf(posPolaca,"%d",posicionPolaca+1);
             ponerEnPolacaPosicion(&polaca,nro,posPolaca);
           }
-	  contadorComparaciones = 0;
+          contadorComparaciones = 0;
           //apilar(#celda_actual); 
           t_info *tInfoIfUnario=(t_info*) malloc(sizeof(t_info));
           if(!tInfoIfUnario)
@@ -444,7 +457,7 @@ entrada:
         printf("paso 24");
         ponerEnPolaca(&polaca,strId);
         ponerEnPolaca(&polaca,"GET");
-        }
+      }
       ;
 
 condicion:
@@ -505,13 +518,60 @@ condicion:
           }
           |comparacion OR 
           {
+            ponerEnPolaca(&polaca, "CMP");
             //si es con OR se deberia modificar el cmp apilado y cambiarlo por el contrario
+            invertirComparador(tipoComparador);
+
+                       
+            ponerEnPolaca(&polaca, tipoComparador);
+            t_info *tInfoPilaCmp=(t_info*) malloc(sizeof(t_info));
+            if(!tInfoPilaCmp)
+            {
+              return;
+            }
+            tInfoPilaCmp->nro = posicionPolaca;
+            apilar(&pilaCMP,tInfoPilaCmp);
+            //avanzar(); 
+            ponerEnPolaca(&polaca,"");
+            contadorComparaciones++;
           }
           comparacion 
           {
+            //insertar(CMP); 
+            ponerEnPolaca(&polaca, "CMP");
+            //insertar(@cmp_type);
+            ponerEnPolaca(&polaca, tipoComparador);
+            //apilar(#celda_actual); 
+            t_info *tInfoPilaCmp=(t_info*) malloc(sizeof(t_info));
+            if(!tInfoPilaCmp)
+            {
+              return;
+            }
+            tInfoPilaCmp->nro = posicionPolaca;
+            apilar(&pilaCMP,tInfoPilaCmp);
+            //avanzar(); 
+            ponerEnPolaca(&polaca,"");
+            contadorComparaciones++;
             printf(" 27\n");
           }
-	        |NOT comparacion {printf(" 28\n");}
+        |NOT comparacion {
+            ponerEnPolaca(&polaca, "CMP");
+            //si es con OR se deberia modificar el cmp apilado y cambiarlo por el contrario
+            invertirComparador(tipoComparador);
+                       
+            ponerEnPolaca(&polaca, tipoComparador);
+            t_info *tInfoPilaCmp=(t_info*) malloc(sizeof(t_info));
+            if(!tInfoPilaCmp)
+            {
+              return;
+            }
+            tInfoPilaCmp->nro = posicionPolaca;
+            apilar(&pilaCMP,tInfoPilaCmp);
+            //avanzar(); 
+            ponerEnPolaca(&polaca,"");
+            contadorComparaciones++;
+            printf(" 28\n");
+        }
 		;
 
 comparacion:
@@ -1143,7 +1203,44 @@ hacerFactoriales(){
          sprintf(posIteracion,"%d",nro);
          ponerEnPolaca(&polaca,posIteracion);
   }
+}
+
+  void invertirComparador(char *comparadorEntrada) 
+  {
+    if(strcmpi(comparadorEntrada,"BEQ")==0)
+    {
+      strcpy(comparadorEntrada,"BNE");
+      
+    }
+    if(strcmpi(comparadorEntrada,"BNE")==0)
+    {
+      strcpy(comparadorEntrada,"BEQ");
+      
+    }
+    if(strcmpi(comparadorEntrada,"BLT")==0)
+    {
+      strcpy(comparadorEntrada,"BGE");
+      
+    }
+    if(strcmpi(comparadorEntrada,"BGT")==0)
+    {
+      strcpy(comparadorEntrada,"BLE");
+      
+    }
+    if(strcmpi(comparadorEntrada,"BGE")==0)
+    {
+      strcpy(comparadorEntrada,"BLT");
+      
+    }
+    if(strcmpi(comparadorEntrada,"BLE")==0)
+    {
+      strcpy(comparadorEntrada,"BGT");
+      
+    }
   }
+
+
+
 
 
 
