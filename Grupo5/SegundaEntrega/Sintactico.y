@@ -182,24 +182,21 @@ char *str_val;
 
 %%
 programa:  	   
-	PROGRAM est_declaracion bloque {printf(" 1\n");}
+	PROGRAM est_declaracion bloque {printf("Regla 1, Fin programa\n");}
     ;
 
 est_declaracion:
-	DEFVAR declaraciones ENDDEF {printf(" 2\n");}
+	DEFVAR {printf("Inicio declaraciones\n");} declaraciones ENDDEF {printf("Regla 2, Fin declaraciones\n");}
         ;
 
 declaraciones:
-            declaracion {printf(" 3\n");}
-            |declaracion declaraciones  {}
+            declaracion {printf("Regla 3\n");}
+            |declaracion declaraciones  {printf("Regla 4\n");}
       ;
 declaracion:
             FLOAT COLON lista_var{
               
               t_info* tInfoADesapilar;
-
-            printf("Cantidad de variables hasta FLOAT:  %d\n", contVar);
-
               int value =0;
               for(value;value<contVar;value++){
                      char floatIds[MAXCAD];
@@ -214,9 +211,6 @@ declaracion:
             |STRING COLON lista_var{
 
               t_info* tInfoADesapilar;
-
-            printf("Cantidad de variables hasta STRING:  %d\n", contVar);
-
               int value =0;
               for(value;value<contVar;value++){
                       char stringIds[MAXCAD];
@@ -230,9 +224,6 @@ declaracion:
             |INT COLON lista_var
             {
               t_info* tInfoADesapilar;
-
-            printf("Cantidad de variables hasta INT:  %d\n", contVar);
-
               int value =0;
               for(value;value<contVar;value++){
                      char intIds[MAXCAD];
@@ -254,30 +245,26 @@ lista_var:
           ;
 
 bloque:
-          sentencia   {printf(" 10\n");}
-          |bloque sentencia {printf(" 11\n");}
+          sentencia   {printf(" Regla 10\n");}
+          |bloque sentencia {printf(" Regla 11\n");}
           ;
 sentencia:
-          decision{printf("12\n");}
-          |iteracion{printf("13\n");}
-          |asignacion {printf("14\n");}
-          |salida {printf(" 15\n");}
-          |entrada {printf(" 16\n");}
+          decision{printf("Regla 12: fin decision\n");}
+          |iteracion{printf("Regla 13: fin iteracion\n");}
+          |asignacion {printf("Regla 14: fin asignacion\n");}
+          |salida {printf("Regla 15: fin salida\n");}
+          |entrada {printf("Regla 16: fin entrada\n");}
           ;
 
 decision: 
     	 IF P_A condicion P_C bloque ENDIF 
         { 
           printf("17\n");
-          printf("llego hasta esta regla");
           int i, nro;
           for(i=0; i<contadorComparaciones; i++)
           {
             nro = desapilar_nro(&pilaCMP);
-            printf("Valor de la pila %d",nro); 
-            
-            //char posPolaca[MAXCAD];
-            //creo variable global para evitar escribirlo en todos lados
+
             sprintf(posPolaca,"%d",posicionPolaca);
             ponerEnPolacaPosicion(&polaca,nro,posPolaca);
           }
@@ -287,7 +274,6 @@ decision:
             ponerEnPolacaPosicion(&polaca,nro,posPolaca);
           }
           contadorComparaciones = 0;
-          printf("pase bloque");
         }
 
      |IF P_A condicion P_C bloque ELSE 
@@ -297,7 +283,6 @@ decision:
         for(i=0; i<contadorComparaciones; i++)
         {
           nro = desapilar_nro(&pilaCMP);
-          printf("Valor de la pila %d",nro); 
           
           //char posPolaca[MAXCAD];
           //creo variable global para evitar escribirlo en todos lados
@@ -322,7 +307,6 @@ decision:
         } 
      bloque {
         int nro = desapilar_nro(&pilaIf);
-        printf("Valor de la pila %d",nro);   
         //char posPolaca[MAXCAD];
         //creo variable global para evitar escribirlo en todos lados
         sprintf(posPolaca,"%d",posicionPolaca);
@@ -333,7 +317,7 @@ decision:
 
 iteracion:
           WHILE{
-            printf("WHILE\n");
+            printf("Empieza WHILE\n");
             t_info info;
             info.cadena=(char*)malloc(sizeof(char)*MAXCAD);
             info.nro=contWhile++;
@@ -357,7 +341,6 @@ iteracion:
             for(i=0; i<contadorComparaciones; i++)
             {
               nro = desapilar_nro(&pilaCMP);
-                 printf("Valor de la pila %d\n",nro); 
         
               char posPolaca[MAXCAD];
               sprintf(posPolaca,"%d",posicionPolaca+1);
@@ -389,7 +372,7 @@ asignacion:
 	    {
 	      t_info  *tInfoTipoDato;
         
-              printf(" 20\n");
+              printf("Regla 20\n");
 	      char strId[MAXCAD];
               char tipoDeDato[MAXCAD]; 
 	      desapilar_str(&pilaIdsAsig, strId);
@@ -478,14 +461,12 @@ salida:
                   return;
                 }
 
-          printf("22\n");
+          printf("Regla 22\n");
           ponerEnPolaca(&polaca,strId);
-          printf("paso 22");
           ponerEnPolaca(&polaca,"DISPLAY");
         }
         |DISPLAY CTE_STRING{
-          printf("23\n");
-          printf("paso 23");
+          printf("Regla 23\n");
           ponerEnPolaca(&polaca,$2);
           ponerEnPolaca(&polaca,"DISPLAY");
         }
@@ -505,8 +486,7 @@ entrada:
                   return;
                 }
 
-        printf("24\n");
-        printf("paso 24");
+        printf("Regla 24\n");
         ponerEnPolaca(&polaca,strId);
         ponerEnPolaca(&polaca,"GET");
       }
@@ -515,7 +495,7 @@ entrada:
 condicion:
           comparacion
           {
-            printf(" 25\n");
+            printf("Regla 25\n");
             ponerEnPolaca(&polaca, "CMP");
             //insertar(@cmp_type); 
             ponerEnPolaca(&polaca, tipoComparador);
@@ -551,7 +531,7 @@ condicion:
           }
           comparacion 
           {
-            printf(" 26\n");
+            printf("Regla 26\n");
             //insertar(CMP); 
             ponerEnPolaca(&polaca, "CMP");
             //insertar(@cmp_type);
@@ -607,7 +587,7 @@ condicion:
 	    saltoOR= posicionPolaca;
             condicion_or=1;
             printf("Posicion de salto del OR%d\n",saltoOR); 
-            printf(" 27\n");
+            printf("Regla 27\n");
           }
         |NOT comparacion {
             ponerEnPolaca(&polaca, "CMP");
@@ -630,70 +610,70 @@ condicion:
 		;
 
 comparacion:
-          expresion comparador expresion {printf(" 29\n");}
-	      |P_A expresion comparador expresion P_C {printf(" 30\n");}
+          expresion comparador expresion {printf("Regla 29\n");}
+	      |P_A expresion comparador expresion P_C {printf("Regla 30\n");}
 		  ;
         
 comparador:
           MAYEQ 
           {
-            printf(" 31\n");
+            printf("Regla 31\n");
             strcpy(tipoComparador,"BLT");
           }
           |MINEQ 
           {
-            printf(" 32\n");
+            printf("Regla 32\n");
             strcpy(tipoComparador,"BGT");
           }
           |MIN 
           {
-            printf(" 33\n");
+            printf("Regla 33\n");
             strcpy(tipoComparador,"BGE");
           }
           |MAY {
-            printf(" 34\n");
+            printf("Regla 34\n");
             strcpy(tipoComparador,"BLE");
           }
           |EQUAL 
           {
-            printf(" 35\n");
+            printf("Regla 35\n");
             strcpy(tipoComparador,"BNE");
           }
 	  |NOTEQUAL 
           {
-            printf(" 36\n");
+            printf("Regla 36\n");
             strcpy(tipoComparador,"BEQ");
           }
 		  ;
 
 expresion:
-		termino  {printf(" 37\n");}
+		termino  {printf("Regla 37\n");}
 	     |expresion OPSUM termino {
-         printf(" 38\n");
+         printf("Regla 38\n");
          ponerEnPolaca(&polaca,"+");
          }
          |expresion OPRES termino {
-           printf(" 39\n");
+           printf("Regla 39\n");
            ponerEnPolaca(&polaca,"-");
            }
-         |factorial {printf(" 40\n");
+         |factorial {printf("Regla 40\n");
                  
                  }
-         |combinatoria {printf(" 41\n");}
-         |ifunario {printf(" 42\n");}
+         |combinatoria {printf("Regla 41\n");}
+         |ifunario {printf("Regla 42\n");}
 		 ;
 
 termino: 
-       factor                   {printf("43\n");}
+       factor                   {printf("Regla 43\n");}
 	   |termino OPDIV factor    {
                                 
-        printf("44\n");
+        printf("Regla 44\n");
         ponerEnPolaca(&polaca,"/");
                                 
             }
        |termino OPMUL factor    {
                                 
-        printf("45\n");
+        printf("Regla 45\n");
         ponerEnPolaca(&polaca,"*");
             }			   
        ;
@@ -701,7 +681,7 @@ termino:
 factor:
       id     {
                
-                printf("46\n");
+                printf("Regla 46: id por factor\n");
                 char tipoDatoId[MAXCAD];
                 strcpy(tipoDatoId,tieneTipoDatoEnTS($1)); 
 
@@ -719,7 +699,7 @@ factor:
               }
       | cte_Entera              {
         
-        printf("47\n");
+        printf("Regla 47: cte entera por factor\n");
       char arrayEntera[MAXCAD];
       t_info *tInfoFactor = (t_info*) malloc(sizeof(t_info));
       tInfoFactor->cadena = (char *) malloc (50 * sizeof (char));
@@ -733,7 +713,7 @@ factor:
          }
       | cte_Real                {
 
-      printf("48\n");
+      printf("Regla 48: cte real por factor\n");
       char arrayReal[MAXCAD];
       t_info *tInfoFactor =  (t_info*) malloc(sizeof(t_info));
       tInfoFactor->cadena = (char *) malloc (50 * sizeof (char));
@@ -745,7 +725,7 @@ factor:
 
       }
       | cte_String              {
-        printf("49\n");
+        printf("Regla 49: cte string por factor\n");
 	t_info *tInfoFactor = (t_info*) malloc(sizeof(t_info));
         tInfoFactor->cadena = (char *) malloc (50 * sizeof (char));
         strcpy(tInfoFactor->cadena,"STRING");
@@ -756,7 +736,7 @@ factor:
 
 factorial:
       FACT P_A {
-
+        printf("Regla 50: Empieza factorial");
         while(existeEnTS(resExpFact) == 1)
             {
             sprintf(resExpFact,"@resFact%d",resExpFactActual+1);
@@ -841,6 +821,7 @@ factorial:
 
 combinatoria:
       COMB P_A {
+        printf("Regla 51: combina");
         while(existeEnTS(resPrimExpComb) == 1) 
             {
             sprintf(resPrimExpComb,"@resExp%d",resActual+3);
@@ -969,7 +950,7 @@ int main(int argc,char *argv[])
   guardarPolaca(&polaca);
   
   //printf("Validando tipo de dato: %d",validarTipoDatoEnTS("a1","STRING"));
-  mostrarTS();
+  //mostrarTS();
   guardarTS();
   fclose(yyin);
 
@@ -1033,7 +1014,9 @@ void insertarTipoDatoEnTS(char* nombre, char* tipoDato){
         return;
       }
     }
-    printf("Error! No existe la variable en la tabla de simbolos");	  
+    printf("Error! No existe la variable %s en la tabla de simbolos", nombre);	
+    system ("Pause");
+		exit(1);
     return;
   }
 
@@ -1057,7 +1040,7 @@ int validarTipoDatoEnTS(char* nombre, char* tipoDato){
           }
       }
     }
-    printf("\nError! No existe la variable en la tabla de simbolos");	  
+    printf("\nError! No existe la variable %s en la tabla de simbolos",nombre);	  
     return ERROR;
   }
 
@@ -1073,7 +1056,9 @@ int validarTipoDatoEnTS(char* nombre, char* tipoDato){
         tablaDeSimbolos[i].valor = nuevoValor;
       }
     }
-    printf("\nError! No existe la variable en la tabla de simbolos");	  
+    printf("\nError! No existe la variable en la tabla de simbolos");
+    system ("Pause");
+									exit(1);
     return ERROR;
   }
 
