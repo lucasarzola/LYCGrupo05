@@ -410,6 +410,8 @@ asignacion:
 ifunario:
         IF P_A condicion 
         {
+	  if(existeEnTS("@resIfUn")==0)
+          insertarEnNuevaTS("_@resIfUn","","","");
           ponerEnPolaca(&polaca,"@r");
         }
         COMA expresion COMA 
@@ -418,14 +420,19 @@ ifunario:
           ponerEnPolaca(&polaca,"="); 
           //insertar(BI); 
           ponerEnPolaca(&polaca,"BI");
-          int i;
+          int i, nro;
           for(i=0; i<contadorComparaciones; i++)
           {
             //@x=desapilar(tope_de_pila);
-            int nro = desapilar_nro(&pilaCMP);
+            nro = desapilar_nro(&pilaCMP);
             //insertar_en(@x, #celda_actual);
             sprintf(posPolaca,"%d",posicionPolaca+1);
             ponerEnPolacaPosicion(&polaca,nro,posPolaca);
+          }
+	  if(condicion_or == 1){
+           char posPolaca[MAXCAD];
+           sprintf(posPolaca,"%d",saltoOR);
+           ponerEnPolacaPosicion(&polaca,nro,posPolaca);
           }
           contadorComparaciones = 0;
           //apilar(#celda_actual); 
