@@ -324,34 +324,21 @@ iteracion:
             tInfoWhile->nro = posicionPolaca;
             apilar(&pilaWhile,tInfoWhile);
           }
-          P_A condicion P_C{
-            //apilo la posicion actual, avanzo
-            ponerEnPolaca(&polaca,"CMP");
-            char ComparadorWhile[MAXCAD];
-            desapilar_str(&pilaCMP,ComparadorWhile);
-            ponerEnPolaca(&polaca,ComparadorWhile);
-            
-            t_info *tInfoWhile=(t_info*) malloc(sizeof(t_info));
-            if(!tInfoWhile)
-            {
-                return;
-            }
-            tInfoWhile->nro = posicionPolaca;
-            apilar(&pilaWhile,tInfoWhile);
-            ponerEnPolaca(&polaca,"");
-          }
+          P_A condicion P_C
           bloque{
             ponerEnPolaca(&polaca,"BI");
-            int nro = desapilar_nro(&pilaWhile);
-                 printf("Valor de la pila %d\n",nro); 
-        
-            char* posPolaca;
-            sprintf(posPolaca,"%d",posicionPolaca+1);
-            ponerEnPolacaPosicion(&polaca,nro,posPolaca);
-
+            int i, nro;
+            for(i=0; i<contadorComparaciones; i++){
+              nro = desapilar_nro(&pilaCMP);
+                  printf("Valor de la pila %d\n",nro); 
+              char posPolaca[MAXCAD];
+              sprintf(posPolaca,"%d",posicionPolaca+1);
+              ponerEnPolacaPosicion(&polaca,nro,posPolaca);
+            }
+            
             nro = desapilar_nro(&pilaWhile);
 
-            char* posIteracion;
+            char posIteracion[MAXCAD];
             sprintf(posIteracion,"%d",nro);
             ponerEnPolaca(&polaca,posIteracion);
            } ENDWHILE {printf("ENDWHILE     19\n");}
