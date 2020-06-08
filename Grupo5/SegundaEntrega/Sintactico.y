@@ -100,6 +100,7 @@ int cantFilasTS = 0;
   t_pila pilaCMP;
   t_pila pilaIfUnario;
   t_pila pilaIdsAsig;
+  t_pila pilaTipoDato;
   char tipoComparador[4];
   int contadorComparaciones = 0;
 %}
@@ -360,9 +361,20 @@ asignacion:
       }
       ASIGN expresion 
 	    {
-	      printf(" 20\n");
-	      char strId[MAXCAD]; 
+	      t_info  *tInfoTipoDato;
+        
+              printf(" 20\n");
+	      char strId[MAXCAD];
+              char tipoDeDato[MAXCAD]; 
 	      desapilar_str(&pilaIdsAsig, strId);
+        
+              desapilar_str(&pilaTipoDato,tipoDeDato);
+              // printf("Validando tipo de dato: %d, de la variable %s",validarTipoDatoEnTS(strId,tipoDeDato),strId);
+              if(validarTipoDatoEnTS(strId,tipoDeDato)  != OK)
+              {
+                //printf("Tipo de dato del id : %s invalido: %s\n",strId,tipoDeDato);
+                return;
+              }
 	      //printf("\nid asignacion desapilado: %s", strId);
 	      ponerEnPolaca(&polaca, strId);
 	      ponerEnPolaca(&polaca, "=");
@@ -643,22 +655,36 @@ factor:
         
         printf("47\n");
       char arrayEntera[MAXCAD];
+      t_info *tInfoFactor = (t_info*) malloc(sizeof(t_info));
+      tInfoFactor->cadena = (char *) malloc (50 * sizeof (char));
+      strcpy(tInfoFactor->cadena,"INT");
       sprintf(arrayEntera,"%d\0",$1);
       ponerEnPolaca(&polaca,arrayEntera);
+      
+      apilar(&pilaTipoDato,tInfoFactor);
 
 
          }
       | cte_Real                {
 
-        printf("48\n");
+      printf("48\n");
       char arrayReal[MAXCAD];
-        sprintf(arrayReal,"%f",$1);
+      t_info *tInfoFactor =  (t_info*) malloc(sizeof(t_info));
+      tInfoFactor->cadena = (char *) malloc (50 * sizeof (char));
+      strcpy(tInfoFactor->cadena,"FLOAT");
+      sprintf(arrayReal,"%f",$1);
       ponerEnPolaca(&polaca,arrayReal);
+      apilar(&pilaTipoDato,tInfoFactor);
+
 
       }
       | cte_String              {
         printf("49\n");
-      ponerEnPolaca(&polaca,$1);
+	t_info *tInfoFactor = (t_info*) malloc(sizeof(t_info));
+        tInfoFactor->cadena = (char *) malloc (50 * sizeof (char));
+        strcpy(tInfoFactor->cadena,"STRING");
+     	ponerEnPolaca(&polaca,$1);
+	apilar(&pilaTipoDato,tInfoFactor);
       }
       ;
 
@@ -821,11 +847,12 @@ int main(int argc,char *argv[])
   crearPila(&pilaFactorial);
 	crearPolaca(&polaca);
   crearPila(&pilaCMP);
+  crearPila(&pilaTipoDato);
 	yyparse();
   }
   guardarPolaca(&polaca);
   
-  printf("Validando tipo de dato: %d",validarTipoDatoEnTS("a1","STRING"));
+  //printf("Validando tipo de dato: %d",validarTipoDatoEnTS("a1","STRING"));
   mostrarTS();
   guardarTS();
   fclose(yyin);
