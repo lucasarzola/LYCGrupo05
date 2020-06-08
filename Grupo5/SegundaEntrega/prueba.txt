@@ -13,7 +13,7 @@ p1 = 99999.99
 p2 = 99.
 p3 = .9999
 
-str = "@sdADaSjfla%dfg"
+str = "@sdADaSjfla%d"
 str2 = "asldk fh sjf"
 
 IF ( ( a1 > b1 ) OR ( b < 6 ) )

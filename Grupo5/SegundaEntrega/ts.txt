@@ -1,48 +1,55 @@
-NOMBRE			TIPODATO		VALOR
-a1			ID			--
-b1			ID			--
-variable1		ID			--
-p1			ID			--
-p2			ID			--
-p3			ID			--
-a			ID			--
-b			ID			--
-str			ID			--
-str2			ID			--
-_99999.990		Real			99999.990
-_99.000			Real			99.000
-_1.000			Real			1.000
-_"@sdADaSjfla%dfg"	String			"@sdADaSjfla%dfg"
-_"asldk fh sjf"		String			"asldk fh sjf"
-_6			Ent			6
-Ab			ID			--
-Ba			ID			--
-Abba			ID			--
-AcdC			ID			--
-resComb			ID			--
-_5			Ent			5
-_3			Ent			3
-_4			Ent			4
-_2			Ent			2
-resFact			ID			--
-n			ID			--
-resIfUn			ID			--
-alpha			ID			--
-_300			Ent			300
-_1			Ent			1
-ab			ID			--
-bc			ID			--
-cd			ID			--
-_123			Ent			123
-hi			ID			--
-de			ID			--
-_"hola"			String			"hola"
-_456			Ent			456
-c			ID			--
-d			ID			--
-fg			ID			--
-_789			Ent			789
-_0			Ent			0
-_"ewr"			String			"ewr"
-base			ID			--
-var1			ID			--
+_a1		FLOAT				
+_b1		FLOAT				
+_var1		STRING				
+_p1		FLOAT				
+_p2		FLOAT				
+_p3		FLOAT				
+_a		INT				
+_b		INT				
+_c		INT				
+_d		INT				
+_ab		INT				
+_bc		INT				
+_cd		INT				
+_str		STRING				
+_str2		STRING				
+_aBBa		STRING				
+_aCdC		STRING				
+_ola		STRING				
+_base		STRING				
+_resComb		INT				
+_resFact		INT				
+_resIfUn		INT				
+_n		INT				
+_r3sp		INT				
+_99999.990000		Cte_Real		99999.990000		
+_99.000000		Cte_Real		99.000000		
+_0.999900		Cte_Real		0.999900		
+_"@sdADaSjfla%d"		Cte_String		"@sdADaSjfla%d"		15
+_"asldk fh sjf"		Cte_String		"asldk fh sjf"		14
+_6		Cte_Entera		6		
+_@resExp1						
+_5		Cte_Entera		5		
+_3		Cte_Entera		3		
+_@resExp2						
+_4		Cte_Entera		4		
+_2		Cte_Entera		2		
+_@F1						
+_@F2						
+_@resExp3						
+_@F3						
+_@resFact1						
+_@fact						
+_300		Cte_Entera		300		
+_@resIfUn						
+_1		Cte_Entera		1		
+_123		Cte_Entera		123		
+_456		Cte_Entera		456		
+_678		Cte_Entera		678		
+_910		Cte_Entera		910		
+_"hola"		Cte_String		"hola"		6
+_"chau"		Cte_String		"chau"		6
+_789		Cte_Entera		789		
+_71		Cte_Entera		71		
+_10		Cte_Entera		10		
+_"ewr"		Cte_String		"ewr"		5
