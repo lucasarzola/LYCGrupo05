@@ -109,6 +109,7 @@ int cantFilasTS = 0;
   char resSegExpComb[MAXCAD] ="@resExp2";
   char resTercExpComb[MAXCAD] ="@resExp3";
   char resExpFact[MAXCAD] ="@resFact1";
+  char resComb[MAXCAD] = "@resComb1";
 %}
 
 %union {
@@ -800,6 +801,7 @@ combinatoria:
         }
         COMA { 
           char* resSegAGuardar = (char*) malloc(sizeof(char)*MAXCAD+1);
+          
           sprintf(resSegExpComb,"@resExp%d",resActual+1);
          
           sprintf(resSegAGuardar,"_%s",resSegExpComb);
@@ -841,7 +843,8 @@ combinatoria:
 
         hacerFactoriales();
 
-        ponerEnPolaca(&polaca,resTercExpComb);
+        sprintf(resComb,"@resComb%d",resActual);
+        ponerEnPolaca(&polaca,resComb);
         ponerEnPolaca(&polaca,"@F1");
         ponerEnPolaca(&polaca,"@F2");
 
@@ -851,9 +854,12 @@ combinatoria:
         ponerEnPolaca(&polaca,"@F3");
         ponerEnPolaca(&polaca,"*");
         ponerEnPolaca(&polaca,"/");
+        ponerEnPolaca(&polaca,"=");
+        ponerEnPolaca(&polaca,resComb);
 
         resActual = resActual-3;
         sprintf(resPrimExpComb,"@resExp%d",resActual);
+        sprintf(resSegExpComb,"@resExp%d",resActual+1);
         }
 
         P_C 
