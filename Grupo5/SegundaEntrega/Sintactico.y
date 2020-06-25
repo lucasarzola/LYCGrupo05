@@ -268,10 +268,11 @@ decision:
             sprintf(posPolaca,"%d",posicionPolaca);
             ponerEnPolacaPosicion(&polaca,nro,posPolaca);
           }
-	  if(condicion_or == 1){
+	      if(condicion_or == 1){
             char posPolaca[MAXCAD];
             sprintf(posPolaca,"%d",saltoOR);
             ponerEnPolacaPosicion(&polaca,nro,posPolaca);
+            condicion_or = 0;
           }
           contadorComparaciones = 0;
         }
@@ -293,6 +294,7 @@ decision:
            char posPolaca[MAXCAD];
            sprintf(posPolaca,"%d",saltoOR);
            ponerEnPolacaPosicion(&polaca,nro,posPolaca);
+           condicion_or = 0;
         }
         contadorComparaciones = 0;
         ponerEnPolaca(&polaca,"BI");
@@ -350,6 +352,7 @@ iteracion:
               char posPolaca[MAXCAD];
               sprintf(posPolaca,"%d",saltoOR);
               ponerEnPolacaPosicion(&polaca,nro,posPolaca);
+              condicion_or = 0;
             }
 
             nro = desapilar_nro(&pilaWhile);
@@ -412,11 +415,12 @@ ifunario:
             sprintf(posPolaca,"%d",posicionPolaca+1);
             ponerEnPolacaPosicion(&polaca,nro,posPolaca);
           }
-	  if(condicion_or == 1){
-           char posPolaca[MAXCAD];
-           sprintf(posPolaca,"%d",saltoOR);
-           ponerEnPolacaPosicion(&polaca,nro,posPolaca);
-          }
+	          if(condicion_or == 1){
+              char posPolaca[MAXCAD];
+              sprintf(posPolaca,"%d",saltoOR);
+              ponerEnPolacaPosicion(&polaca,nro,posPolaca);
+              condicion_or = 0;
+            }
           contadorComparaciones = 0;
           //apilar(#celda_actual); 
           t_info *tInfoIfUnario=(t_info*) malloc(sizeof(t_info));
