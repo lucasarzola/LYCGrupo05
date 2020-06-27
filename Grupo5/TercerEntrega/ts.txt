@@ -1,0 +1,3 @@
+_a		INT				
+_b		INT				
+_1		Cte_Entera		1		

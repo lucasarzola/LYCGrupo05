@@ -1,0 +1,7 @@
+PROGRAM
+
+DEFVAR
+INT : a; b
+ENDDEF
+
+b = a + 1
