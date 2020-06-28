@@ -693,15 +693,12 @@ factor:
         char tipoDatoId[MAXCAD];
         strcpy(tipoDatoId,tieneTipoDatoEnTS($1)); 
 
-        /*asda*/
-        if(strcmpi(tipoDatoId, "") == 0){
-          /*asda*/
+        
+        if(strcmpi(tipoDatoId, "") == 0)
+        {
           printf("ERROR: El id %s no tiene tipo de dato\n",$1);
-          /*asda*/
           return;
-          /*asda*/
         }
-        /*asda*/
         
 
         t_info *tInfoFactor = (t_info*) malloc(sizeof(t_info));
@@ -944,7 +941,7 @@ cte_String: CTE_STRING {
 %%
 
 
-///////////////////////////////FUNCIONES///////////////////////////////
+///////////////////////////////MAIN Y FUNCIONES///////////////////////////////
 
 
 int main(int argc,char *argv[])
@@ -1399,7 +1396,7 @@ hacerFactoriales(){
 
 void generarAssembler(t_polaca* p) {
   t_nodoPolaca* aux;
-  aux=*pp;
+  aux=*p;
   /*int i;
   int nroAuxReal=0;
   int nroAuxEntero=0;
@@ -1418,12 +1415,43 @@ void generarAssembler(t_polaca* p) {
 
   fprintf(pf,"include macros2.asm\n");
   fprintf(pf,"include number.asm\n\n");
-  fprintf(pf,".MODEL LARGE\n.STACK 200h\n.386\n.387\n.DATA\n\n\tMAXTEXTSIZE equ 50\n");
+  fprintf(pf,".MODEL LARGE\n.STACK 200h\n.386\n.DATA\n\n");
 
-  fprintf(pf,"\tFLD 1\n");
-  fprintf(pf,"\tFLD 2\n");
-  fprintf(pf,"\tFADD\n");
-  fprintf(pf,"\tFSTP a\n");
+  //DECLARACION DE VARIABLES
+
+  fprintf(pf,"a\tdd\t?\n");
+  fprintf(pf,"b\tdd\t?\n");
+  fprintf(pf,"result\tdd\t?\n");
+  fprintf(pf,"R\tdd\t?\n");
+  fprintf(pf,"_100m\tdd\t100000.0\n");
+
+  fprintf(pf,"\n.CODE\n");
+
+  /*while(aux!=NULL){
+
+  }*/
+  fprintf(pf,"\tMOV AX,@DATA\n");
+  fprintf(pf,"\tMOV DS,AX\n");
+
+  fprintf(pf,"\tFINIT\n"); //Inicializa el coprocesador
+
+  //ASIGNACION
+
+  fprintf(pf,"FFREE\n");
+  fprintf(pf,"FLD\t_100m\n");
+  fprintf(pf,"FSTP\ta\n");
+
+  //Impresar resultacion
+
+  fprintf(pf,"DisplayFloat a,2\n");
+
+  //FIN DE ARCHIVO
+
+  fprintf(pf,"FINAL:\n");
+  fprintf(pf,"\tmov ah, 1\n\tint 21h\n\tMOV AX, 4c00h\n\tINT 21h\n");
+  fprintf(pf,"END\n\n;FIN DEL PROGRAMA DE USUARIO\n");
+
+  fclose(pf);
 
   printf("FIN GENERACION DE ASSEMBLER!!!");
 }
