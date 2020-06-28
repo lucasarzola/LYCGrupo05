@@ -1415,7 +1415,7 @@ void generarAssembler(t_polaca* p) {
 
   fprintf(pf,"include macros2.asm\n");
   fprintf(pf,"include number.asm\n\n");
-  fprintf(pf,".MODEL LARGE\n.STACK 200h\n.386\n.DATA\n\n");
+  fprintf(pf,".MODEL SMALL\n.386\n.STACK 200h\n\n.DATA\n");
 
   //DECLARACION DE VARIABLES
 
@@ -1433,17 +1433,17 @@ void generarAssembler(t_polaca* p) {
   fprintf(pf,"\tMOV AX,@DATA\n");
   fprintf(pf,"\tMOV DS,AX\n");
 
-  fprintf(pf,"\tFINIT\n"); //Inicializa el coprocesador
+  fprintf(pf,"\tFINIT\n\n"); //Inicializa el coprocesador
 
   //ASIGNACION
 
   fprintf(pf,"FFREE\n");
   fprintf(pf,"FLD\t_100m\n");
-  fprintf(pf,"FSTP\ta\n");
+  fprintf(pf,"FSTP\ta\n\n");
 
   //Impresar resultacion
 
-  fprintf(pf,"DisplayFloat a,2\n");
+  fprintf(pf,"DisplayFloat a,2\n\n");
 
   //FIN DE ARCHIVO
 
