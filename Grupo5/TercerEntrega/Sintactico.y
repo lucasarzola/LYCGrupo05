@@ -768,7 +768,7 @@ factorial:
         ponerEnPolaca(&polaca,"=");
 
         if(existeEnTS("@fact")==0)
-        insertarEnNuevaTS("_@fact","","","");
+        insertarEnNuevaTS("_@fact","INT","","");
 
         ponerEnPolaca(&polaca,"@fact");
 
@@ -844,7 +844,7 @@ combinatoria:
         
         sprintf(resAGuardar,"_%s",resPrimExpComb);
 
-        insertarEnNuevaTS(resAGuardar,"","","");
+        insertarEnNuevaTS(resAGuardar,"INT","","");
         
         ponerEnPolaca(&polaca,resPrimExpComb);
         
@@ -858,7 +858,7 @@ combinatoria:
          
           sprintf(resSegAGuardar,"_%s",resSegExpComb);
           
-          insertarEnNuevaTS(resSegAGuardar,"","","");
+          insertarEnNuevaTS(resSegAGuardar,"INT","","");
           ponerEnPolaca(&polaca,resSegExpComb); 
           
           }  expresion 
@@ -866,14 +866,14 @@ combinatoria:
         ponerEnPolaca(&polaca,"=");
 
         if(existeEnTS("@F1")==0)
-        insertarEnNuevaTS("_@F1","","","");
+        insertarEnNuevaTS("_@F1","INT","","");
 
         ponerEnPolaca(&polaca,"F1"); 
         ponerEnPolaca(&polaca,"1");
         ponerEnPolaca(&polaca,"=");
 
         if(existeEnTS("@F2")==0)
-        insertarEnNuevaTS("_@F2","","","");
+        insertarEnNuevaTS("_@F2","INT","","");
 
         ponerEnPolaca(&polaca,"F2");
         ponerEnPolaca(&polaca,"1");
@@ -885,7 +885,7 @@ combinatoria:
          
         sprintf(resTercAGuardar,"_%s",resTercExpComb);
           
-        insertarEnNuevaTS(resTercAGuardar,"","","");
+        insertarEnNuevaTS(resTercAGuardar,"INT","","");
 
         ponerEnPolaca(&polaca,resTercExpComb);
         ponerEnPolaca(&polaca,resPrimExpComb);
@@ -901,7 +901,7 @@ combinatoria:
         ponerEnPolaca(&polaca,"@F2");
 
         if(existeEnTS("@F3")==0)
-        insertarEnNuevaTS("_@F3","","","");
+        insertarEnNuevaTS("_@F3","FLOAT","","");
         
         ponerEnPolaca(&polaca,"@F3");
         ponerEnPolaca(&polaca,"*");
@@ -1275,6 +1275,11 @@ int ponerEnPolacaPosicion(t_polaca* p,int pos, char *cadena){
 int guardarPolaca(t_polaca *p){
 		FILE*pf=fopen("intermedia.txt","w+");
 		
+    t_nodoPolaca* aux;
+		
+		aux=*p;
+
+
 		if(!pf){
 			//No se creó el archivo de intermedia en el main
 			return ERROR;
@@ -1282,15 +1287,15 @@ int guardarPolaca(t_polaca *p){
 
 		t_nodoPolaca* nodoActual;
 
-		while(*p)
+		while(aux)
 	    {
-	        nodoActual=*p;
+	        nodoActual=aux;
 
 	        fprintf(pf, "%s %d\n",nodoActual->info.cadena, nodoActual->info.nro);
 	        
-			*p=(*p)->psig;
-	        
-			free(nodoActual);
+			aux=(aux)->psig;
+	    
+			//free(nodoActual);
 	    }
 		fclose(pf);
 	}
@@ -1396,7 +1401,9 @@ hacerFactoriales(){
 
 void generarAssembler(t_polaca* p) {
   t_nodoPolaca* aux;
-  aux=*p;
+  char* linea;
+
+
   /*int i;
   int nroAuxReal=0;
   int nroAuxEntero=0;
@@ -1407,30 +1414,85 @@ void generarAssembler(t_polaca* p) {
   int huboAsignacion=TRUE;
   int asignacionConArray=FALSE;
   int vectorComoFactor;*/
+
+
   FILE* pf=fopen("final.asm","w+");
   if(!pf){
     printf("Error al guardar el archivo assembler.\n");
     exit(1);
   }
 
+
+
   fprintf(pf,"include macros2.asm\n");
   fprintf(pf,"include number.asm\n\n");
-  fprintf(pf,".MODEL SMALL\n.386\n.STACK 200h\n\n.DATA\n");
+  fprintf(pf,".MODEL LARGE\n.386\n.STACK 200h\n\n.DATA\n");
+
+
 
   //DECLARACION DE VARIABLES
+    //Parte ejemplo
+    fprintf(pf,"a\tdd\t?\n");
+    fprintf(pf,"b\tdd\t?\n");
+    fprintf(pf,"result\tdd\t?\n");
+    fprintf(pf,"R\tdd\t?\n");
+    fprintf(pf,"_100m\tdd\t100000.0\n");
 
-  fprintf(pf,"a\tdd\t?\n");
-  fprintf(pf,"b\tdd\t?\n");
-  fprintf(pf,"result\tdd\t?\n");
-  fprintf(pf,"R\tdd\t?\n");
-  fprintf(pf,"_100m\tdd\t100000.0\n");
+  
+    int i=0;
+    for(i; i<cantFilasTS;i++)
+    { 
+    if(strcmpi("INT",tablaDeSimbolos[i].tipoDato) == 0){
+          fprintf(pf,"%s dd ?\n",tablaDeSimbolos[i].nombre);        
+        }
 
-  fprintf(pf,"\n.CODE\n");
+    if(strcmpi("FLOAT",tablaDeSimbolos[i].tipoDato) == 0){
+          fprintf(pf,"%s dd ?\n",tablaDeSimbolos[i].nombre);        
+        }
+    
+    if(strcmpi("STRING",tablaDeSimbolos[i].tipoDato) == 0){
+          fprintf(pf,"%s dw ?\n",tablaDeSimbolos[i].nombre);        
+    }  
+    }
+
+  //FIN DECLARACION DE VARIABLES
+
+
+  //Recorremos la polaca
+  while(*p)
+	    {   aux = *p;
+          
+          printf("Recorriendo polaca");
+          linea = (char *) malloc (sizeof((*p)->info.cadena));
+	        sprintf(linea,"%s",(*p)->info.cadena);
+          printf("\nLinea %s", linea);
+
+        //En linea esta el valor de cada cadena que se recorre en la polaca
+
+        
+
+
+
+
+
+
+
+
+
+
+
+			    *p=(*p)->psig;
+			    free(aux);
+	    }
+
+
 
   /*while(aux!=NULL){
 
   }*/
-  fprintf(pf,"\tMOV AX,@DATA\n");
+
+  fprintf(pf,"\n.CODE\n");
+  fprintf(pf,"\n\n\tMOV AX,@DATA\n");
   fprintf(pf,"\tMOV DS,AX\n");
 
   fprintf(pf,"\tFINIT\n\n"); //Inicializa el coprocesador
