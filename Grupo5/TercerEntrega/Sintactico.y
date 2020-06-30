@@ -116,6 +116,11 @@ int cantFilasTS = 0;
   char resTercExpComb[MAXCAD] ="@resExp3";
   char resExpFact[MAXCAD] ="@resFact1";
   char resComb[MAXCAD] = "@resComb1";
+
+  //Assembler
+  t_pila pilaIdsASM;
+
+
 %}
 
 %union {
@@ -1402,8 +1407,9 @@ hacerFactoriales(){
 void generarAssembler(t_polaca* p) {
   t_nodoPolaca* aux;
   char* linea;
-
-
+  crearPila(&pilaIdsASM);
+        char id1[MAXCAD];
+        char id2[MAXCAD];
   /*int i;
   int nroAuxReal=0;
   int nroAuxEntero=0;
@@ -1452,7 +1458,21 @@ void generarAssembler(t_polaca* p) {
     
     if(strcmpi("STRING",tablaDeSimbolos[i].tipoDato) == 0){
           fprintf(pf,"%s dw ?\n",tablaDeSimbolos[i].nombre);        
+    }
+
+    if(strcmpi("Cte_String",tablaDeSimbolos[i].tipoDato) == 0){
+          fprintf(pf,"%s dw %s\n",tablaDeSimbolos[i].nombre,tablaDeSimbolos[i].valor);        
     }  
+
+    if(strcmpi("Cte_Entera",tablaDeSimbolos[i].tipoDato) == 0){
+          fprintf(pf,"%s dd %s\n",tablaDeSimbolos[i].nombre,tablaDeSimbolos[i].valor);        
+    }  
+
+    if(strcmpi("Cte_Real",tablaDeSimbolos[i].tipoDato) == 0){
+          fprintf(pf,"%s dd %s\n",tablaDeSimbolos[i].nombre,tablaDeSimbolos[i].valor);        
+    }  
+
+
     }
 
   //FIN DECLARACION DE VARIABLES
@@ -1469,11 +1489,63 @@ void generarAssembler(t_polaca* p) {
 
         //En linea esta el valor de cada cadena que se recorre en la polaca
 
-        
+        if(strcmpi(linea,"*") == 0){
+          desapilar_str(&pilaIdsASM,id2);
+          desapilar_str(&pilaIdsASM,id1);
 
+          fprintf(pf,"FLD _%s\n",id1);
 
+          if(strcmpi(id2,"aux") != 0)
+          fprintf(pf,"FLD _%s\n",id2);
 
+          fprintf(pf,"FMUL\n");
 
+          t_info *auxPila =(t_info*) malloc(sizeof(t_info));
+          auxPila->cadena = (char *) malloc (50 * sizeof (char));
+          strcpy(auxPila->cadena,"aux");
+          apilar(&pilaIdsASM,auxPila);
+          //Apilar variable aux
+        }
+
+        if(strcmpi(linea,"/") == 0){
+          desapilar_str(&pilaIdsASM,id2);
+          desapilar_str(&pilaIdsASM,id1);
+
+          fprintf(pf,"FLD _%s\n",id1);
+
+          if(strcmpi(id2,"aux") != 0)
+          fprintf(pf,"FLD _%s\n",id2);
+
+          fprintf(pf,"FDIV\n");
+
+          t_info *auxPila =(t_info*) malloc(sizeof(t_info));
+          auxPila->cadena = (char *) malloc (50 * sizeof (char));
+          strcpy(auxPila->cadena,"aux");
+          apilar(&pilaIdsASM,auxPila);
+          //Apilar variable aux
+        }
+
+        if(strcmpi(linea,"-") == 0){
+          desapilar_str(&pilaIdsASM,id2);
+          desapilar_str(&pilaIdsASM,id1);
+
+          fprintf(pf,"FLD _%s\n",id1);
+
+          if(strcmpi(id2,"aux") != 0)
+          fprintf(pf,"FLD _%s\n",id2);
+
+          fprintf(pf,"FRES\n");
+
+          t_info *auxPila =(t_info*) malloc(sizeof(t_info));
+          auxPila->cadena = (char *) malloc (50 * sizeof (char));
+          strcpy(auxPila->cadena,"aux");
+          apilar(&pilaIdsASM,auxPila);
+          //Apilar variable aux
+        }
+
+        if(strcmpi(linea,"=") == 0){
+          fprintf(pf,"FSTP\n");
+        }
 
 
 
