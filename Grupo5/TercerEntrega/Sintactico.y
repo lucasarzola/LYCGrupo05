@@ -1497,8 +1497,8 @@ void generarAssembler(t_polaca* p) {
 
   //FIN DECLARACION DE VARIABLES
   fprintf(pf,"\n.CODE\n");
-  fprintf(pf,"\n\n\tMOV AX,@DATA\n");
-  fprintf(pf,"\tMOV DS,AX\n");
+  fprintf(pf,"\n\nMOV AX,@DATA\n");
+  fprintf(pf,"MOV DS,AX\n");
 
   fprintf(pf,"\tFINIT\n\n"); //Inicializa el coprocesador
 
@@ -1549,13 +1549,14 @@ void generarAssembler(t_polaca* p) {
           if(strcmpi(id1->tipoDeDato,"INT")==0 || strcmpi(id1->tipoDeDato,"Cte_Entera")==0 || strcmpi(id2->tipoDeDato,"INT")==0 || strcmpi(id2->tipoDeDato,"Cte_Entera")==0 )
           {
               printf("Suma entera");
-              fprintf(pf,"\tfild \t@%s\n", id1->cadena);
-							fprintf(pf,"\tfiadd \t@%s\n", id2->cadena); 
+
+              fprintf(pf,"fild\t@%s\n", id1->cadena);
+							fprintf(pf,"fiadd\t@%s\n", id2->cadena); 
        
               char auxInt[MAXCAD];
               sprintf(auxInt,"auxInt%d",contAuxInt);
 
-              fprintf(pf,"\tfistp \t@%s\n", auxInt);
+              fprintf(pf,"fistp\t@%s\n", auxInt);
 
               t_info *auxPilaInt =(t_info*) malloc(sizeof(t_info));  
               auxPilaInt->cadena = (char *) malloc (MAXCAD * sizeof (char));
@@ -1572,15 +1573,17 @@ void generarAssembler(t_polaca* p) {
 
 
               //Cargamos las cadenas
-              fprintf(pf,"\tfld \t@%s\n", id1->cadena);
-						  fprintf(pf,"\tfld \t@%s\n", id2->cadena);
+              fprintf(pf,"fld\t@%s\n", id1->cadena);
 
-              fprintf(pf,"\tfadd\n");
+						  fprintf(pf,"fld\t@%s\n", id2->cadena);
+
+              fprintf(pf,"fadd\n");
 
               //Dejamos el resultado en el aux
               char auxReal[MAXCAD];
               sprintf(auxReal,"auxFloat%d",contAuxFloat);
-              fprintf(pf,"\tfstp \t@%s\n", auxReal);
+
+              fprintf(pf,"fstp\t@%s\n", auxReal);
 
 
               //Guardamos en la pila la nueva variable aux
@@ -1609,14 +1612,16 @@ void generarAssembler(t_polaca* p) {
 
           if(strcmpi(id1->tipoDeDato,"INT")==0 || strcmpi(id1->tipoDeDato,"Cte_Entera")==0 || strcmpi(id2->tipoDeDato,"INT")==0 || strcmpi(id2->tipoDeDato,"Cte_Entera")==0 )
           {
+              //Carga id 1
+              fprintf(pf,"fild\t@%s\n", id1->cadena);
 
-              fprintf(pf,"\tfild \t@%s\n", id1->cadena);
-							fprintf(pf,"\tfisubr \t@%s\n", id2->cadena); 
+              //Resta el id2
+							fprintf(pf,"fisubr\t@%s\n", id2->cadena); 
        
               char auxInt[MAXCAD];
               sprintf(auxInt,"auxInt%d",contAuxInt);
 
-              fprintf(pf,"\tfistp \t@%s\n", auxInt);
+              fprintf(pf,"fistp\t@%s\n", auxInt);
 
               t_info *auxPilaInt =(t_info*) malloc(sizeof(t_info));  
               auxPilaInt->cadena = (char *) malloc (MAXCAD * sizeof (char));
@@ -1629,17 +1634,20 @@ void generarAssembler(t_polaca* p) {
           }else if(strcmpi(id1->tipoDeDato,"FLOAT")==0 || strcmpi(id1->tipoDeDato,"Cte_Real")==0 || strcmpi(id2->tipoDeDato,"FLOAT")==0 || strcmpi(id2->tipoDeDato,"Cte_Real")==0 )
           {
               printf("Resta Float");
+              //Cargo el primer id
+              fprintf(pf,"fld\t@%s\n", id1->cadena);
 
-              fprintf(pf,"\tfld \t@%s\n", id1->cadena);
-						  fprintf(pf,"\tfld \t@%s\n", id2->cadena);
+              //Cargo el segundo id
+						  fprintf(pf,"fld\t@%s\n", id2->cadena);
 
-              fprintf(pf,"\tfsubr\n");
+              //Realiza la resta
+              fprintf(pf,"fsubr\n");
 
 
               char auxReal[MAXCAD];
               sprintf(auxReal,"auxFloat%d",contAuxFloat);
 
-              fprintf(pf,"\tfstp \t@%s\n", auxReal);
+              fprintf(pf,"fstp\t@%s\n", auxReal);
 
               t_info *auxPilaReal =(t_info*) malloc(sizeof(t_info));  
               auxPilaReal->cadena = (char *) malloc (MAXCAD * sizeof (char));
@@ -1664,13 +1672,14 @@ void generarAssembler(t_polaca* p) {
           if(strcmpi(id1->tipoDeDato,"INT")==0 || strcmpi(id1->tipoDeDato,"Cte_Entera")==0 || strcmpi(id2->tipoDeDato,"INT")==0 || strcmpi(id2->tipoDeDato,"Cte_Entera")==0 )
           {
               printf("Multiplicacion entera");
-              fprintf(pf,"\tfild \t@%s\n", id1->cadena);
-							fprintf(pf,"\ttfimul \t@%s\n", id2->cadena); 
+              fprintf(pf,"fild\t@%s\n", id1->cadena);
+
+							fprintf(pf,"tfimul\t@%s\n", id2->cadena); 
        
               char auxInt[MAXCAD];
               sprintf(auxInt,"auxInt%d",contAuxInt);
 
-              fprintf(pf,"\tfistp \t@%s\n", auxInt);
+              fprintf(pf,"fistp \t@%s\n", auxInt);
 
               t_info *auxPilaInt =(t_info*) malloc(sizeof(t_info));  
               auxPilaInt->cadena = (char *) malloc (MAXCAD * sizeof (char));
@@ -1683,17 +1692,21 @@ void generarAssembler(t_polaca* p) {
           }else if(strcmpi(id1->tipoDeDato,"FLOAT")==0 || strcmpi(id1->tipoDeDato,"Cte_Real")==0 || strcmpi(id2->tipoDeDato,"FLOAT")==0 || strcmpi(id2->tipoDeDato,"Cte_Real")==0 )
           {
               printf("Multiplicacion Float");
+              
+              //Cargo el primer id
+              fprintf(pf,"fld\t@%s\n", id1->cadena);
 
-              fprintf(pf,"\tfld \t@%s\n", id1->cadena);
-						  fprintf(pf,"\tfld \t@%s\n", id2->cadena);
+              //Cargo el segundo id
+						  fprintf(pf,"fld\t@%s\n", id2->cadena);
 
-              fprintf(pf,"\tfmul\n");
+              //Multiplico
+              fprintf(pf,"fmul\n");
 
 
               char auxReal[MAXCAD];
               sprintf(auxReal,"auxFloat%d",contAuxFloat);
 
-              fprintf(pf,"\tfstp \t@%s\n", auxReal);
+              fprintf(pf,"fstp\t@%s\n", auxReal);
 
               t_info *auxPilaReal =(t_info*) malloc(sizeof(t_info));  
               auxPilaReal->cadena = (char *) malloc (MAXCAD * sizeof (char));
@@ -1718,19 +1731,21 @@ void generarAssembler(t_polaca* p) {
           if(strcmpi(id1->tipoDeDato,"INT")==0 || strcmpi(id1->tipoDeDato,"Cte_Entera")==0 || strcmpi(id2->tipoDeDato,"INT")==0 || strcmpi(id2->tipoDeDato,"Cte_Entera")==0 )
           {
               printf("Division entera");
-              fprintf(pf,"\tfild \t@%s\n", id1->cadena);
-							fprintf(pf,"\tfidivr \t@%s\n", id2->cadena); 
+              fprintf(pf,"fild\t@%s\n", id1->cadena);
+
+              //Divido por el segundo id
+							fprintf(pf,"fidivr\t@%s\n", id2->cadena); 
        
               char auxInt[MAXCAD];
               sprintf(auxInt,"auxInt%d",contAuxInt);
 
-              fprintf(pf,"\tfistp \t@%s\n", auxInt);
+              fprintf(pf,"fistp\t@%s\n", auxInt);
 
               t_info *auxPilaInt =(t_info*) malloc(sizeof(t_info));  
               auxPilaInt->cadena = (char *) malloc (MAXCAD * sizeof (char));
               auxPilaInt->tipoDeDato = (char *) malloc (MAXCAD * sizeof (char));
 
-              
+
               strcpy(auxPilaInt->cadena,auxInt);
               strcpy(auxPilaInt->tipoDeDato,"INT");  
 
@@ -1740,16 +1755,20 @@ void generarAssembler(t_polaca* p) {
           {
               printf("Division Float");
 
-              fprintf(pf,"\tfld \t@%s\n", id1->cadena);
-						  fprintf(pf,"\tfld \t@%s\n", id2->cadena);
+              //Cargo el primero
+              fprintf(pf,"fld\t@%s\n", id1->cadena);
 
-              fprintf(pf,"\tfdivr\n");
+              //Cargo el segundo id
+						  fprintf(pf,"fld\t@%s\n", id2->cadena);
+
+              //Realiza la division
+              fprintf(pf,"fdivr\n");
 
 
               char auxReal[MAXCAD];
               sprintf(auxReal,"auxFloat%d",contAuxFloat);
 
-              fprintf(pf,"\tfstp \t@%s\n", auxReal);
+              fprintf(pf,"fstp\t@%s\n", auxReal);
 
               t_info *auxPilaReal =(t_info*) malloc(sizeof(t_info));  
               auxPilaReal->cadena = (char *) malloc (MAXCAD * sizeof (char));
