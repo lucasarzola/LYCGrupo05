@@ -1799,7 +1799,56 @@ void generarAssembler(t_polaca* p) {
 
   }*/
 
+ //COMPARADORES
+    if(strcmp(linea,"CMP")==0){
+				t_info *op1= desapilarASM(&pilaIdsASM);
+				t_info *op2= desapilarASM(&pilaIdsASM);
 
+        if(strcmpi(op1->tipoDeDato,"FLOAT") == 0){                                // diferencio la comparacion de enteros de la real.
+					fprintf(pf,"\tfld \t@%s\n", op1->cadena); 
+					fprintf(pf,"\tfld \t@%s\n", op2->cadena);
+				}
+				else{
+					fprintf(pf,"\tfild \t@%s\n", op1->cadena);
+					fprintf(pf,"\tfild \t@%s\n", op2->cadena);
+				}
+			}
+      // >
+			if(strcmp(linea,"BLE")==0){
+				fprintf(pf,"\tfcomp\n\tfstsw\tax\n\tfwait\n\tsahf\n\tjbe\t\t%s\n",desapilarASM(&pilaIdsASM)->cadena);
+			}
+
+			//<
+			if(strcmp(linea,"BGE")==0){
+				fprintf(pf,"\tfcomp\n\tfstsw\tax\n\tfwait\n\tsahf\n\tjae\t\t%s\n",desapilarASM(&pilaIdsASM)->cadena);
+			}
+
+			//!=
+			if(strcmp(linea,"BEQ")==0){
+				fprintf(pf,"\tfcomp\n\tfstsw\tax\n\tfwait\n\tsahf\n\tje\t\t%s\n",desapilarASM(&pilaIdsASM)->cadena);
+			}
+
+			//==
+			if(strcmp(linea,"BNE")==0){
+				fprintf(pf,"\tfcomp\n\tfstsw\tax\n\tfwait\n\tsahf\n\tjne\t\t%s\n",desapilarASM(&pilaIdsASM)->cadena);
+			}
+
+			//>=
+			if(strcmp(linea,"BLT")==0){
+				fprintf(pf,"\tfcomp\n\tfstsw\tax\n\tfwait\n\tsahf\n\tjb\t\t%s\n",desapilarASM(&pilaIdsASM)->cadena);
+			}
+
+			//<=
+			if(strcmp(linea,"BGT")==0){
+				fprintf(pf,"\tfcomp\n\tfstsw\tax\n\tfwait\n\tsahf\n\tja\t\t%s\n",desapilarASM(&pilaIdsASM)->cadena);
+			}
+
+			if(strcmp(linea,"BI")==0){
+				fprintf(pf,"\tjmp\t\t%s\n",sacarDePila(&pilaIdsASM)->cadena);
+			}
+
+
+  
 
   //ASIGNACION
 
