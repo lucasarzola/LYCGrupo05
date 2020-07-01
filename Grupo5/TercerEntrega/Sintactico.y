@@ -1783,11 +1783,45 @@ void generarAssembler(t_polaca* p) {
           }
         }
 
+      //Entrada y salida
+			if(strcmpi(linea,"DISPLAY")==0){
+				fprintf(pf,";SALIDA\n");
+        t_info *auxPila =(t_info*) malloc(sizeof(t_info));
+        auxPila = desapilarASM(&pilaIdsASM);
 
+        if(strcmpi(auxPila->tipoDeDato,"INT")==0 || strcmpi(auxPila->tipoDeDato,"Cte_Entera")==0)
+        {
+            fprintf(pf,"\tdisplayInteger \t@%s,3\n\tnewLine 1\n",auxPila->cadena);
+        }
+        else if(strcmpi(auxPila->tipoDeDato,"FLOAT")==0 || strcmpi(auxPila->tipoDeDato,"Cte_Real")==0)
+        {
+          fprintf(pf,"\tdisplayFloat \t@%s,3\n\tnewLine 1\n",auxPila->cadena);
+        }
+        else (strcmpi(auxPila->tipoDeDato,"STRING")==0 || strcmpi(auxPila->tipoDeDato,"Cte_String")==0)
+        {
+          fprintf(pf,"\tdisplayString \t@%s\n\tnewLine 1\n",auxPila->cadena);
+        }
 
+			}
 
+			if(strcmpi(linea,"GET")==0){
+				fprintf(pf,";ENTRADA\n");
+        t_info *auxPila =(t_info*) malloc(sizeof(t_info));
+        auxPila = desapilarASM(&pilaIdsASM);
 
-
+		    if(strcmpi(auxPila->tipoDeDato,"INT")==0 || strcmpi(auxPila->tipoDeDato,"Cte_Entera")==0)
+        {
+            fprintf(pf,"\tdisplayInteger \t@%s,3\n\tnewLine 1\n",auxPila->cadena);
+        }
+        else if(strcmpi(auxPila->tipoDeDato,"FLOAT")==0 || strcmpi(auxPila->tipoDeDato,"Cte_Real")==0)
+        {
+          fprintf(pf,"\tdisplayFloat \t@%s,3\n\tnewLine 1\n",auxPila->cadena);
+        }
+        else (strcmpi(auxPila->tipoDeDato,"STRING")==0 || strcmpi(auxPila->tipoDeDato,"Cte_String")==0)
+        {
+          fprintf(pf,"\tdisplayString \t@%s\n\tnewLine 1\n",auxPila->cadena);
+        }
+		  }
 
 			    *p=(*p)->psig;
 			    free(aux);
