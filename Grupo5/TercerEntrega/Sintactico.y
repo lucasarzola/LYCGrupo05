@@ -1500,105 +1500,106 @@ void generarAssembler(t_polaca* p) {
   fprintf(pf,"MOV AX,@DATA\n");
   fprintf(pf,"MOV DS,AX\n");
 
-  fprintf(pf,"\n\tFINIT\n\n"); //Inicializa el coprocesador
+  fprintf(pf,"\n\tFINIT\n"); //Inicializa el coprocesador
+  fprintf(pf,"\tFFREE\n\n");
 
   //Recorremos la polaca
   while(*p)
-	    {   
+	{   
         
-          aux = *p;
-          
-          printf("Recorriendo polaca");
+    aux = *p;
+    
+    printf("Recorriendo polaca");
 
-          //Obtenemos la linea
-          linea = (char *) malloc (sizeof((*p)->info.cadena));
-	        sprintf(linea,"%s",(*p)->info.cadena);
+    //Obtenemos la linea
+    linea = (char *) malloc (sizeof((*p)->info.cadena));
+    sprintf(linea,"%s",(*p)->info.cadena);
 
-        //En linea esta el valor de cada cadena que se recorre en la polaca
+    //En linea esta el valor de cada cadena que se recorre en la polaca
 
-          //Chequeamos si es un ID o Cte. Preguntamos si está en la TS
-          if(existeEnTS(linea)){
-              t_info *auxPila =(t_info*) malloc(sizeof(t_info));
+    //Chequeamos si es un ID o Cte. Preguntamos si está en la TS
+    if(existeEnTS(linea)){
+      t_info *auxPila =(t_info*) malloc(sizeof(t_info));
 
+
+      auxPila->cadena = (char *) malloc (50 * sizeof (char));
+      auxPila->tipoDeDato = (char *) malloc (50 * sizeof (char));
+
+      //Guardamos el tipo de dato y la linea en la pila
+   
+      strcpy(auxPila->tipoDeDato,tieneTipoDatoEnTS(linea));
+      char lineaAux[MAXCAD];
+      sprintf(lineaAux,"_%s",linea);
+
+      strcpy(auxPila->cadena,lineaAux);
+
+      apilar(&pilaIdsASM,auxPila);
+    }
+
+
+    //Suma
+    if(strcmpi(linea,"+") == 0)
+    {
+      t_info *id1 =(t_info*) malloc(sizeof(t_info));
+      t_info *id2 =(t_info*) malloc(sizeof(t_info));
+      
+      id1 = desapilarASM(&pilaIdsASM);
+      id2 = desapilarASM(&pilaIdsASM);
+
+      if(strcmpi(id1->tipoDeDato,"INT")==0 || strcmpi(id1->tipoDeDato,"Cte_Entera")==0 || strcmpi(id2->tipoDeDato,"INT")==0 || strcmpi(id2->tipoDeDato,"Cte_Entera")==0 )
+      {
+        printf("Suma entera");
+
+        fprintf(pf,"fild\t@%s\n", id1->cadena);
+        fprintf(pf,"fiadd\t@%s\n", id2->cadena); 
   
-              auxPila->cadena = (char *) malloc (50 * sizeof (char));
-              auxPila->tipoDeDato = (char *) malloc (50 * sizeof (char));
+        char auxInt[MAXCAD];
+        sprintf(auxInt,"auxInt%d",contAuxInt);
 
-              //Guardamos el tipo de dato y la linea en la pila
-              
-              
-              strcpy(auxPila->tipoDeDato,tieneTipoDatoEnTS(linea));
-              char lineaAux[MAXCAD];
-              sprintf(lineaAux,"_%s",linea);
+        fprintf(pf,"fistp\t@%s\n", auxInt);
 
-              strcpy(auxPila->cadena,lineaAux);
+        t_info *auxPilaInt =(t_info*) malloc(sizeof(t_info));  
+        auxPilaInt->cadena = (char *) malloc (MAXCAD * sizeof (char));
+        auxPilaInt->tipoDeDato = (char *) malloc (MAXCAD * sizeof (char));
+        strcpy(auxPilaInt->cadena,auxInt);
+        strcpy(auxPilaInt->tipoDeDato,"INT");  
 
-              apilar(&pilaIdsASM,auxPila);
+        apilar(&pilaIdsASM,auxPilaInt);
 
-          }
-
-
-        //Suma
-        if(strcmpi(linea,"+") == 0){
-          t_info *id1 =(t_info*) malloc(sizeof(t_info));
-          t_info *id2 =(t_info*) malloc(sizeof(t_info));
-          
-          id1 = desapilarASM(&pilaIdsASM);
-          id2 = desapilarASM(&pilaIdsASM);
-
-          if(strcmpi(id1->tipoDeDato,"INT")==0 || strcmpi(id1->tipoDeDato,"Cte_Entera")==0 || strcmpi(id2->tipoDeDato,"INT")==0 || strcmpi(id2->tipoDeDato,"Cte_Entera")==0 )
-          {
-              printf("Suma entera");
-
-              fprintf(pf,"fild\t@%s\n", id1->cadena);
-							fprintf(pf,"fiadd\t@%s\n", id2->cadena); 
-       
-              char auxInt[MAXCAD];
-              sprintf(auxInt,"auxInt%d",contAuxInt);
-
-              fprintf(pf,"fistp\t@%s\n", auxInt);
-
-              t_info *auxPilaInt =(t_info*) malloc(sizeof(t_info));  
-              auxPilaInt->cadena = (char *) malloc (MAXCAD * sizeof (char));
-              auxPilaInt->tipoDeDato = (char *) malloc (MAXCAD * sizeof (char));
-              strcpy(auxPilaInt->cadena,auxInt);
-              strcpy(auxPilaInt->tipoDeDato,"INT");  
-
-              apilar(&pilaIdsASM,auxPilaInt);
-
-              contAuxInt++;
-          }else if(strcmpi(id1->tipoDeDato,"FLOAT")==0 || strcmpi(id1->tipoDeDato,"Cte_Real")==0 || strcmpi(id2->tipoDeDato,"FLOAT")==0 || strcmpi(id2->tipoDeDato,"Cte_Real")==0 )
-          {
-              printf("Suma Float");
+        contAuxInt++;
+      } 
+      else if(strcmpi(id1->tipoDeDato,"FLOAT")==0 || strcmpi(id1->tipoDeDato,"Cte_Real")==0 || strcmpi(id2->tipoDeDato,"FLOAT")==0 || strcmpi(id2->tipoDeDato,"Cte_Real")==0 )
+      {
+        printf("Suma Float");
 
 
-              //Cargamos las cadenas
-              fprintf(pf,"fld\t@%s\n", id1->cadena);
+        //Cargamos las cadenas
+        fprintf(pf,"fld\t@%s\n", id1->cadena);
 
-						  fprintf(pf,"fld\t@%s\n", id2->cadena);
+        fprintf(pf,"fld\t@%s\n", id2->cadena);
 
-              fprintf(pf,"fadd\n");
+        fprintf(pf,"fadd\n");
 
-              //Dejamos el resultado en el aux
-              char auxReal[MAXCAD];
-              sprintf(auxReal,"auxFloat%d",contAuxFloat);
+        //Dejamos el resultado en el aux
+        char auxReal[MAXCAD];
+        sprintf(auxReal,"auxFloat%d",contAuxFloat);
 
-              fprintf(pf,"fstp\t@%s\n", auxReal);
+        fprintf(pf,"fstp\t@%s\n", auxReal);
 
 
-              //Guardamos en la pila la nueva variable aux
-              t_info *auxPilaReal =(t_info*) malloc(sizeof(t_info));  
-              auxPilaReal->cadena = (char *) malloc (MAXCAD * sizeof (char));
-              auxPilaReal->tipoDeDato = (char *) malloc (MAXCAD * sizeof (char));
+        //Guardamos en la pila la nueva variable aux
+        t_info *auxPilaReal =(t_info*) malloc(sizeof(t_info));  
+        auxPilaReal->cadena = (char *) malloc (MAXCAD * sizeof (char));
+        auxPilaReal->tipoDeDato = (char *) malloc (MAXCAD * sizeof (char));
 
-              strcpy(auxPilaReal->cadena,auxReal);
-              strcpy(auxPilaReal->tipoDeDato,"FLOAT");  
+        strcpy(auxPilaReal->cadena,auxReal);
+        strcpy(auxPilaReal->tipoDeDato,"FLOAT");  
 
-              apilar(&pilaIdsASM,auxPilaReal);
-              contAuxFloat++;
+        apilar(&pilaIdsASM,auxPilaReal);
+        contAuxFloat++;
 
-          }
-        }
+      }
+    }
 
         //Resta
         if(strcmpi(linea,"-") == 0){
@@ -1831,85 +1832,85 @@ void generarAssembler(t_polaca* p) {
         
 		  }
 
-
-      //Asignacion
-      if(strcmp(linea,"=")==0){
-        fprintf(pf,";ASIGNACION\n");
-        t_info *id =(t_info*) malloc(sizeof(t_info));
-        id = desapilarASM(&pilaIdsASM);
-
-        fprintf(pf,"\tfild\t@%s\n",desapilarASM(&pilaIdsASM)->cadena);
-        fprintf(pf,"\tfistp\t@%s\n",id->cadena);
+    //Saltos If
+    //if(strcmp(linea,"CMP")==0){
 
 
-        fprintf(pf,"\n\tdisplayInteger @_b,3\n\n");
+    //Comparadores
+    /*if(strcmp(linea,"CMP")==0){
+      t_info *op1= desapilarASM(&pilaIdsASM);
+      t_info *op2= desapilarASM(&pilaIdsASM);
+
+      if(strcmpi(op1->tipoDeDato,"FLOAT") == 0){                                // diferencio la comparacion de enteros de la real.
+        fprintf(pf,"\tfld \t@%s\n", op1->cadena); 
+        fprintf(pf,"\tfld \t@%s\n", op2->cadena);
       }
+      else{
+        fprintf(pf,"\tfild \t@%s\n", op1->cadena);
+        fprintf(pf,"\tfild \t@%s\n", op2->cadena);
+      }
+    }
 
-      *p=(*p)->psig;
-      free(aux);
-      //FIN DEL WHILE
-	  }
+    //>
+    if(strcmp(linea,"BLE")==0){
+      fprintf(pf,"\tfcomp\n\tfstsw\tax\n\tfwait\n\tsahf\n\tjbe\t\t%s\n",desapilarASM(&pilaIdsASM)->cadena);
+    }
+
+    //<
+    if(strcmp(linea,"BGE")==0){
+      fprintf(pf,"\tfcomp\n\tfstsw\tax\n\tfwait\n\tsahf\n\tjae\t\t%s\n",desapilarASM(&pilaIdsASM)->cadena);
+    }
+
+    //!=
+    if(strcmp(linea,"BEQ")==0){
+      fprintf(pf,"\tfcomp\n\tfstsw\tax\n\tfwait\n\tsahf\n\tje\t\t%s\n",desapilarASM(&pilaIdsASM)->cadena);
+    }
+
+    //==
+    if(strcmp(linea,"BNE")==0){
+      fprintf(pf,"\tfcomp\n\tfstsw\tax\n\tfwait\n\tsahf\n\tjne\t\t%s\n",desapilarASM(&pilaIdsASM)->cadena);
+    }
+
+    //>=
+    if(strcmp(linea,"BLT")==0){
+      fprintf(pf,"\tfcomp\n\tfstsw\tax\n\tfwait\n\tsahf\n\tjb\t\t%s\n",desapilarASM(&pilaIdsASM)->cadena);
+    }
+
+    //<=
+    if(strcmp(linea,"BGT")==0){
+      fprintf(pf,"\tfcomp\n\tfstsw\tax\n\tfwait\n\tsahf\n\tja\t\t%s\n",desapilarASM(&pilaIdsASM)->cadena);
+    }
+
+    //<>
+    if(strcmp(linea,"BI")==0){
+      fprintf(pf,"\tjmp\t\t%s\n",sacarDePila(&pilaIdsASM)->cadena);
+    }*/
+
+
+
+    //Asignacion
+    if(strcmp(linea,"=")==0){
+      fprintf(pf,";ASIGNACION\n");
+      t_info *id =(t_info*) malloc(sizeof(t_info));
+      id = desapilarASM(&pilaIdsASM);
+
+      fprintf(pf,"\tfild\t@%s\n",desapilarASM(&pilaIdsASM)->cadena);
+      fprintf(pf,"\tfistp\t@%s\n",id->cadena);
+
+
+      fprintf(pf,"\n\tdisplayInteger @_b,3\n\n");
+    }
+
+    *p=(*p)->psig;
+    free(aux);
+    //FIN DEL WHILE
+  }
       
 
 
 
-  /*while(aux!=NULL){
-
-  }*/
-
- //COMPARADORES
-    /*if(strcmp(linea,"CMP")==0){
-				t_info *op1= desapilarASM(&pilaIdsASM);
-				t_info *op2= desapilarASM(&pilaIdsASM);
-
-        if(strcmpi(op1->tipoDeDato,"FLOAT") == 0){                                // diferencio la comparacion de enteros de la real.
-					fprintf(pf,"\tfld \t@%s\n", op1->cadena); 
-					fprintf(pf,"\tfld \t@%s\n", op2->cadena);
-				}
-				else{
-					fprintf(pf,"\tfild \t@%s\n", op1->cadena);
-					fprintf(pf,"\tfild \t@%s\n", op2->cadena);
-				}
-			}
-      // >
-			if(strcmp(linea,"BLE")==0){
-				fprintf(pf,"\tfcomp\n\tfstsw\tax\n\tfwait\n\tsahf\n\tjbe\t\t%s\n",desapilarASM(&pilaIdsASM)->cadena);
-			}
-
-			//<
-			if(strcmp(linea,"BGE")==0){
-				fprintf(pf,"\tfcomp\n\tfstsw\tax\n\tfwait\n\tsahf\n\tjae\t\t%s\n",desapilarASM(&pilaIdsASM)->cadena);
-			}
-
-			//!=
-			if(strcmp(linea,"BEQ")==0){
-				fprintf(pf,"\tfcomp\n\tfstsw\tax\n\tfwait\n\tsahf\n\tje\t\t%s\n",desapilarASM(&pilaIdsASM)->cadena);
-			}
-
-			//==
-			if(strcmp(linea,"BNE")==0){
-				fprintf(pf,"\tfcomp\n\tfstsw\tax\n\tfwait\n\tsahf\n\tjne\t\t%s\n",desapilarASM(&pilaIdsASM)->cadena);
-			}
-
-			//>=
-			if(strcmp(linea,"BLT")==0){
-				fprintf(pf,"\tfcomp\n\tfstsw\tax\n\tfwait\n\tsahf\n\tjb\t\t%s\n",desapilarASM(&pilaIdsASM)->cadena);
-			}
-
-			//<=
-			if(strcmp(linea,"BGT")==0){
-				fprintf(pf,"\tfcomp\n\tfstsw\tax\n\tfwait\n\tsahf\n\tja\t\t%s\n",desapilarASM(&pilaIdsASM)->cadena);
-			}
-
-			if(strcmp(linea,"BI")==0){
-				fprintf(pf,"\tjmp\t\t%s\n",sacarDePila(&pilaIdsASM)->cadena);
-			}*/
-
-
-
-
   //FIN DE ARCHIVO
-  fprintf(pf,"\tFFREE\n\n");
+  
   fprintf(pf,"FINAL:\n");
   fprintf(pf,"\tmov ah, 1\n\tint 21h\n\tMOV AX, 4c00h\n\tINT 21h\n");
   fprintf(pf,"END\n\n;FIN DEL PROGRAMA DE USUARIO\n");
