@@ -1982,7 +1982,7 @@ void generarAssembler(t_polaca* p) {
       aux = *p;
       linea = (char *) malloc (sizeof((*p)->info.cadena));
       sprintf(linea,"%s",(*p)->info.cadena);
-      fprintf(pf,"\tfxch\n\tfcomp\n\tfstsw\tax\n\tsahf\n\tjae\t\t%s\n",linea);
+      fprintf(pf,"\tfxch\n\tfcomp\n\tfstsw\tax\n\tsahf\n\tjae\t\tEtiq_%s\n",linea);
     }
 
     //!=
@@ -1992,7 +1992,7 @@ void generarAssembler(t_polaca* p) {
       aux = *p;
       linea = (char *) malloc (sizeof((*p)->info.cadena));
       sprintf(linea,"%s",(*p)->info.cadena);
-      fprintf(pf,"\tfxch\n\tfcomp\n\tfstsw\tax\n\tsahf\n\tje\t\t%s\n",linea);
+      fprintf(pf,"\tfxch\n\tfcomp\n\tfstsw\tax\n\tsahf\n\tje\t\tEtiq_%s\n",linea);
     }
 
     //==
@@ -2002,7 +2002,7 @@ void generarAssembler(t_polaca* p) {
       aux = *p;
       linea = (char *) malloc (sizeof((*p)->info.cadena));
       sprintf(linea,"%s",(*p)->info.cadena);
-      fprintf(pf,"\tfxch\n\tfcomp\n\tfstsw\tax\n\tsahf\n\tjne\t\t%s\n",linea);
+      fprintf(pf,"\tfxch\n\tfcomp\n\tfstsw\tax\n\tsahf\n\tjne\t\tEtiq_%s\n",linea);
     }
 
     //>=
@@ -2012,7 +2012,7 @@ void generarAssembler(t_polaca* p) {
       aux = *p;
       linea = (char *) malloc (sizeof((*p)->info.cadena));
       sprintf(linea,"%s",(*p)->info.cadena);
-      fprintf(pf,"\tfxch\n\tfcomp\n\tfstsw\tax\n\tsahf\n\tjb\t\t%s\n",linea);
+      fprintf(pf,"\tfxch\n\tfcomp\n\tfstsw\tax\n\tsahf\n\tjb\t\tEtiq_%s\n",linea);
     }
 
     //<=
@@ -2022,7 +2022,7 @@ void generarAssembler(t_polaca* p) {
       aux = *p;
       linea = (char *) malloc (sizeof((*p)->info.cadena));
       sprintf(linea,"%s",(*p)->info.cadena);
-      fprintf(pf,"\tfxch\n\tfcomp\n\tfstsw\tax\n\tsahf\n\tja\t\t%s\n",linea);
+      fprintf(pf,"\tfxch\n\tfcomp\n\tfstsw\tax\n\tsahf\n\tja\t\tEtiq_%s\n",linea);
     }
 
     //<>
