@@ -4,4 +4,4 @@ DEFVAR
 INT : a; b
 ENDDEF
 
-b = a + 1
+b = 1
