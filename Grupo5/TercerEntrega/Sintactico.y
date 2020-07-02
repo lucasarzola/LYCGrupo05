@@ -122,6 +122,8 @@ int cantFilasTS = 0;
   t_pila pilaIdsASM;
   int auxiliaresASM = 0;
 
+  int vecPosSaltos[200];
+  int contVecPosSaltos = 0;
 
 %}
 
@@ -424,12 +426,19 @@ ifunario:
             //insertar_en(@x, #celda_actual);
             sprintf(posPolaca,"%d",posicionPolaca+1);
             ponerEnPolacaPosicion(&polaca,nro,posPolaca);
+            //Agregar etiqueta
+            vecPosSaltos[contVecPosSaltos] = posicionPolaca + 1;
+            contVecPosSaltos++;
           }
 	          if(condicion_or == 1)
             {
               char posPolaca[MAXCAD];
               sprintf(posPolaca,"%d",saltoOR);
               ponerEnPolacaPosicion(&polaca,nro,posPolaca);
+              //Agregar etiqueta
+              vecPosSaltos[contVecPosSaltos] = saltoOR;
+              contVecPosSaltos++;
+
               condicion_or = 0;
             }
           contadorComparaciones = 0;
@@ -455,6 +464,9 @@ ifunario:
           //insertar_en(@x, #celda_actual); 
           sprintf(posPolaca,"%d",posicionPolaca);
           ponerEnPolacaPosicion(&polaca,nro,posPolaca);
+          //Agregar etiqueta
+          vecPosSaltos[contVecPosSaltos] = posicionPolaca;
+          contVecPosSaltos++;
           //insertar(@r);
           ponerEnPolaca(&polaca,"@r");
           printf(" 21\n");
@@ -984,16 +996,21 @@ int main(int argc,char *argv[])
   //fprintf(archTabla,"%s\n","NOMBRE\t\t\tTIPODATO\t\tVALOR");
   if ((yyin = fopen(argv[1], "rt")) == NULL)
   {
-	printf("\nNo se puede abrir el archivo: %s\n", argv[1]);
+	  printf("\nNo se puede abrir el archivo: %s\n", argv[1]);
   }
   else
   {
-  crearPila(&pilaIds);
-  crearPila(&pilaFactorial);
-	crearPolaca(&polaca);
-  crearPila(&pilaCMP);
-  crearPila(&pilaTipoDato);
-	yyparse();
+    int i;
+    for(i=0;i<200;i++)
+    {
+      vecPosSaltos[i] = 0;
+    }
+    crearPila(&pilaIds);
+    crearPila(&pilaFactorial);
+    crearPolaca(&polaca);
+    crearPila(&pilaCMP);
+    crearPila(&pilaTipoDato);
+    yyparse();
   }
   guardarPolaca(&polaca);
   
@@ -1471,8 +1488,12 @@ hacerFactoriales(){
   }
 
 
+
+/////////////////////////////////////////////ASSEMBLER///////////////////////////////////////////////////////
+
+
 void generarAssembler(t_polaca* p) {
-  
+
   t_nodoPolaca* aux;
   char* linea;
 
@@ -1573,6 +1594,19 @@ void generarAssembler(t_polaca* p) {
     //printf("\n");
     printf("Recorriendo polaca\n");
     printf("Linea encontrada = %s\n", (*p)->info.cadena);
+
+    //Creo etiqueta
+    int r = 0;
+    int auxPosSaltos = contVecPosSaltos;
+    printf("\n----contVecPosSaltos = %d\n", contVecPosSaltos);
+ 
+    for(r; r<auxPosSaltos; auxPosSaltos++){
+      if((*p)->info.nro == vecPosSaltos[r]){
+        fprintf(pf,"ETIQ%d:",(*p)->info.nro);
+        vecPosSaltos[r] = -1;
+        contVecPosSaltos--;
+      }
+    }
 
     //Obtenemos la linea
     linea = (char *) malloc (sizeof((*p)->info.cadena));
@@ -1972,7 +2006,7 @@ void generarAssembler(t_polaca* p) {
       aux = *p;
       linea = (char *) malloc (sizeof((*p)->info.cadena));
       sprintf(linea,"%s",(*p)->info.cadena);
-      fprintf(pf,"\tfxch\n\tfcomp\n\tfstsw\tax\n\tsahf\n\tjbe\t\tEtiq_%s\n",linea);
+      fprintf(pf,"\tfxch\n\tfcomp\n\tfstsw\tax\n\tsahf\n\tjbe\t\tETIQ%s\n",linea);
     }
 
     //<
@@ -1982,7 +2016,7 @@ void generarAssembler(t_polaca* p) {
       aux = *p;
       linea = (char *) malloc (sizeof((*p)->info.cadena));
       sprintf(linea,"%s",(*p)->info.cadena);
-      fprintf(pf,"\tfxch\n\tfcomp\n\tfstsw\tax\n\tsahf\n\tjae\t\tEtiq_%s\n",linea);
+      fprintf(pf,"\tfxch\n\tfcomp\n\tfstsw\tax\n\tsahf\n\tjae\t\tETIQ%s\n",linea);
     }
 
     //!=
@@ -1992,7 +2026,7 @@ void generarAssembler(t_polaca* p) {
       aux = *p;
       linea = (char *) malloc (sizeof((*p)->info.cadena));
       sprintf(linea,"%s",(*p)->info.cadena);
-      fprintf(pf,"\tfxch\n\tfcomp\n\tfstsw\tax\n\tsahf\n\tje\t\tEtiq_%s\n",linea);
+      fprintf(pf,"\tfxch\n\tfcomp\n\tfstsw\tax\n\tsahf\n\tje\t\tETIQ%s\n",linea);
     }
 
     //==
@@ -2002,7 +2036,7 @@ void generarAssembler(t_polaca* p) {
       aux = *p;
       linea = (char *) malloc (sizeof((*p)->info.cadena));
       sprintf(linea,"%s",(*p)->info.cadena);
-      fprintf(pf,"\tfxch\n\tfcomp\n\tfstsw\tax\n\tsahf\n\tjne\t\tEtiq_%s\n",linea);
+      fprintf(pf,"\tfxch\n\tfcomp\n\tfstsw\tax\n\tsahf\n\tjne\t\tETIQ%s\n",linea);
     }
 
     //>=
@@ -2012,7 +2046,7 @@ void generarAssembler(t_polaca* p) {
       aux = *p;
       linea = (char *) malloc (sizeof((*p)->info.cadena));
       sprintf(linea,"%s",(*p)->info.cadena);
-      fprintf(pf,"\tfxch\n\tfcomp\n\tfstsw\tax\n\tsahf\n\tjb\t\tEtiq_%s\n",linea);
+      fprintf(pf,"\tfxch\n\tfcomp\n\tfstsw\tax\n\tsahf\n\tjb\t\tETIQ%s\n",linea);
     }
 
     //<=
@@ -2022,7 +2056,7 @@ void generarAssembler(t_polaca* p) {
       aux = *p;
       linea = (char *) malloc (sizeof((*p)->info.cadena));
       sprintf(linea,"%s",(*p)->info.cadena);
-      fprintf(pf,"\tfxch\n\tfcomp\n\tfstsw\tax\n\tsahf\n\tja\t\tEtiq_%s\n",linea);
+      fprintf(pf,"\tfxch\n\tfcomp\n\tfstsw\tax\n\tsahf\n\tja\t\tETIQ%s\n",linea);
     }
 
     //<>
@@ -2032,7 +2066,7 @@ void generarAssembler(t_polaca* p) {
       aux = *p;
       linea = (char *) malloc (sizeof((*p)->info.cadena));
       sprintf(linea,"%s",(*p)->info.cadena);
-      fprintf(pf,"\tjmp\t\tEtiq_%s\n",linea);
+      fprintf(pf,"\tjmp\t\tETIQ%s\n",linea);
     }
 
 
