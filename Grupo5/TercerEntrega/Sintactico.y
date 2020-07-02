@@ -758,8 +758,9 @@ factor:
       ;
 
 factorial:
-      FACT P_A {
-        printf("Regla 50: Empieza factorial");
+      FACT P_A expresion P_C   {
+
+           printf("Regla 50: Empieza factorial");
         while(existeEnTS(resExpFact) == 1)
             {
             sprintf(resExpFact,"@resFact%d",resExpFactActual+1);
@@ -770,20 +771,26 @@ factorial:
         
         sprintf(resAGuardar,"_%s",resExpFact);
 
-        insertarEnNuevaTS(resAGuardar,"","","");
+        insertarEnNuevaTS(resAGuardar,"INT","","");
 
         ponerEnPolaca(&polaca,resExpFact);
 
-        } expresion P_C   {
-
         ponerEnPolaca(&polaca,"=");
+
+        
+
+        if(existeEnTS("_1")==0)
+        insertarEnNuevaTS("_1","Cte_Entera","1","");
 
         if(existeEnTS("@fact")==0)
         insertarEnNuevaTS("_@fact","INT","","");
 
-        ponerEnPolaca(&polaca,"@fact");
+        
 
         ponerEnPolaca(&polaca,"1");
+
+        ponerEnPolaca(&polaca,"@fact");
+
         ponerEnPolaca(&polaca,"=");        
         
         //Apilar posicion del res para While e insertar Res
@@ -810,18 +817,20 @@ factorial:
         apilar(&pilaFactorial,tInfoFactorial);
         ponerEnPolaca(&polaca,"");
 
-        ponerEnPolaca(&polaca,"@fact"); 
+        
         ponerEnPolaca(&polaca,"@fact");
         ponerEnPolaca(&polaca,resExpFact);
         ponerEnPolaca(&polaca,"*");
         auxiliaresASM++;
-
+        ponerEnPolaca(&polaca,"@fact"); 
         ponerEnPolaca(&polaca,"=");
-        ponerEnPolaca(&polaca,resExpFact);
+        
         ponerEnPolaca(&polaca,resExpFact);
         ponerEnPolaca(&polaca,"1");
-        ponerEnPolaca(&polaca,"-");
         auxiliaresASM++;
+        ponerEnPolaca(&polaca,"-");
+
+        ponerEnPolaca(&polaca,resExpFact);
         ponerEnPolaca(&polaca,"=");
         ponerEnPolaca(&polaca,"BI");
         
@@ -846,7 +855,7 @@ factorial:
       ;
 
 combinatoria:
-      COMB P_A {
+      COMB P_A expresion {
         printf("Regla 51: combina");
         while(existeEnTS(resPrimExpComb) == 1) 
             {
@@ -861,36 +870,39 @@ combinatoria:
         insertarEnNuevaTS(resAGuardar,"INT","","");
         
         ponerEnPolaca(&polaca,resPrimExpComb);
-        
-        } expresion {
+
+          
         ponerEnPolaca(&polaca,"="); 
         }
-        COMA { 
-          char* resSegAGuardar = (char*) malloc(sizeof(char)*MAXCAD+1);
-          
-          sprintf(resSegExpComb,"@resExp%d",resActual+1);
-         
-          sprintf(resSegAGuardar,"_%s",resSegExpComb);
-          
-          insertarEnNuevaTS(resSegAGuardar,"INT","","");
-          ponerEnPolaca(&polaca,resSegExpComb); 
-          
-          }  expresion 
+        COMA expresion 
         {
+        char* resSegAGuardar = (char*) malloc(sizeof(char)*MAXCAD+1);
+          
+        sprintf(resSegExpComb,"@resExp%d",resActual+1);
+         
+        sprintf(resSegAGuardar,"_%s",resSegExpComb);
+          
+        insertarEnNuevaTS(resSegAGuardar,"INT","","");
+        ponerEnPolaca(&polaca,resSegExpComb); 
+
         ponerEnPolaca(&polaca,"=");
 
         if(existeEnTS("@F1")==0)
         insertarEnNuevaTS("_@F1","INT","","");
 
-        ponerEnPolaca(&polaca,"F1"); 
+        if(existeEnTS("_1")==0)
+        insertarEnNuevaTS("_1","Cte_Entera","1","");
+
         ponerEnPolaca(&polaca,"1");
+        ponerEnPolaca(&polaca,"F1"); 
         ponerEnPolaca(&polaca,"=");
 
         if(existeEnTS("@F2")==0)
         insertarEnNuevaTS("_@F2","INT","","");
 
-        ponerEnPolaca(&polaca,"F2");
+        
         ponerEnPolaca(&polaca,"1");
+        ponerEnPolaca(&polaca,"F2");
         ponerEnPolaca(&polaca,"=");
         
         char* resTercAGuardar = (char*) malloc(sizeof(char)*MAXCAD+1);
@@ -901,29 +913,32 @@ combinatoria:
           
         insertarEnNuevaTS(resTercAGuardar,"INT","","");
 
-        ponerEnPolaca(&polaca,resTercExpComb);
+        
         ponerEnPolaca(&polaca,resPrimExpComb);
         ponerEnPolaca(&polaca,resSegExpComb);
         ponerEnPolaca(&polaca,"-");
         auxiliaresASM++;
+        ponerEnPolaca(&polaca,resTercExpComb);
         ponerEnPolaca(&polaca,"=");
 
         hacerFactoriales();
 
         sprintf(resComb,"@resComb%d",resActual);
-        ponerEnPolaca(&polaca,resComb);
+        
         ponerEnPolaca(&polaca,"@F1");
         ponerEnPolaca(&polaca,"@F2");
 
         if(existeEnTS("@F3")==0)
-        insertarEnNuevaTS("_@F3","FLOAT","","");
+        insertarEnNuevaTS("_@F3","INT","","");
         
         ponerEnPolaca(&polaca,"@F3");
         ponerEnPolaca(&polaca,"*");
         auxiliaresASM++;
         ponerEnPolaca(&polaca,"/");
         auxiliaresASM++;
+        ponerEnPolaca(&polaca,resComb);
         ponerEnPolaca(&polaca,"=");
+
         ponerEnPolaca(&polaca,resComb);
 
         resActual = resActual-3;
@@ -1388,17 +1403,20 @@ hacerFactoriales(){
 
         char factorActual[MAXCAD];
         sprintf(factorActual,"@F%d",factActual);
-        ponerEnPolaca(&polaca,factorActual); 
+        
         ponerEnPolaca(&polaca,factorActual);
         ponerEnPolaca(&polaca,resultActual);
         ponerEnPolaca(&polaca,"*");
         auxiliaresASM++;
+        ponerEnPolaca(&polaca,factorActual); 
         ponerEnPolaca(&polaca,"=");
-        ponerEnPolaca(&polaca,resultActual);
+
+        
         ponerEnPolaca(&polaca,resultActual);
         ponerEnPolaca(&polaca,"1");
         ponerEnPolaca(&polaca,"-");
         auxiliaresASM++;
+        ponerEnPolaca(&polaca,resultActual);
         ponerEnPolaca(&polaca,"=");
         ponerEnPolaca(&polaca,"BI");
         
@@ -1492,7 +1510,8 @@ void generarAssembler(t_polaca* p) {
     for(i; i<cantFilasTS;i++){    
     if(strcmpi("Cte_String",tablaDeSimbolos[i].tipoDato) == 0){
           contCteString++;
-          fprintf(pf,"@Cte_String%d dw %s\n",contCteString,tablaDeSimbolos[i].valor);        
+          fprintf(pf,"@Cte_String%d db %s, '$', 30 dup (?)\n",contCteString,tablaDeSimbolos[i].valor);  
+          @str21 db "FACT(4)", "$", 30 dup (?)      
     }  
 
     if(strcmpi("Cte_Entera",tablaDeSimbolos[i].tipoDato) == 0){
@@ -1519,7 +1538,7 @@ void generarAssembler(t_polaca* p) {
         }
     
     if(strcmpi("STRING",tablaDeSimbolos[i].tipoDato) == 0){
-          fprintf(pf,"@%s dw ?\n",tablaDeSimbolos[i].nombre);        
+          fprintf(pf,"@%s db ?\n",tablaDeSimbolos[i].nombre);        
     }  
     }
     
@@ -1534,7 +1553,7 @@ void generarAssembler(t_polaca* p) {
   //FIN DECLARACION DE VARIABLES
   fprintf(pf,"\n.CODE\n");
 
-  //Procedures
+//Procedures
   fprintf(pf,"\ncopy proc\n\tcpy_nxt:\n\tmov al, [si]\n\tmov [di], al\n\tinc si\n\tinc di\n\tcmp byte ptr [si],0\n\tjne cpy_nxt\n\tret\n\tcopy endp\n");
 
   fprintf(pf,"MAIN:\n");
@@ -1550,12 +1569,12 @@ void generarAssembler(t_polaca* p) {
         
     aux = *p;
     
-    printf("Recorriendo polaca");
+    printf("\n");
 
     //Obtenemos la linea
     linea = (char *) malloc (sizeof((*p)->info.cadena));
     sprintf(linea,"%s",(*p)->info.cadena);
-
+    printf("%s",linea);
     //En linea esta el valor de cada cadena que se recorre en la polaca
 
     //Chequeamos si es un ID o Cte. Preguntamos si está en la TS
@@ -1730,7 +1749,7 @@ void generarAssembler(t_polaca* p) {
               printf("Multiplicacion entera");
               fprintf(pf,"fild\t@%s\n", id1->cadena);
 
-							fprintf(pf,"tfimul\t@%s\n", id2->cadena); 
+							fprintf(pf,"fimul\t@%s\n", id2->cadena); 
        
               char auxInt[MAXCAD];
               sprintf(auxInt,"auxInt%d",contAuxInt);
@@ -1953,6 +1972,7 @@ void generarAssembler(t_polaca* p) {
             fprintf(pf,";Asignacon Integer\n");
             fprintf(pf,"\tfild\t@%s\n",desapilarASM(&pilaIdsASM)->cadena);
             fprintf(pf,"\tfistp\t@%s\n",id->cadena);
+
         }
         else 
         {
@@ -1989,6 +2009,7 @@ void generarAssembler(t_polaca* p) {
       // 		jne cpy_nxt; loop if not null
     // ret
     // copy endp
+  //fprintf(pf,"\ncopy_proc\n\tcpy_nxt:\n\tmov al, [si]\n\tmov [di], al\n\tinc si\n\tinc di\t\ncmp byte ptr [si],0\n\tjne cpy_nxt\n\tret\n\tcopy_proc end\n");
 
   //FIN DE ARCHIVO
   fprintf(pf,"\n\tMOV EAX, 4c00h\n\tINT 21h\n");
