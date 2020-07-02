@@ -4,4 +4,5 @@ DEFVAR
 INT : a; b
 ENDDEF
 
-b = 1
+b = 3
+a = if ( b > 1, 5, 7 )

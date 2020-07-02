@@ -406,8 +406,8 @@ asignacion:
 ifunario:
         IF P_A condicion 
         {
-	  if(existeEnTS("@resIfUn")==0)
-          insertarEnNuevaTS("_@resIfUn","","","");
+	      if(existeEnTS("@r")==0)
+          insertarEnNuevaTS("_@r","INT","","");
           ponerEnPolaca(&polaca,"@r");
         }
         COMA expresion COMA 
@@ -425,7 +425,8 @@ ifunario:
             sprintf(posPolaca,"%d",posicionPolaca+1);
             ponerEnPolacaPosicion(&polaca,nro,posPolaca);
           }
-	          if(condicion_or == 1){
+	          if(condicion_or == 1)
+            {
               char posPolaca[MAXCAD];
               sprintf(posPolaca,"%d",saltoOR);
               ponerEnPolacaPosicion(&polaca,nro,posPolaca);
@@ -1471,6 +1472,7 @@ hacerFactoriales(){
 
 
 void generarAssembler(t_polaca* p) {
+  
   t_nodoPolaca* aux;
   char* linea;
 
@@ -1568,7 +1570,9 @@ void generarAssembler(t_polaca* p) {
         
     aux = *p;
     
-    printf("\n");
+    //printf("\n");
+    printf("Recorriendo polaca\n");
+    printf("Linea encontrada = %s\n", (*p)->info.cadena);
 
     //Obtenemos la linea
     linea = (char *) malloc (sizeof((*p)->info.cadena));
@@ -1905,59 +1909,7 @@ void generarAssembler(t_polaca* p) {
         
 		  }
 
-    //Saltos If
-    //if(strcmp(linea,"CMP")==0){
-
-
-    //Comparadores
-    /*if(strcmp(linea,"CMP")==0){
-      t_info *op1= desapilarASM(&pilaIdsASM);
-      t_info *op2= desapilarASM(&pilaIdsASM);
-
-      if(strcmpi(op1->tipoDeDato,"FLOAT") == 0){                                // diferencio la comparacion de enteros de la real.
-        fprintf(pf,"\tfld \t@%s\n", op1->cadena); 
-        fprintf(pf,"\tfld \t@%s\n", op2->cadena);
-      }
-      else{
-        fprintf(pf,"\tfild \t@%s\n", op1->cadena);
-        fprintf(pf,"\tfild \t@%s\n", op2->cadena);
-      }
-    }
-
-    //>
-    if(strcmp(linea,"BLE")==0){
-      fprintf(pf,"\tfcomp\n\tfstsw\tax\n\tfwait\n\tsahf\n\tjbe\t\t%s\n",desapilarASM(&pilaIdsASM)->cadena);
-    }
-
-    //<
-    if(strcmp(linea,"BGE")==0){
-      fprintf(pf,"\tfcomp\n\tfstsw\tax\n\tfwait\n\tsahf\n\tjae\t\t%s\n",desapilarASM(&pilaIdsASM)->cadena);
-    }
-
-    //!=
-    if(strcmp(linea,"BEQ")==0){
-      fprintf(pf,"\tfcomp\n\tfstsw\tax\n\tfwait\n\tsahf\n\tje\t\t%s\n",desapilarASM(&pilaIdsASM)->cadena);
-    }
-
-    //==
-    if(strcmp(linea,"BNE")==0){
-      fprintf(pf,"\tfcomp\n\tfstsw\tax\n\tfwait\n\tsahf\n\tjne\t\t%s\n",desapilarASM(&pilaIdsASM)->cadena);
-    }
-
-    //>=
-    if(strcmp(linea,"BLT")==0){
-      fprintf(pf,"\tfcomp\n\tfstsw\tax\n\tfwait\n\tsahf\n\tjb\t\t%s\n",desapilarASM(&pilaIdsASM)->cadena);
-    }
-
-    //<=
-    if(strcmp(linea,"BGT")==0){
-      fprintf(pf,"\tfcomp\n\tfstsw\tax\n\tfwait\n\tsahf\n\tja\t\t%s\n",desapilarASM(&pilaIdsASM)->cadena);
-    }
-
-    //<>
-    if(strcmp(linea,"BI")==0){
-      fprintf(pf,"\tjmp\t\t%s\n",sacarDePila(&pilaIdsASM)->cadena);
-    }*/
+    
 
 
 //Asignacion
@@ -1990,6 +1942,100 @@ void generarAssembler(t_polaca* p) {
           }
         }
       }
+
+
+    //Comparadores
+    if(strcmp(linea,"CMP")==0){
+
+      t_info *op1 =(t_info*) malloc(sizeof(t_info));
+      op1 = desapilarASM(&pilaIdsASM);
+      printf("\nDato OP1 = %s\n", op1->cadena);
+
+      t_info *op2 =(t_info*) malloc(sizeof(t_info));
+      op2 = desapilarASM(&pilaIdsASM);
+      printf("\nDato OP2 = %s\n", op2->cadena);
+
+      if(strcmpi(op1->tipoDeDato,"FLOAT") == 0){                                // diferencio la comparacion de enteros de la real.
+        fprintf(pf,"\tfld \t@%s\n", op1->cadena); 
+        fprintf(pf,"\tfld \t@%s\n", op2->cadena);
+      }
+      else{
+        fprintf(pf,"\tfild \t@%s\n", op1->cadena);
+        fprintf(pf,"\tfild \t@%s\n", op2->cadena);
+      }
+    }
+
+    //>
+    if(strcmp(linea,"BLE")==0){
+      *p=(*p)->psig;
+      free(aux);
+      aux = *p;
+      linea = (char *) malloc (sizeof((*p)->info.cadena));
+      sprintf(linea,"%s",(*p)->info.cadena);
+      fprintf(pf,"\tfxch\n\tfcomp\n\tfstsw\tax\n\tsahf\n\tjbe\t\tEtiq_%s\n",linea);
+    }
+
+    //<
+    if(strcmp(linea,"BGE")==0){
+      *p=(*p)->psig;
+      free(aux);
+      aux = *p;
+      linea = (char *) malloc (sizeof((*p)->info.cadena));
+      sprintf(linea,"%s",(*p)->info.cadena);
+      fprintf(pf,"\tfxch\n\tfcomp\n\tfstsw\tax\n\tsahf\n\tjae\t\t%s\n",linea);
+    }
+
+    //!=
+    if(strcmp(linea,"BEQ")==0){
+      *p=(*p)->psig;
+      free(aux);
+      aux = *p;
+      linea = (char *) malloc (sizeof((*p)->info.cadena));
+      sprintf(linea,"%s",(*p)->info.cadena);
+      fprintf(pf,"\tfxch\n\tfcomp\n\tfstsw\tax\n\tsahf\n\tje\t\t%s\n",linea);
+    }
+
+    //==
+    if(strcmp(linea,"BNE")==0){
+      *p=(*p)->psig;
+      free(aux);
+      aux = *p;
+      linea = (char *) malloc (sizeof((*p)->info.cadena));
+      sprintf(linea,"%s",(*p)->info.cadena);
+      fprintf(pf,"\tfxch\n\tfcomp\n\tfstsw\tax\n\tsahf\n\tjne\t\t%s\n",linea);
+    }
+
+    //>=
+    if(strcmp(linea,"BLT")==0){
+      *p=(*p)->psig;
+      free(aux);
+      aux = *p;
+      linea = (char *) malloc (sizeof((*p)->info.cadena));
+      sprintf(linea,"%s",(*p)->info.cadena);
+      fprintf(pf,"\tfxch\n\tfcomp\n\tfstsw\tax\n\tsahf\n\tjb\t\t%s\n",linea);
+    }
+
+    //<=
+    if(strcmp(linea,"BGT")==0){
+      *p=(*p)->psig;
+      free(aux);
+      aux = *p;
+      linea = (char *) malloc (sizeof((*p)->info.cadena));
+      sprintf(linea,"%s",(*p)->info.cadena);
+      fprintf(pf,"\tfxch\n\tfcomp\n\tfstsw\tax\n\tsahf\n\tja\t\t%s\n",linea);
+    }
+
+    //<>
+    if(strcmp(linea,"BI")==0){
+      *p=(*p)->psig;
+      free(aux);
+      aux = *p;
+      linea = (char *) malloc (sizeof((*p)->info.cadena));
+      sprintf(linea,"%s",(*p)->info.cadena);
+      fprintf(pf,"\tjmp\t\tEtiq_%s\n",linea);
+    }
+
+
 
     *p=(*p)->psig;
     free(aux);
