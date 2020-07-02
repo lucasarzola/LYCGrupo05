@@ -6,26 +6,24 @@ include number.asm
 .STACK 200h
 
 .DATA
-
-a   dd  ?
-b   dd  ?
-result  dd  ?
-R   dd  ?
-_100m   dd  100000.0
+@Cte_Entera1 dw 1
+@_a dw ?
+@_b dw ?
 
 .CODE
-    MOV AX,@DATA
-    MOV DS,AX
-    FINIT
-FFREE
-FLD _100m
-FSTP    a
-DisplayFloat a,2
-FINAL:
-    mov ah, 1
-    int 21h
-    MOV AX, 4c00h
-    INT 21h
-END
+MAIN:
+MOV EAX,@DATA
+MOV DS,EAX
+MOV ES,EAX
+;ASIGNACION
+	fild	@Cte_Entera1
+	fistp	@_b
+
+	displayInteger @_b,3
+
+
+	MOV EAX, 4c00h
+	INT 21h
+END MAIN
 
 ;FIN DEL PROGRAMA DE USUARIO

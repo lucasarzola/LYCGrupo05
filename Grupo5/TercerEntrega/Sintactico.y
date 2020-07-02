@@ -1132,6 +1132,29 @@ char* tieneTipoDatoEnTS(char* nombre){
     return "";
 }   
 
+char* obtenerNroParaTipoEnTS(char* linea, char* tipoDato){
+    char* nombreVariable = (char*) malloc(sizeof(linea)+1);
+    sprintf(nombreVariable,"_%s",linea);    
+
+    int i=0;
+    int cont = 0;
+
+    for(i; i<cantFilasTS;i++)
+    { 
+
+      if(strcmpi(tipoDato,tablaDeSimbolos[i].tipoDato) == 0){
+          cont++;
+          
+        if(strcmpi(nombreVariable,tablaDeSimbolos[i].nombre) == 0){
+          char* nombreARetornar = (char*) malloc(MAXCAD);
+          sprintf(nombreARetornar,"%s%d",tablaDeSimbolos[i].tipoDato,cont);
+          return nombreARetornar;
+      }
+      }
+    }
+    return "";
+}
+
 //------------------------------------Funciones de Pila----------------------------------------------------//
 
 void crearPila(t_pila* p){
@@ -1454,16 +1477,40 @@ void generarAssembler(t_polaca* p) {
 
 
   fprintf(pf,"include macros2.asm\n");
+  //fprintf(pf,"include macros.asm\n");
   fprintf(pf,"include number.asm\n\n");
   fprintf(pf,".MODEL LARGE\n.386\n.STACK 200h\n\n.DATA\n");
 
 
 
-  //DECLARACION DE VARIABLES  
+  //DECLARACION DE CONSTANTES  
     int i=0;
-    for(i; i<cantFilasTS;i++)
-    { 
-    if(strcmpi("INT",tablaDeSimbolos[i].tipoDato) == 0){
+    int contCteFloats = 0;
+    int contCteInt = 0;
+    int contCteString = 0;
+    
+    for(i; i<cantFilasTS;i++){    
+    if(strcmpi("Cte_String",tablaDeSimbolos[i].tipoDato) == 0){
+          contCteString++;
+          fprintf(pf,"@Cte_String%d dw %s\n",contCteString,tablaDeSimbolos[i].valor);        
+    }  
+
+    if(strcmpi("Cte_Entera",tablaDeSimbolos[i].tipoDato) == 0){
+          contCteInt++;
+          fprintf(pf,"@Cte_Entera%d dw %s\n",contCteInt,tablaDeSimbolos[i].valor);        
+    }  
+
+    if(strcmpi("Cte_Real",tablaDeSimbolos[i].tipoDato) == 0){
+          contCteFloats++;
+          fprintf(pf,"@Cte_Real%d dd %s\n",contCteFloats,tablaDeSimbolos[i].valor);        
+    }
+    }
+
+    i=0;
+
+    //DECLARACION DE VARIABLES
+    for(i; i<cantFilasTS;i++){
+        if(strcmpi("INT",tablaDeSimbolos[i].tipoDato) == 0){
           fprintf(pf,"@%s dw ?\n",tablaDeSimbolos[i].nombre);        
         }
 
@@ -1473,20 +1520,9 @@ void generarAssembler(t_polaca* p) {
     
     if(strcmpi("STRING",tablaDeSimbolos[i].tipoDato) == 0){
           fprintf(pf,"@%s dw ?\n",tablaDeSimbolos[i].nombre);        
-    }
-
-    if(strcmpi("Cte_String",tablaDeSimbolos[i].tipoDato) == 0){
-          fprintf(pf,"@%s dw %s\n",tablaDeSimbolos[i].nombre,tablaDeSimbolos[i].valor);        
-    }  
-
-    if(strcmpi("Cte_Entera",tablaDeSimbolos[i].tipoDato) == 0){
-          fprintf(pf,"@%s dd %s\n",tablaDeSimbolos[i].nombre,tablaDeSimbolos[i].valor);        
-    }  
-
-    if(strcmpi("Cte_Real",tablaDeSimbolos[i].tipoDato) == 0){
-          fprintf(pf,"@%s dd %s\n",tablaDeSimbolos[i].nombre,tablaDeSimbolos[i].valor);        
     }  
     }
+    
 
   int j=0;
 
@@ -1497,11 +1533,12 @@ void generarAssembler(t_polaca* p) {
 
   //FIN DECLARACION DE VARIABLES
   fprintf(pf,"\n.CODE\n");
-  fprintf(pf,"MOV AX,@DATA\n");
-  fprintf(pf,"MOV DS,AX\n");
+  fprintf(pf,"MAIN:\n");
 
-  fprintf(pf,"\n\tFINIT\n"); //Inicializa el coprocesador
-  fprintf(pf,"\tFFREE\n\n");
+
+  fprintf(pf,"MOV EAX,@DATA\n");
+  fprintf(pf,"MOV DS,EAX\n");
+  fprintf(pf,"MOV ES,EAX\n");
 
   //Recorremos la polaca
   while(*p)
@@ -1519,21 +1556,35 @@ void generarAssembler(t_polaca* p) {
 
     //Chequeamos si es un ID o Cte. Preguntamos si está en la TS
     if(existeEnTS(linea)){
+      
       t_info *auxPila =(t_info*) malloc(sizeof(t_info));
 
-
       auxPila->cadena = (char *) malloc (50 * sizeof (char));
+      
       auxPila->tipoDeDato = (char *) malloc (50 * sizeof (char));
 
-      //Guardamos el tipo de dato y la linea en la pila
-   
+      if(tieneTipoDatoEnTS)
+      if(strcmpi("FLOAT",tieneTipoDatoEnTS(linea))==0 || strcmpi("STRING",tieneTipoDatoEnTS(linea))==0 || strcmpi("INT",tieneTipoDatoEnTS(linea))==0 )
+      {
+              //CASO VARIABLE
       strcpy(auxPila->tipoDeDato,tieneTipoDatoEnTS(linea));
       char lineaAux[MAXCAD];
       sprintf(lineaAux,"_%s",linea);
-
       strcpy(auxPila->cadena,lineaAux);
-
       apilar(&pilaIdsASM,auxPila);
+      }
+      else
+      {
+            //CASO CTE
+        strcpy(auxPila->tipoDeDato,tieneTipoDatoEnTS(linea));
+        char lineaAux[MAXCAD];
+        sprintf(lineaAux,"%s",obtenerNroParaTipoEnTS(linea,auxPila->tipoDeDato));
+        strcpy(auxPila->cadena,lineaAux);
+        apilar(&pilaIdsASM,auxPila);
+
+      }
+
+
     }
 
 
@@ -1905,21 +1956,15 @@ void generarAssembler(t_polaca* p) {
     free(aux);
     //FIN DEL WHILE
   }
-      
-
-
 
   //FIN DE ARCHIVO
-  
-  fprintf(pf,"FINAL:\n");
-  fprintf(pf,"\tmov ah, 1\n\tint 21h\n\tMOV AX, 4c00h\n\tINT 21h\n");
-  fprintf(pf,"END\n\n;FIN DEL PROGRAMA DE USUARIO\n");
+  fprintf(pf,"\n\tMOV EAX, 4c00h\n\tINT 21h\n");
+  fprintf(pf,"END MAIN\n\n;FIN DEL PROGRAMA DE USUARIO\n");
 
   fclose(pf);
 
   printf("FIN GENERACION DE ASSEMBLER!!!");
 }
-
 
 
 
