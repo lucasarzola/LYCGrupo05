@@ -344,7 +344,7 @@ iteracion:
             info.cadena=(char*)malloc(sizeof(char)*MAXCAD);
             info.nro=contWhile++;
             sprintf(info.cadena,"#while_%d",info.nro);
-            ponerEnPolaca(&polaca,info.cadena);
+            //ponerEnPolaca(&polaca,info.cadena);
             sprintf(info.cadena,"#while_%d",info.nro);
             apilar(&pilaWhile,&info);
             //apilo la primer posicion
@@ -367,11 +367,18 @@ iteracion:
               char posPolaca[MAXCAD];
               sprintf(posPolaca,"%d",posicionPolaca+1);
               ponerEnPolacaPosicion(&polaca,nro,posPolaca);
+	      
+	      //Agregar etiqueta
+              vecPosSaltos[contVecPosSaltos] = posicionPolaca;
+              contVecPosSaltos++;
             }
 	    if(condicion_or == 1){
               char posPolaca[MAXCAD];
               sprintf(posPolaca,"%d",saltoOR);
               ponerEnPolacaPosicion(&polaca,nro,posPolaca);
+	      //Agregar etiqueta
+              vecPosSaltos[contVecPosSaltos] = saltoOR;
+              contVecPosSaltos++;
               condicion_or = 0;
             }
 
