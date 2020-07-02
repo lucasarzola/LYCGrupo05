@@ -1,8 +1,17 @@
 PROGRAM
 
 DEFVAR
-INT : a; b
+INT : a; b; c
 ENDDEF
 
 b = 3
-a = if ( b > 1, 5, 7 )
+
+if ( b > 1 )
+a = 7
+endif
+
+c = 125
+
+DISPLAY a
+DISPLAY b
+DISPLAY c

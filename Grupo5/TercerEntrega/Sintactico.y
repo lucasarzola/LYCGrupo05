@@ -279,11 +279,18 @@ decision:
 
             sprintf(posPolaca,"%d",posicionPolaca);
             ponerEnPolacaPosicion(&polaca,nro,posPolaca);
+            //Agregar etiqueta
+            vecPosSaltos[contVecPosSaltos] = posicionPolaca;
+            contVecPosSaltos++;
           }
-	      if(condicion_or == 1){
+	      if(condicion_or == 1)
+        {
             char posPolaca[MAXCAD];
             sprintf(posPolaca,"%d",saltoOR);
             ponerEnPolacaPosicion(&polaca,nro,posPolaca);
+            //Agregar etiqueta
+            vecPosSaltos[contVecPosSaltos] = posicionPolaca;
+            contVecPosSaltos++;
             condicion_or = 0;
           }
           contadorComparaciones = 0;
@@ -302,7 +309,8 @@ decision:
           sprintf(posPolaca,"%d",posicionPolaca+2);
           ponerEnPolacaPosicion(&polaca,nro,posPolaca);
         }
-	if(condicion_or == 1){
+        if(condicion_or == 1)
+        {
            char posPolaca[MAXCAD];
            sprintf(posPolaca,"%d",saltoOR);
            ponerEnPolacaPosicion(&polaca,nro,posPolaca);
@@ -1600,7 +1608,7 @@ void generarAssembler(t_polaca* p) {
     int auxPosSaltos = contVecPosSaltos;
     printf("\n----contVecPosSaltos = %d\n", contVecPosSaltos);
  
-    for(r; r<auxPosSaltos; auxPosSaltos++){
+    for(r; r<auxPosSaltos; r++){
       if((*p)->info.nro == vecPosSaltos[r]){
         fprintf(pf,"ETIQ%d:",(*p)->info.nro);
         vecPosSaltos[r] = -1;
@@ -1952,7 +1960,7 @@ void generarAssembler(t_polaca* p) {
         t_info* id =(t_info*) malloc(sizeof(t_info));
         id = desapilarASM(&pilaIdsASM);
         
-       if(strcmpi(id->tipoDeDato,"INT")==0)
+       if(strcmpi(id->tipoDeDato,"INT")==0 || strcmpi(id->tipoDeDato,"Cte_Entera")==0)
         {   
             fprintf(pf,";Asignacon Integer\n");
             fprintf(pf,"\tfild\t@%s\n",desapilarASM(&pilaIdsASM)->cadena);
@@ -1961,13 +1969,13 @@ void generarAssembler(t_polaca* p) {
         }
         else 
         {
-          if(strcmpi(id->tipoDeDato,"FLOAT")==0)
+          if(strcmpi(id->tipoDeDato,"FLOAT")==0 || strcmpi(id->tipoDeDato,"Cte_Real")==0)
           {
             fprintf(pf,";Asignacon Float\n");
             fprintf(pf,"\tfld\t@%s\n",desapilarASM(&pilaIdsASM)->cadena);
             fprintf(pf,"\tfstp\t@%s\n",id->cadena);
           }
-          else if(strcmpi(id->tipoDeDato,"STRING")==0)
+          else if(strcmpi(id->tipoDeDato,"STRING")==0 || strcmpi(id->tipoDeDato,"Cte_String")==0)
           {
             fprintf(pf,";Asignacon String\n");
 						fprintf(pf,"\tmov si, OFFSET\t@%s\n", desapilarASM(&pilaIdsASM)->cadena);  //SI = SOURCE. 
