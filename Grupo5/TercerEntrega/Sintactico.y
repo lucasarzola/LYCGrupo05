@@ -1464,27 +1464,27 @@ void generarAssembler(t_polaca* p) {
     for(i; i<cantFilasTS;i++)
     { 
     if(strcmpi("INT",tablaDeSimbolos[i].tipoDato) == 0){
-          fprintf(pf,"%s dw ?\n",tablaDeSimbolos[i].nombre);        
+          fprintf(pf,"@%s dw ?\n",tablaDeSimbolos[i].nombre);        
         }
 
     if(strcmpi("FLOAT",tablaDeSimbolos[i].tipoDato) == 0){
-          fprintf(pf,"%s dd ?\n",tablaDeSimbolos[i].nombre);        
+          fprintf(pf,"@%s dd ?\n",tablaDeSimbolos[i].nombre);        
         }
     
     if(strcmpi("STRING",tablaDeSimbolos[i].tipoDato) == 0){
-          fprintf(pf,"%s dw ?\n",tablaDeSimbolos[i].nombre);        
+          fprintf(pf,"@%s dw ?\n",tablaDeSimbolos[i].nombre);        
     }
 
     if(strcmpi("Cte_String",tablaDeSimbolos[i].tipoDato) == 0){
-          fprintf(pf,"%s dw %s\n",tablaDeSimbolos[i].nombre,tablaDeSimbolos[i].valor);        
+          fprintf(pf,"@%s dw %s\n",tablaDeSimbolos[i].nombre,tablaDeSimbolos[i].valor);        
     }  
 
     if(strcmpi("Cte_Entera",tablaDeSimbolos[i].tipoDato) == 0){
-          fprintf(pf,"%s dd %s\n",tablaDeSimbolos[i].nombre,tablaDeSimbolos[i].valor);        
+          fprintf(pf,"@%s dd %s\n",tablaDeSimbolos[i].nombre,tablaDeSimbolos[i].valor);        
     }  
 
     if(strcmpi("Cte_Real",tablaDeSimbolos[i].tipoDato) == 0){
-          fprintf(pf,"%s dd %s\n",tablaDeSimbolos[i].nombre,tablaDeSimbolos[i].valor);        
+          fprintf(pf,"@%s dd %s\n",tablaDeSimbolos[i].nombre,tablaDeSimbolos[i].valor);        
     }  
     }
 
@@ -1497,10 +1497,10 @@ void generarAssembler(t_polaca* p) {
 
   //FIN DECLARACION DE VARIABLES
   fprintf(pf,"\n.CODE\n");
-  fprintf(pf,"\n\nMOV AX,@DATA\n");
+  fprintf(pf,"MOV AX,@DATA\n");
   fprintf(pf,"MOV DS,AX\n");
 
-  fprintf(pf,"\tFINIT\n\n"); //Inicializa el coprocesador
+  fprintf(pf,"\n\tFINIT\n\n"); //Inicializa el coprocesador
 
   //Recorremos la polaca
   while(*p)
@@ -1529,7 +1529,7 @@ void generarAssembler(t_polaca* p) {
               
               strcpy(auxPila->tipoDeDato,tieneTipoDatoEnTS(linea));
               char lineaAux[MAXCAD];
-              sprintf(lineaAux,"@_%s",linea);
+              sprintf(lineaAux,"_%s",linea);
 
               strcpy(auxPila->cadena,lineaAux);
 
@@ -1842,7 +1842,7 @@ void generarAssembler(t_polaca* p) {
         fprintf(pf,"\tfistp\t@%s\n",id->cadena);
 
 
-        fprintf(pf,"\tdisplayInteger @_b,3\n");
+        fprintf(pf,"\n\tdisplayInteger @_b,3\n\n");
       }
 
       *p=(*p)->psig;
