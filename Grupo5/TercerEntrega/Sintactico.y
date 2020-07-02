@@ -1511,7 +1511,6 @@ void generarAssembler(t_polaca* p) {
     if(strcmpi("Cte_String",tablaDeSimbolos[i].tipoDato) == 0){
           contCteString++;
           fprintf(pf,"@Cte_String%d db %s, '$', 30 dup (?)\n",contCteString,tablaDeSimbolos[i].valor);  
-          @str21 db "FACT(4)", "$", 30 dup (?)      
     }  
 
     if(strcmpi("Cte_Entera",tablaDeSimbolos[i].tipoDato) == 0){
