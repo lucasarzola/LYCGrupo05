@@ -1938,24 +1938,54 @@ void generarAssembler(t_polaca* p) {
     }*/
 
 
-
-    //Asignacion
-    if(strcmp(linea,"=")==0){
-      fprintf(pf,";ASIGNACION\n");
-      t_info *id =(t_info*) malloc(sizeof(t_info));
-      id = desapilarASM(&pilaIdsASM);
-
-      fprintf(pf,"\tfild\t@%s\n",desapilarASM(&pilaIdsASM)->cadena);
-      fprintf(pf,"\tfistp\t@%s\n",id->cadena);
-
-
-      fprintf(pf,"\n\tdisplayInteger @_b,3\n\n");
-    }
+//Asignacion
+      if(strcmp(linea,"=")==0){
+        fprintf(pf,";ASIGNACION\n");
+        t_info* id =(t_info*) malloc(sizeof(t_info));
+        id = desapilarASM(&pilaIdsASM);
+        
+       if(strcmpi(id->tipoDeDato,"INT")==0)
+        {   
+            fprintf(pf,";Asignacon Integer\n");
+            fprintf(pf,"\tfild\t@%s\n",desapilarASM(&pilaIdsASM)->cadena);
+            fprintf(pf,"\tfistp\t@%s\n",id->cadena);
+        }
+        else 
+        {
+          if(strcmpi(id->tipoDeDato,"FLOAT")==0)
+          {
+            fprintf(pf,";Asignacon Float\n");
+            fprintf(pf,"\tfld\t@%s\n",desapilarASM(&pilaIdsASM)->cadena);
+            fprintf(pf,"\tfstp\t@%s\n",id->cadena);
+          }
+          else if(strcmpi(id->tipoDeDato,"STRING")==0)
+          {
+            fprintf(pf,";Asignacon String\n");
+						fprintf(pf,"\tmov si, OFFSET\t@%s\n", desapilarASM(&pilaIdsASM)->cadena);  //SI = SOURCE. 
+						fprintf(pf,"\tmov di, OFFSET\t@%s\n", id->cadena); //DI = DESTINATION. 
+						fprintf(pf,"\tcall copy_proc\n");
+          }
+        }
+      }
 
     *p=(*p)->psig;
     free(aux);
     //FIN DEL WHILE
   }
+
+
+  //Procedures
+    // copy proc
+      // cpy_nxt:
+      // 		mov al, [si];copy source to destination
+      // 		mov [di], al
+      // 		inc si;increment source and destination
+      // 		inc di	
+      // 		cmp byte ptr [si],0   ; Check for null terminator
+      // 		jne cpy_nxt; loop if not null
+    // ret
+    // copy endp
+  //fprintf(pf,"\ncopy_proc\n\tcpy_nxt:\n\tmov al, [si]\n\tmov [di], al\n\tinc si\n\tinc di\tcmp byte ptr [si],0\n\tjne cpy_nxt\n\tret\n\tcopy end\n");
 
   //FIN DE ARCHIVO
   fprintf(pf,"\n\tMOV EAX, 4c00h\n\tINT 21h\n");
