@@ -8,6 +8,8 @@ b = 3
 
 if ( b > 1 )
 a = 7
+else
+a = 32
 endif
 
 c = 125
