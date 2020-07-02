@@ -1527,8 +1527,8 @@ void generarAssembler(t_polaca* p) {
   int j=0;
 
   for(j; j<auxiliaresASM; j++){
-          fprintf(pf,"auxFloat%d dd 0\n",j); 
-          fprintf(pf,"auxInt%d dw 0\n",j);
+          fprintf(pf,"@auxFloat%d dd 0\n",j); 
+          fprintf(pf,"@auxInt%d dw 0\n",j);
   }
 
   //FIN DECLARACION DE VARIABLES
