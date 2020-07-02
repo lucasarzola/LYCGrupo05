@@ -1985,7 +1985,7 @@ void generarAssembler(t_polaca* p) {
       // 		jne cpy_nxt; loop if not null
     // ret
     // copy endp
-  //fprintf(pf,"\ncopy_proc\n\tcpy_nxt:\n\tmov al, [si]\n\tmov [di], al\n\tinc si\n\tinc di\tcmp byte ptr [si],0\n\tjne cpy_nxt\n\tret\n\tcopy end\n");
+  //fprintf(pf,"\ncopy_proc\n\tcpy_nxt:\n\tmov al, [si]\n\tmov [di], al\n\tinc si\n\tinc di\t\ncmp byte ptr [si],0\n\tjne cpy_nxt\n\tret\n\tcopy_proc end\n");
 
   //FIN DE ARCHIVO
   fprintf(pf,"\n\tMOV EAX, 4c00h\n\tINT 21h\n");
