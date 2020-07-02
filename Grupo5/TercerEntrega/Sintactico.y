@@ -1533,6 +1533,10 @@ void generarAssembler(t_polaca* p) {
 
   //FIN DECLARACION DE VARIABLES
   fprintf(pf,"\n.CODE\n");
+
+  //Procedures
+  fprintf(pf,"\ncopy proc\n\tcpy_nxt:\n\tmov al, [si]\n\tmov [di], al\n\tinc si\n\tinc di\n\tcmp byte ptr [si],0\n\tjne cpy_nxt\n\tret\n\tcopy endp\n");
+
   fprintf(pf,"MAIN:\n");
 
 
@@ -1963,7 +1967,7 @@ void generarAssembler(t_polaca* p) {
             fprintf(pf,";Asignacon String\n");
 						fprintf(pf,"\tmov si, OFFSET\t@%s\n", desapilarASM(&pilaIdsASM)->cadena);  //SI = SOURCE. 
 						fprintf(pf,"\tmov di, OFFSET\t@%s\n", id->cadena); //DI = DESTINATION. 
-						fprintf(pf,"\tcall copy_proc\n");
+						fprintf(pf,"\tcall copy\n");
           }
         }
       }
@@ -1985,7 +1989,6 @@ void generarAssembler(t_polaca* p) {
       // 		jne cpy_nxt; loop if not null
     // ret
     // copy endp
-  //fprintf(pf,"\ncopy_proc\n\tcpy_nxt:\n\tmov al, [si]\n\tmov [di], al\n\tinc si\n\tinc di\t\ncmp byte ptr [si],0\n\tjne cpy_nxt\n\tret\n\tcopy_proc end\n");
 
   //FIN DE ARCHIVO
   fprintf(pf,"\n\tMOV EAX, 4c00h\n\tINT 21h\n");
