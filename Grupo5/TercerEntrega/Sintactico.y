@@ -353,7 +353,6 @@ iteracion:
             info.cadena=(char*)malloc(sizeof(char)*MAXCAD);
             info.nro=contWhile++;
 	    
-            apilar(&pilaWhile,&info);
             //apilo la primer posicion
             t_info *tInfoWhile=(t_info*) malloc(sizeof(t_info));
             if(!tInfoWhile)
