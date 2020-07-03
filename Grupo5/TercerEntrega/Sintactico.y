@@ -435,12 +435,13 @@ asignacion:
 ifunario:
         IF P_A condicion 
         {
-	      if(existeEnTS("@r")==0)
+        if(existeEnTS("@r")==0)
           insertarEnNuevaTS("_@r","INT","","");
-          ponerEnPolaca(&polaca,"@r");
+          ////ponerEnPolaca(&polaca,"@r");
         }
         COMA expresion COMA 
         {
+          ponerEnPolaca(&polaca,"@r");
           //insertar(ASIGN);
           ponerEnPolaca(&polaca,"="); 
           //insertar(BI); 
@@ -457,7 +458,7 @@ ifunario:
             vecPosSaltos[contVecPosSaltos] = posicionPolaca + 1;
             contVecPosSaltos++;
           }
-	          if(condicion_or == 1)
+            if(condicion_or == 1)
             {
               char posPolaca[MAXCAD];
               sprintf(posPolaca,"%d",saltoOR);
@@ -465,7 +466,7 @@ ifunario:
               //Agregar etiqueta
               vecPosSaltos[contVecPosSaltos] = saltoOR;
               contVecPosSaltos++;
-
+ 
               condicion_or = 0;
             }
           contadorComparaciones = 0;
@@ -480,10 +481,11 @@ ifunario:
           //avanzar(); 
           ponerEnPolaca(&polaca,"");
           //insertar(@r);
-          ponerEnPolaca(&polaca,"@r");
+          ////ponerEnPolaca(&polaca,"@r");
         }
         expresion P_C 
         {
+          ponerEnPolaca(&polaca,"@r");
           //insertar(ASIGN); 
           ponerEnPolaca(&polaca,"=");
           //@x=desapilar(tope_de_pila);
@@ -840,12 +842,18 @@ factorial:
           return;
         }
         tInfoFactorial->nro = posicionPolaca;
+                
+            //Agregar etiqueta
+            vecPosSaltos[contVecPosSaltos] = posicionPolaca;
+            contVecPosSaltos++;  
+            printf("Poniendo salto en: %d",posicionPolaca);
+
         apilar(&pilaFactorial,tInfoFactorial);
         
         ponerEnPolaca(&polaca,resExpFact);
         ponerEnPolaca(&polaca,"1");
         ponerEnPolaca(&polaca,"CMP");
-        ponerEnPolaca(&polaca,"BLI");
+        ponerEnPolaca(&polaca,"BLT");
         
         //Apilar posicion del while actual y avanzar
         tInfoFactorial=(t_info*) malloc(sizeof(t_info));
@@ -875,7 +883,6 @@ factorial:
         ponerEnPolaca(&polaca,"BI");
         
         int nro = desapilar_nro(&pilaFactorial);
-                 printf("Valor de la pila %d",nro); 
         
         char posPolacaFact[MAXCAD];
         sprintf(posPolacaFact,"%d",posicionPolaca+1);
@@ -885,10 +892,18 @@ factorial:
 
          char posIteracion[MAXCAD];
          sprintf(posIteracion,"%d",nro);
+
+
          ponerEnPolaca(&polaca,posIteracion);
 
+                         //Agregar etiqueta
+            vecPosSaltos[contVecPosSaltos] = posicionPolaca;
+            contVecPosSaltos++;  
+            printf("Poniendo salto en: %d",posicionPolaca);
+
          ponerEnPolaca(&polaca,"@fact");
-          
+        
+
         resExpFactActual--;
         sprintf(resExpFact,"@resFact%d",resExpFactActual);
         }
