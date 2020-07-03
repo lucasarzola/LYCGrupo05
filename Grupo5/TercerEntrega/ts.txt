@@ -1,3 +1,10 @@
 _a		INT				
 _b		INT				
+_c		INT				
+_3		Cte_Entera		3		
+_2		Cte_Entera		2		
+_5		Cte_Entera		5		
+_16		Cte_Entera		16		
 _1		Cte_Entera		1		
+_8		Cte_Entera		8		
+_323		Cte_Entera		323		

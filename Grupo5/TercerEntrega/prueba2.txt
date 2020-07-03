@@ -5,14 +5,19 @@ INT : a; b; c
 ENDDEF
 
 b = 3
-
-if ( b > 1 )
-a = 7
-else
-a = 32
+a= 2
+c=5
+if(a <= 3) 
+c= 16
 endif
 
-c = 125
+if ( b > 1 )
+a = 8
+else
+b = 323
+endif
+
+
 
 DISPLAY a
 DISPLAY b
