@@ -949,7 +949,7 @@ combinatoria:
         insertarEnNuevaTS("_1","Cte_Entera","1","");
 
         ponerEnPolaca(&polaca,"1");
-        ponerEnPolaca(&polaca,"F1"); 
+        ponerEnPolaca(&polaca,"@F1"); 
         ponerEnPolaca(&polaca,"=");
 
         if(existeEnTS("@F2")==0)
@@ -957,7 +957,7 @@ combinatoria:
 
         
         ponerEnPolaca(&polaca,"1");
-        ponerEnPolaca(&polaca,"F2");
+        ponerEnPolaca(&polaca,"@F2");
         ponerEnPolaca(&polaca,"=");
         
         char* resTercAGuardar = (char*) malloc(sizeof(char)*MAXCAD+1);
@@ -978,7 +978,19 @@ combinatoria:
 
         hacerFactoriales();
 
+        //Agregar etiqueta
+            vecPosSaltos[contVecPosSaltos] = posicionPolaca;
+            contVecPosSaltos++;  
+            printf("Poniendo salto en: %d",posicionPolaca);
+
         sprintf(resComb,"@resComb%d",resActual);
+        
+        char* resCombAux = (char*) malloc(sizeof(char)*MAXCAD+1);
+
+        sprintf(resCombAux,"_%s",resComb);
+
+        
+        insertarEnNuevaTS(resCombAux,"INT","","");
         
         ponerEnPolaca(&polaca,"@F1");
         ponerEnPolaca(&polaca,"@F2");
@@ -1442,13 +1454,18 @@ hacerFactoriales(){
         tInfoFactorial->nro = posicionPolaca;
         apilar(&pilaFactorial,tInfoFactorial);
         
+         //Agregar etiqueta
+            vecPosSaltos[contVecPosSaltos] = posicionPolaca;
+            contVecPosSaltos++;  
+            printf("Poniendo salto en: %d",posicionPolaca);
+
         char resultActual[MAXCAD];
 
         sprintf(resultActual,"@resExp%d",ciclo);
         ponerEnPolaca(&polaca,resultActual);
         ponerEnPolaca(&polaca,"1");
         ponerEnPolaca(&polaca,"CMP");
-        ponerEnPolaca(&polaca,"BLI");
+        ponerEnPolaca(&polaca,"BLT");
         
         //Apilar posicion del while actual y avanzar
         tInfoFactorial=(t_info*) malloc(sizeof(t_info));
@@ -1634,14 +1651,13 @@ void generarAssembler(t_polaca* p) {
     aux = *p;
     
     //printf("\n");
-    printf("Recorriendo polaca\n");
-    printf("Linea encontrada = %s\n", (*p)->info.cadena);
+    printf("%s\n", (*p)->info.cadena);
 
     //Creo etiqueta
     int r=0;
     for(r; r<contVecPosSaltos; r++){
       if((*p)->info.nro == vecPosSaltos[r]){
-        fprintf(pf,"ETIQ%d:",(*p)->info.nro);
+        fprintf(pf,"\nETIQ%d:\n",(*p)->info.nro);
       }
     }
 
@@ -1985,13 +2001,20 @@ void generarAssembler(t_polaca* p) {
 
 //Asignacion
       if(strcmp(linea,"=")==0){
+
         fprintf(pf,";ASIGNACION\n");
         t_info* id =(t_info*) malloc(sizeof(t_info));
         id = desapilarASM(&pilaIdsASM);
         
+
        if(strcmpi(id->tipoDeDato,"INT")==0 || strcmpi(id->tipoDeDato,"Cte_Entera")==0)
         {   
-            fprintf(pf,";Asignacon Integer\n");
+            
+            fprintf(pf,";Asignacion Integer\n");
+
+            printf("id: %s",id->cadena);           
+
+
             fprintf(pf,"\tfild\t@%s\n",desapilarASM(&pilaIdsASM)->cadena);
             fprintf(pf,"\tfistp\t@%s\n",id->cadena);
 
