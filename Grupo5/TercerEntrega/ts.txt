@@ -1,10 +1,33 @@
 _a		INT				
 _b		INT				
 _c		INT				
+_d		INT				
+_str1		STRING				
+_str2		STRING				
+_f		FLOAT				
+_j		FLOAT				
+_"hola"		Cte_String		"hola"		6
+_"chau"		Cte_String		"chau"		6
+_1.600000		Cte_Real		1.600000		
+_2.350000		Cte_Real		2.350000		
 _3		Cte_Entera		3		
 _2		Cte_Entera		2		
 _5		Cte_Entera		5		
 _16		Cte_Entera		16		
 _1		Cte_Entera		1		
+_"Esto"		Cte_String		"Esto"		6
+_@r		INT				
+_7		Cte_Entera		7		
 _8		Cte_Entera		8		
 _323		Cte_Entera		323		
+_@resFact1		INT				
+_1		Cte_Entera		1		
+_@fact		INT				
+_@resExp1		INT				
+_@resExp2		INT				
+_@F1		INT				
+_1		Cte_Entera		1		
+_@F2		INT				
+_@resExp3		INT				
+_@resComb1		INT				
+_@F3		INT				
