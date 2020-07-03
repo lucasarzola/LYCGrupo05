@@ -352,9 +352,7 @@ iteracion:
             t_info info;
             info.cadena=(char*)malloc(sizeof(char)*MAXCAD);
             info.nro=contWhile++;
-            sprintf(info.cadena,"#while_%d",info.nro);
-            //ponerEnPolaca(&polaca,info.cadena);
-            sprintf(info.cadena,"#while_%d",info.nro);
+	    
             apilar(&pilaWhile,&info);
             //apilo la primer posicion
             t_info *tInfoWhile=(t_info*) malloc(sizeof(t_info));
@@ -364,6 +362,9 @@ iteracion:
             }
             tInfoWhile->nro = posicionPolaca;
             apilar(&pilaWhile,tInfoWhile);
+	    //Agregar etiqueta
+            vecPosSaltos[contVecPosSaltos] = posicionPolaca;
+            contVecPosSaltos++;
           }
           P_A condicion P_C
           bloque{
@@ -396,6 +397,9 @@ iteracion:
             char posIteracion[MAXCAD];
             sprintf(posIteracion,"%d",nro);
             ponerEnPolaca(&polaca,posIteracion);
+	    //Agregar etiqueta
+            vecPosSaltos[contVecPosSaltos] = posicionPolaca;
+            contVecPosSaltos++;
            } ENDWHILE {printf("ENDWHILE     19\n");}
         ;
 
