@@ -1619,7 +1619,7 @@ void generarAssembler(t_polaca* p) {
         }
     
     if(strcmpi("STRING",tablaDeSimbolos[i].tipoDato) == 0){
-          fprintf(pf,"@%s db ?\n",tablaDeSimbolos[i].nombre);        
+          fprintf(pf,"@%s db ?, '$', 30 dup (?)\n\n",tablaDeSimbolos[i].nombre);        
     }  
     }
     
@@ -1627,7 +1627,7 @@ void generarAssembler(t_polaca* p) {
   int j=0;
 
   for(j; j<auxiliaresASM; j++){
-          fprintf(pf,"@auxFloat%d dd 0\n",j); 
+          fprintf(pf,"@auxFloat%d dd 0.0\n",j); 
           fprintf(pf,"@auxInt%d dd 0\n",j);
   }
 
